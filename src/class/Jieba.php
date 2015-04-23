@@ -25,6 +25,44 @@
 class Jieba
 {
 
+    public static $trie;
+    public static $FREQ;
+    public static $min_freq;
+
+    /**
+     * Static method init
+     *
+     * @param array $options # other options
+     *
+     * @return void
+     */
+    public static function init($options=array())
+    {
+
+        echo "Building Trie...\n";
+
+        $t1 = microtime(true);
+        self::$trie = Jieba::gen_trie();
+        self::$FREQ = array();
+        self::$min_freq = array();
+
+        echo "loading model cost ".(microtime(true) - $t1)." seconds.\n";
+        echo "Trie has been built succesfully.\n";
+
+    }// end function init
+
+    /**
+     * Static method gen_trie
+     *
+     * @param array $options # other options
+     *
+     * @return void
+     */
+    public static function gen_trie($options=array())
+    {
+
+    }// end function gen_trie
+
     /**
      * Static method __cut_all
      *
@@ -70,6 +108,10 @@ class Jieba
 
         $words = array();
 
+        $N = mb_strlen($sentence, 'UTF-8');
+        $i = 0;
+        $j = 0;
+
         echo "$sentence \n";
         echo "__cut_DAG \n";
 
@@ -80,9 +122,9 @@ class Jieba
     /**
      * Static method cut
      *
-     * @param string  $sentence     # input sentence
-     * @param boolean $cut_all      # cut_all or not
-     * @param array   $options      # other options
+     * @param string  $sentence # input sentence
+     * @param boolean $cut_all  # cut_all or not
+     * @param array   $options  # other options
      *
      * @return array $seg_list
      */
@@ -104,11 +146,24 @@ class Jieba
 
         foreach ($blocks as $blk) {
 
-            if ($cut_all) {
-                $words = Jieba::__cut_all($blk);
+            if (preg_match('/'.$re_han_pattern.'/u', $blk)) {
+
+                if ($cut_all) {
+                    $words = Jieba::__cut_all($blk);
+                } else {
+                    $words = Jieba::__cut_DAG($blk);
+                }
+
+                foreach ($words as $word) {
+                    array_push($seg_list, $word);
+                }
+
             } else {
-                $words = Jieba::__cut_DAG($blk);
-            }
+
+                array_push($seg_list, $blk);
+
+            }// end else (preg_match('/'.$re_han_pattern.'/u', $blk))
+
 
         }// end foreach ($blocks as $blk)
 
