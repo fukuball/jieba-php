@@ -31,13 +31,23 @@ class Jieba
      * @param string $sentence # input sentence
      * @param array  $options  # other options
      *
-     * @return void
+     * @return array $words
      */
     public static function __cut_all($sentence, $options=array())
     {
 
+        $defaults = array(
+            'mode'=>'default'
+        );
+
+        $options = array_merge($defaults, $options);
+
+        $words = array();
+
         echo "$sentence \n";
         echo "__cut_all \n";
+
+        return $words;
 
     }// end function __cut_all
 
@@ -47,13 +57,23 @@ class Jieba
      * @param string $sentence # input sentence
      * @param array  $options  # other options
      *
-     * @return void
+     * @return array $words
      */
     public static function __cut_DAG($sentence, $options=array())
     {
 
+        $defaults = array(
+            'mode'=>'default'
+        );
+
+        $options = array_merge($defaults, $options);
+
+        $words = array();
+
         echo "$sentence \n";
         echo "__cut_DAG \n";
+
+        return $words;
 
     }// end function __cut_DAG
 
