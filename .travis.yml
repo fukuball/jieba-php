@@ -1,0 +1,37 @@
+# see http://about.travis-ci.org/docs/user/languages/php/ for more hints
+language: php
+
+# list any PHP version you want to test against
+php:
+  # using major version aliases
+  # aliased to a recent 5.4.x version
+  - 5.4
+  # aliased to a recent 5.5.x version
+  - 5.5
+
+# optionally specify a list of environments, for example to test different RDBMS
+env:
+  #- DB=mysql
+
+# execute any number of scripts before the test run, custom env's are available as variables
+before_script:
+  #- if [[ "$DB" == "mysql" ]]; then mysql -e "create database IF NOT EXISTS hello_world_test;" -uroot; fi
+  - composer self-update
+  - composer install --dev --prefer-source
+  - mkdir -p build/logs
+
+# omitting "script:" will default to phpunit
+# use the $DB env variable to determine the phpunit.xml to use
+script:
+  - vendor/bin/phpunit --configuration phpunit.xml --colors --coverage-text --coverage-clover build/logs/clover.xml
+  - vendor/bin/phpcs --standard=PSR2  --extensions=php --ignore=*/test/* ./src
+
+# configure notifications (email, IRC, campfire etc)
+#notifications:
+  #irc: "irc.freenode.org#travis"
+
+after_script:
+  #- php vendor/bin/coveralls
+  # or enable logging
+  - vendor/bin/coveralls -v
+  #- vendor/bin/coveralls -c tests/coveralls.yml -v
