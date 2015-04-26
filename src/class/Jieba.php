@@ -159,6 +159,8 @@ class Jieba
         $N = mb_strlen($sentence, 'UTF-8');
         $i = 0;
         $j = 0;
+        $p = self::$trie;
+        $DAG = array();
 
         echo "$sentence \n";
         echo "__cut_DAG \n";

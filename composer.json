@@ -11,9 +11,11 @@
     ],
     "minimum-stability": "stable",
     "require": {
-         "php": ">= 5.4"
+        "php": ">= 5.4",
+        "tebru/multi-array": "~0.1"
     },
     "require-dev": {
+        "tebru/multi-array": "~0.1",
         "phpunit/phpunit": "4.4.1",
         "satooshi/php-coveralls": "dev-master",
         "squizlabs/php_codesniffer": "1.5.6"
