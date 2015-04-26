@@ -16,7 +16,6 @@
 // autoload
 require_once dirname(__FILE__)."/class/ClassAutoloader.php";
 
-Jieba::init();
 $seg_list = Jieba::cut("他来到了网易杭研大厦 A test，\n我来到北京清华大学");
 print_r($seg_list);
 ?>

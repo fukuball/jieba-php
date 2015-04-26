@@ -25,8 +25,9 @@
 class Jieba
 {
 
-    public static $trie;
-    public static $FREQ;
+    public static $total = 0.0;
+    public static $trie = array();
+    public static $FREQ = array();
     public static $min_freq;
 
     /**
@@ -42,9 +43,11 @@ class Jieba
         echo "Building Trie...\n";
 
         $t1 = microtime(true);
-        self::$trie = Jieba::gen_trie();
-        self::$FREQ = array();
-        self::$min_freq = array();
+        self::$trie = Jieba::gen_trie(dirname(dirname(__FILE__))."/dict/dict2.txt");
+        foreach (self::$FREQ as $key=>$value) {
+            self::$FREQ[$key] = ($value/self::$total);
+        }
+        self::$min_freq = min(self::$FREQ);
 
         echo "loading model cost ".(microtime(true) - $t1)." seconds.\n";
         echo "Trie has been built succesfully.\n";
@@ -54,12 +57,57 @@ class Jieba
     /**
      * Static method gen_trie
      *
-     * @param array $options # other options
+     * @param string $f_name  # input f_name
+     * @param array  $options # other options
      *
-     * @return void
+     * @return array self::$trie
      */
-    public static function gen_trie($options=array())
+    public static function gen_trie($f_name, $options=array())
     {
+
+        $defaults = array(
+            'mode'=>'default'
+        );
+
+        $options = array_merge($defaults, $options);
+
+        $content = fopen($f_name, "r");
+
+        while (($line = fgets($content)) !== false) {
+            $explode_line = explode(" ", trim($line));
+            $word = $explode_line[0];
+            $freq = $explode_line[1];
+            $freq = (float) $freq;
+            self::$FREQ[$word] = $freq;
+            self::$total += $freq;
+            $l = mb_strlen($word, 'UTF-8');
+
+            $word_c = array();
+            for ($i=0; $i<$l; $i++) {
+                $c = mb_substr($word, $i, 1, 'UTF-8');
+                if ($i==0) {
+                    if (!isset(self::$trie[$c])) {
+                        self::$trie[$c] = array();
+                    }
+                } else {
+                    $eval_trie_string = 'self::$trie[';
+                    for ($j=0; $j<count($word_c); $j++) {
+                        $eval_trie_string = $eval_trie_string.'$word_c['.$j.']][';
+                    }
+                    $eval_trie_string = substr($eval_trie_string, 0, -1);
+                    eval('$key_not_exist = !isset('.$eval_trie_string.'[$c]);');
+                    if ($key_not_exist) {
+                        eval($eval_trie_string.'[$c] = array();');
+                    }
+
+                }
+                array_push($word_c, $c);
+            }
+        }
+
+        fclose($content);
+
+        return self::$trie;
 
     }// end function gen_trie
 
@@ -173,4 +221,6 @@ class Jieba
 
 
 }// end of class Jieba
+
+Jieba::init();
 ?>
