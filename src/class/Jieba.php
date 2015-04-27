@@ -41,6 +41,12 @@ class Jieba
     public static function init($options=array())
     {
 
+        $defaults = array(
+            'mode'=>'default'
+        );
+
+        $options = array_merge($defaults, $options);
+
         echo "Building Trie...\n";
 
         $t1 = microtime(true);
