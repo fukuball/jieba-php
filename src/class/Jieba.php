@@ -233,8 +233,6 @@ class Jieba
 
         self::calc($sentence, $DAG);
 
-        var_dump(self::$route);
-
         $x = 0;
         $buf = '';
 
@@ -265,10 +263,16 @@ class Jieba
             $x = $y;
         }
 
-        var_dump($words);
-
-        echo "$sentence \n";
-        echo "__cut_DAG \n";
+        if (mb_strlen($buf, 'UTF-8')>0) {
+            if (mb_strlen($buf, 'UTF-8')==1) {
+                array_push($words, $buf);
+            } else {
+                $regognized = Finalseg::__cut($buf);
+                foreach ($regognized as $key=>$word) {
+                    array_push($words, $word);
+                }
+            }
+        }
 
         return $words;
 

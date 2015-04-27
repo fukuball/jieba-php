@@ -19,17 +19,5 @@ require_once dirname(dirname(__FILE__)).'/vendor/autoload.php';
 require_once dirname(__FILE__)."/class/ClassAutoloader.php";
 
 $seg_list = Jieba::cut("他来到了网易考察大厦 A test，\n我来到北京清华大学");
-print_r($seg_list);
-
-//$multiArray = new Tebru\MultiArray(array());
-//$multiArray->set('考.察.队.员', array("end"=>""));
-//$multiArray->set('考.察.上', array("end"=>""));
-//$multiArray->set('考.察', array("end"=>""));
-//var_dump($multiArray);
-//
-//$multiArray = new Tebru\MultiArray(array());
-//$multiArray->set('考.察', array("end"=>""));
-//$multiArray->set('考.察.上', array("end"=>""));
-//$multiArray->set('考.察.队.员', array("end"=>""));
-//var_dump($multiArray);
+var_dump($seg_list);
 ?>
