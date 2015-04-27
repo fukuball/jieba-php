@@ -158,8 +158,41 @@ class Jieba
 
         $words = array();
 
-        echo "$sentence \n";
-        echo "__cut_all \n";
+        $N = mb_strlen($sentence, 'UTF-8');
+        $i = 0;
+        $j = 0;
+        $p = self::$trie;
+        $word_c = array();
+
+        while ($i < $N) {
+            $c = mb_substr($sentence, $j, 1, 'UTF-8');
+            if (count($word_c)==0) {
+                $next_word_key = $c;
+            } else {
+                $next_word_key = implode('.', $word_c).'.'.$c;
+            }
+
+            if (self::$trie->exists($next_word_key)) {
+                array_push($word_c, $c);
+                $next_word_key_value = self::$trie->get($next_word_key);
+                if (   $next_word_key_value == array("end"=>"")
+                    || in_array(array("end"=>""), $next_word_key_value)
+                ) {
+                    array_push($words, mb_substr($sentence, $i, (($j+1)-$i), 'UTF-8'));
+                }
+                $j += 1;
+                if ($j >= $N) {
+                    $word_c = array();
+                    $i += 1;
+                    $j = $i;
+                }
+            } else {
+                $word_c = array();
+                $i += 1;
+                $j = $i;
+            }
+
+        }
 
         return $words;
 
