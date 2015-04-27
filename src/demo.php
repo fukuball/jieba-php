@@ -14,9 +14,13 @@
  */
 ini_set('memory_limit', '1024M');
 
-// autoload
 require_once dirname(dirname(__FILE__)).'/vendor/autoload.php';
-require_once dirname(__FILE__)."/class/ClassAutoloader.php";
+require_once dirname(__FILE__)."/class/Jieba.php";
+require_once dirname(__FILE__)."/class/Finalseg.php";
+use Fukuball\Jieba;
+use Fukuball\Finalseg;
+Jieba::init();
+Finalseg::init();
 
 $seg_list = Jieba::cut("他来到了网易考察大厦 A test，\n我来到北京清华大学");
 var_dump($seg_list);

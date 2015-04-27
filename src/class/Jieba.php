@@ -12,6 +12,10 @@
  * @link     https://github.com/fukuball/iloveck101
  */
 
+namespace Fukuball;
+
+use Tebru\MultiArray;
+
 /**
  * Jieba
  *
@@ -38,7 +42,7 @@ class Jieba
      *
      * @return void
      */
-    public static function init($options=array())
+    public static function init($options = array())
     {
 
         $defaults = array(
@@ -70,7 +74,7 @@ class Jieba
      *
      * @return array self::$route
      */
-    public static function calc($sentence, $DAG, $options=array())
+    public static function calc($sentence, $DAG, $options = array())
     {
 
         $N = mb_strlen($sentence, 'UTF-8');
@@ -102,7 +106,7 @@ class Jieba
      *
      * @return array self::$trie
      */
-    public static function gen_trie($f_name, $options=array())
+    public static function gen_trie($f_name, $options = array())
     {
 
         $defaults = array(
@@ -111,7 +115,7 @@ class Jieba
 
         $options = array_merge($defaults, $options);
 
-        self::$trie = new Tebru\MultiArray(array());
+        self::$trie = new MultiArray(array());
 
         $content = fopen($f_name, "r");
 
@@ -147,7 +151,7 @@ class Jieba
      *
      * @return array $words
      */
-    public static function __cut_all($sentence, $options=array())
+    public static function __cut_all($sentence, $options = array())
     {
 
         $defaults = array(
@@ -206,7 +210,7 @@ class Jieba
      *
      * @return array $words
      */
-    public static function __cut_DAG($sentence, $options=array())
+    public static function __cut_DAG($sentence, $options = array())
     {
 
         $defaults = array(
@@ -320,7 +324,7 @@ class Jieba
      *
      * @return array $seg_list
      */
-    public static function cut($sentence, $cut_all=false, $options=array())
+    public static function cut($sentence, $cut_all = false, $options = array())
     {
 
         $defaults = array(
@@ -365,6 +369,4 @@ class Jieba
 
 
 }// end of class Jieba
-
-Jieba::init();
 ?>

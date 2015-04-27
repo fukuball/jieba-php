@@ -12,6 +12,8 @@
  * @link     https://github.com/fukuball/iloveck101
  */
 
+namespace Fukuball;
+
 /**
  * Finalseg
  *
@@ -36,7 +38,7 @@ class Finalseg
      *
      * @return void
      */
-    public static function init($options=array())
+    public static function init($options = array())
     {
 
         $defaults = array(
@@ -45,21 +47,21 @@ class Finalseg
 
         $options = array_merge($defaults, $options);
 
-        self::$prob_start = self::load_model(dirname(dirname(__FILE__)).'/model/prob_start.json');
-        self::$prob_trans = self::load_model(dirname(dirname(__FILE__)).'/model/prob_trans.json');
-        self::$prob_emit = self::load_model(dirname(dirname(__FILE__)).'/model/prob_emit.json');
+        self::$prob_start = self::loadModel(dirname(dirname(__FILE__)).'/model/prob_start.json');
+        self::$prob_trans = self::loadModel(dirname(dirname(__FILE__)).'/model/prob_trans.json');
+        self::$prob_emit = self::loadModel(dirname(dirname(__FILE__)).'/model/prob_emit.json');
 
     }// end function init
 
     /**
-     * Static method load_model
+     * Static method loadModel
      *
      * @param string $f_name # input f_name
      * @param array $options # other options
      *
      * @return void
      */
-    public static function load_model($f_name, $options=array())
+    public static function loadModel($f_name, $options = array())
     {
 
         $defaults = array(
@@ -70,7 +72,7 @@ class Finalseg
 
         return json_decode(file_get_contents($f_name), true);
 
-    }// end function load_model
+    }// end function loadModel
 
     /**
      * Static method viterbi
@@ -80,7 +82,7 @@ class Finalseg
      *
      * @return array $viterbi
      */
-    public static function viterbi($sentence, $options=array())
+    public static function viterbi($sentence, $options = array())
     {
 
         $defaults = array(
@@ -171,7 +173,7 @@ class Finalseg
      *
      * @return array $words
      */
-    public static function __cut($sentence, $options=array())
+    public static function __cut($sentence, $options = array())
     {
 
         $defaults = array(
@@ -221,7 +223,7 @@ class Finalseg
      *
      * @return array $seg_list
      */
-    public static function cut($sentence, $options=array())
+    public static function cut($sentence, $options = array())
     {
 
         $defaults = array(
@@ -261,6 +263,4 @@ class Finalseg
     }// end function cut
 
 }// end of class Finalseg
-
-Finalseg::init();
 ?>

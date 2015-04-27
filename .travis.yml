@@ -24,7 +24,7 @@ before_script:
 # use the $DB env variable to determine the phpunit.xml to use
 script:
   - vendor/bin/phpunit --configuration phpunit.xml --colors --coverage-text --coverage-clover build/logs/clover.xml
-  - vendor/bin/phpcs --standard=PSR2  --extensions=php --ignore=*/test/* ./src
+  - vendor/bin/phpcs --standard=PSR2  --extensions=php --ignore=*/test/* ./src/class
 
 # configure notifications (email, IRC, campfire etc)
 #notifications:

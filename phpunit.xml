@@ -24,7 +24,7 @@
 
     <filter>
         <whitelist>
-            <directory>./src</directory>
+            <directory>./src/class</directory>
             <exclude>
                 <directory>./build</directory>
                 <directory>./codesniffer</directory>
