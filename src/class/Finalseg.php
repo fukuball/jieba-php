@@ -212,6 +212,54 @@ class Finalseg
 
     }// end function __cut
 
+
+    /**
+     * Static method cut
+     *
+     * @param string  $sentence # input sentence
+     * @param array   $options  # other options
+     *
+     * @return array $seg_list
+     */
+    public static function cut($sentence, $options=array())
+    {
+
+        $defaults = array(
+            'mode'=>'default'
+        );
+
+        $options = array_merge($defaults, $options);
+
+        $seg_list = array();
+
+        $re_han_pattern = '([\x{4E00}-\x{9FA5}]+)';
+        $re_skip_pattern = '([a-zA-Z0-9+#\n]+)';
+        preg_match_all('/('.$re_han_pattern.'|'.$re_skip_pattern.')/u', $sentence, $matches, PREG_PATTERN_ORDER);
+        $blocks = $matches[0];
+
+        foreach ($blocks as $blk) {
+
+            if (preg_match('/'.$re_han_pattern.'/u', $blk)) {
+
+                $words = self::__cut($blk);
+
+                foreach ($words as $word) {
+                    array_push($seg_list, $word);
+                }
+
+            } else {
+
+                array_push($seg_list, $blk);
+
+            }// end else (preg_match('/'.$re_han_pattern.'/u', $blk))
+
+
+        }// end foreach ($blocks as $blk)
+
+        return $seg_list;
+
+    }// end function cut
+
 }// end of class Finalseg
 
 Finalseg::init();
