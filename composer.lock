@@ -4,8 +4,51 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "129b135e9c0779eb20857b5a2d674307",
-    "packages": [],
+    "hash": "61911db23ee8f86c16394d23649c7b98",
+    "packages": [
+        {
+            "name": "tebru/multi-array",
+            "version": "v0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tebru/multi-array.git",
+                "reference": "20426d31846ba0d1945090699943bed0fdf0b6e7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tebru/multi-array/zipball/20426d31846ba0d1945090699943bed0fdf0b6e7",
+                "reference": "20426d31846ba0d1945090699943bed0fdf0b6e7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "mockery/mockery": "dev-master",
+                "php": ">=5.5",
+                "phpunit/phpunit": "4.3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Tebru\\": "src/",
+                    "Tebru\\Test\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nate Brunette",
+                    "email": "n@tebru.net"
+                }
+            ],
+            "description": "Provides a data structure to ease access to multidimensional arrays in PHP",
+            "time": "2014-11-22 21:41:02"
+        }
+    ],
     "packages-dev": [
         {
             "name": "doctrine/instantiator",

@@ -28,7 +28,7 @@ class Jieba
     public static $total = 0.0;
     public static $trie = array();
     public static $FREQ = array();
-    public static $min_freq;
+    public static $min_freq = 0.0;
 
     /**
      * Static method init
@@ -71,6 +71,8 @@ class Jieba
 
         $options = array_merge($defaults, $options);
 
+        self::$trie = new Tebru\MultiArray(array());
+
         $content = fopen($f_name, "r");
 
         while (($line = fgets($content)) !== false) {
@@ -85,24 +87,10 @@ class Jieba
             $word_c = array();
             for ($i=0; $i<$l; $i++) {
                 $c = mb_substr($word, $i, 1, 'UTF-8');
-                if ($i==0) {
-                    if (!isset(self::$trie[$c])) {
-                        self::$trie[$c] = array();
-                    }
-                } else {
-                    $eval_trie_string = 'self::$trie[';
-                    for ($j=0; $j<count($word_c); $j++) {
-                        $eval_trie_string = $eval_trie_string.'$word_c['.$j.']][';
-                    }
-                    $eval_trie_string = substr($eval_trie_string, 0, -1);
-                    eval('$key_not_exist = !isset('.$eval_trie_string.'[$c]);');
-                    if ($key_not_exist) {
-                        eval($eval_trie_string.'[$c] = array();');
-                    }
-
-                }
                 array_push($word_c, $c);
             }
+            $word_c_key = implode('.', $word_c);
+            self::$trie->set($word_c_key, array("end"=>""));
         }
 
         fclose($content);
@@ -161,6 +149,40 @@ class Jieba
         $j = 0;
         $p = self::$trie;
         $DAG = array();
+        $word_c = array();
+
+        while ($i < $N) {
+            $c = mb_substr($sentence, $j, 1, 'UTF-8');
+            if (count($word_c)==0) {
+                $next_word_key = $c;
+            } else {
+                $next_word_key = implode('.', $word_c).'.'.$c;
+            }
+
+            if (self::$trie->exists($next_word_key)) {
+                array_push($word_c, $c);
+                $next_word_key_value = self::$trie->get($next_word_key);
+                if (   $next_word_key_value == array("end"=>"")
+                    || in_array(array("end"=>""), $next_word_key_value)
+                ) {
+                    //exist and leaf node
+                    if (!isset($DAG[$i])) {
+                        $DAG[$i] = array();
+                    }
+                    array_push($DAG[$i], $j);
+                }
+                $j += 1;
+                if ($j >= $N) {
+                    $word_c = array();
+                    $i += 1;
+                    $j = $i;
+                }
+            } else {
+                $word_c = array();
+                $i += 1;
+                $j = $i;
+            }
+        }
 
         echo "$sentence \n";
         echo "__cut_DAG \n";
