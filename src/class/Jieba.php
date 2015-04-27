@@ -71,16 +71,17 @@ class Jieba
         self::$route = array();
         self::$route[$N] = array($N => 1.0);
 
+        $previous_key = $N;
         for ($i=($N-1); $i>=0; $i--) {
-
             $w_c = mb_substr($sentence, $i, (($DAG[$i][0]+1)-$i), 'UTF-8');
-            $previous_freq = self::$route[$i+1][$i+1];
+            $previous_freq = self::$route[$i+1][$previous_key];
             if (isset(self::$FREQ[$w_c])) {
                 $current_freq = (float) $previous_freq*self::$FREQ[$w_c]/self::$min_freq;
             } else {
                 $current_freq = (float) $previous_freq*self::$min_freq;
             }
-            self::$route[$i] = array($i => $current_freq);
+            self::$route[$i] = array($DAG[$i][0] => $current_freq);
+            $previous_key = $DAG[$i][0];
         }
 
         return self::$route;
@@ -225,6 +226,40 @@ class Jieba
         }
 
         self::calc($sentence, $DAG);
+
+        var_dump(self::$route);
+
+        $x = 0;
+        $buf = '';
+
+        while ($x < $N) {
+            $current_route_keys = array_keys(self::$route[$x]);
+            $y = $current_route_keys[0]+1;
+            $l_word = mb_substr($sentence, $x, ($y-$x), 'UTF-8');
+
+            if (($y-$x)==1) {
+                $buf = $buf.$l_word;
+            } else {
+
+                if (mb_strlen($buf, 'UTF-8')>0) {
+                    if (mb_strlen($buf, 'UTF-8')==1) {
+                        array_push($words, $buf);
+                        $buf = '';
+                    } else {
+                        $regognized = Finalseg::__cut($buf);
+                        foreach ($regognized as $key=>$word) {
+                            array_push($words, $word);
+                        }
+                        $buf = '';
+                    }
+
+                }
+                array_push($words, $l_word);
+            }
+            $x = $y;
+        }
+
+        var_dump($words);
 
         echo "$sentence \n";
         echo "__cut_DAG \n";

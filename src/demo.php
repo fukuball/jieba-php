@@ -22,8 +22,14 @@ $seg_list = Jieba::cut("他来到了网易考察大厦 A test，\n我来到北�
 print_r($seg_list);
 
 //$multiArray = new Tebru\MultiArray(array());
-//$multiArray->set('key1', 'value');
-//$multiArray->set('key2.nested-key', 'value');
-//$multiArray->set('key2.newKey', 'value');
-//var_dump($multiArray->get('key2'));
+//$multiArray->set('考.察.队.员', array("end"=>""));
+//$multiArray->set('考.察.上', array("end"=>""));
+//$multiArray->set('考.察', array("end"=>""));
+//var_dump($multiArray);
+//
+//$multiArray = new Tebru\MultiArray(array());
+//$multiArray->set('考.察', array("end"=>""));
+//$multiArray->set('考.察.上', array("end"=>""));
+//$multiArray->set('考.察.队.员', array("end"=>""));
+//var_dump($multiArray);
 ?>
