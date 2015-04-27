@@ -29,6 +29,7 @@ class Jieba
     public static $trie = array();
     public static $FREQ = array();
     public static $min_freq = 0.0;
+    public static $route = array();
 
     /**
      * Static method init
@@ -53,6 +54,38 @@ class Jieba
         echo "Trie has been built succesfully.\n";
 
     }// end function init
+
+    /**
+     * Static method calc
+     *
+     * @param string $sentence # input sentence
+     * @param array  $DAG      # DAG
+     * @param array  $options  # other options
+     *
+     * @return array self::$route
+     */
+    public static function calc($sentence, $DAG, $options=array())
+    {
+
+        $N = mb_strlen($sentence, 'UTF-8');
+        self::$route = array();
+        self::$route[$N] = array($N => 1.0);
+
+        for ($i=($N-1); $i>=0; $i--) {
+
+            $w_c = mb_substr($sentence, $i, (($DAG[$i][0]+1)-$i), 'UTF-8');
+            $previous_freq = self::$route[$i+1][$i+1];
+            if (isset(self::$FREQ[$w_c])) {
+                $current_freq = (float) $previous_freq*self::$FREQ[$w_c]/self::$min_freq;
+            } else {
+                $current_freq = (float) $previous_freq*self::$min_freq;
+            }
+            self::$route[$i] = array($i => $current_freq);
+        }
+
+        return self::$route;
+
+    }// end function calc
 
     /**
      * Static method gen_trie
@@ -183,6 +216,15 @@ class Jieba
                 $j = $i;
             }
         }
+
+        for ($i=0; $i<$N; $i++) {
+            if (!isset($DAG[$i])) {
+                $DAG[$i] = array();
+                array_push($DAG[$i], $i);
+            }
+        }
+
+        self::calc($sentence, $DAG);
 
         echo "$sentence \n";
         echo "__cut_DAG \n";
