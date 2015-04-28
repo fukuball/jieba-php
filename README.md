@@ -87,16 +87,34 @@ Output:
       string(3) "啊"
     }
     Full Mode:
-    array(3) {
+    array(12) {
       [0]=>
-      string(6) "来到"
+      string(3) "我"
       [1]=>
-      string(6) "北京"
+      string(3) "来"
       [2]=>
-      string(6) "大学"
+      string(6) "来到"
+      [3]=>
+      string(3) "到"
+      [4]=>
+      string(3) "北"
+      [5]=>
+      string(3) "京"
+      [6]=>
+      string(3) "清"
+      [7]=>
+      string(12) "清华大学"
+      [8]=>
+      string(3) "华"
+      [9]=>
+      string(6) "华大"
+      [10]=>
+      string(3) "大"
+      [11]=>
+      string(3) "学"
     }
     Default Mode:
-    array(5) {
+    array(4) {
       [0]=>
       string(3) "我"
       [1]=>
@@ -104,9 +122,7 @@ Output:
       [2]=>
       string(6) "北京"
       [3]=>
-      string(6) "清华"
-      [4]=>
-      string(6) "大学"
+      string(12) "清华大学"
     }
     array(6) {
       [0]=>

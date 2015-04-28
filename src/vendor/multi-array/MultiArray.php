@@ -36,14 +36,14 @@ class MultiArray implements IteratorAggregate, JsonSerializable, ArrayAccess
      * Stores array object was created with
      * @var array $storage
      */
-    private $storage = [];
+    public $storage = [];
 
     /**
      * A cache of keys that have been verified and values
      *
      * @var array $cache
      */
-    private $cache = [];
+    public $cache = [];
 
     /**
      * Constructor

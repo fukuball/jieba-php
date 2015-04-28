@@ -53,7 +53,7 @@ class Jieba
         echo "Building Trie...\n";
 
         $t1 = microtime(true);
-        self::$trie = Jieba::genTrie(dirname(dirname(__FILE__))."/dict/dict.small.txt");
+        self::$trie = Jieba::genTrie(dirname(dirname(__FILE__))."/dict/dict.txt");
         foreach (self::$FREQ as $key => $value) {
             self::$FREQ[$key] = ($value/self::$total);
         }
@@ -114,10 +114,10 @@ class Jieba
 
         $options = array_merge($defaults, $options);
 
-        self::$trie = new MultiArray(array());
+        self::$trie = new MultiArray(file_get_contents($f_name.'.json'));
+        self::$trie->cache = new MultiArray(file_get_contents($f_name.'.cache.json'));
 
         $content = fopen($f_name, "r");
-
         while (($line = fgets($content)) !== false) {
             $explode_line = explode(" ", trim($line));
             $word = $explode_line[0];
@@ -125,17 +125,15 @@ class Jieba
             $freq = (float) $freq;
             self::$FREQ[$word] = $freq;
             self::$total += $freq;
-            $l = mb_strlen($word, 'UTF-8');
-
-            $word_c = array();
-            for ($i=0; $i<$l; $i++) {
-                $c = mb_substr($word, $i, 1, 'UTF-8');
-                array_push($word_c, $c);
-            }
-            $word_c_key = implode('.', $word_c);
-            self::$trie->set($word_c_key, array("end"=>""));
+            //$l = mb_strlen($word, 'UTF-8');
+            //$word_c = array();
+            //for ($i=0; $i<$l; $i++) {
+            //    $c = mb_substr($word, $i, 1, 'UTF-8');
+            //    array_push($word_c, $c);
+            //}
+            //$word_c_key = implode('.', $word_c);
+            //self::$trie->set($word_c_key, array("end"=>""));
         }
-
         fclose($content);
 
         return self::$trie;
