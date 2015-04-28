@@ -17,5 +17,13 @@
         "phpunit/phpunit": "4.4.1",
         "satooshi/php-coveralls": "dev-master",
         "squizlabs/php_codesniffer": "1.5.6"
+    },
+    "autoload": {
+        "files": [
+            "src/class/Jieba.php",
+            "src/class/Finalseg.php",
+            "src/vendor/multi-array/MultiArray.php",
+            "src/vendor/multi-array/Factory/MultiArrayFactory.php"
+        ]
     }
 }
