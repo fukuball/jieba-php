@@ -16,4 +16,19 @@ class JiebaTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(4, $array_count);
     }
 
+    public function testJiebaCut()
+    {
+        $case_array = array(
+            "怜香惜玉",
+            "也",
+            "得",
+            "要",
+            "看",
+            "对象",
+            "啊"
+        );
+
+        $seg_list = Jieba::cut("怜香惜玉也得要看对象啊！");
+        $this->assertEquals($case_array, $seg_list);
+    }
 }
