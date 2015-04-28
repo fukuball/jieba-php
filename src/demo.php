@@ -14,7 +14,8 @@
  */
 ini_set('memory_limit', '1024M');
 
-require_once dirname(dirname(__FILE__)).'/vendor/autoload.php';
+require_once dirname(__FILE__)."/vendor/multi-array/MultiArray.php";
+require_once dirname(__FILE__)."/vendor/multi-array/Factory/MultiArrayFactory.php";
 require_once dirname(__FILE__)."/class/Jieba.php";
 require_once dirname(__FILE__)."/class/Finalseg.php";
 use Fukuball\Jieba;
