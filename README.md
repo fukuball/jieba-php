@@ -1,17 +1,30 @@
 jieba-php
 ========
-"結巴"中文分詞（PHP 版本翻譯中）：做最好的 PHP 的中文分詞組件
-目前翻譯版本為 jieba-0.16 版本，未來再慢慢往上升級，請有興趣的開發者一起加入開發！
+"結巴"中文分詞：做最好的 PHP 的中文分詞組件，目前翻譯版本為 jieba-0.16 版本，未來再慢慢往上升級，效能也需要再改善，請有興趣的開發者一起加入開發！
 
 Feature
 ========
 * 支持兩種分詞模式：
 * 1）默認模式，試圖將句子最精確地切開，適合文本分析；
-* 2）全模式，把句子中所有的可以成詞的詞語都掃描出來，適合搜索引擎。
+* 2）全模式，把句子中所有的可以成詞的詞語都掃描出來，適合搜索引擎。（需要充足的字典）
 
 Usage
 ========
-待補充
+* 自動安裝：使用 composer 安裝後，透過 autoload 引用
+
+代碼示例
+    composer require fukuball/jieba-php:dev-master
+
+代碼示例
+    require_once "/path/to/your/vendor/autoload.php";
+
+* 手動安裝：將 jieba-php 放置適當目錄後，透過 require_once 引用
+
+代碼示例
+    require_once "/path/to/your/vendor/multi-array/MultiArray.php";
+    require_once "/path/to/your/vendor/multi-array/Factory/MultiArrayFactory.php";
+    require_once "/path/to/your/class/Jieba.php";
+    require_once "/path/to/your/class/Finalseg.php";
 
 Algorithm
 ========
@@ -29,8 +42,19 @@ Interface
 
 代碼示例 (Tutorial)
 
-    #encoding=utf-8
-    import jieba
+    ini_set('memory_limit', '1024M');
+
+    require_once "/path/to/your/vendor/multi-array/MultiArray.php";
+    require_once "/path/to/your/vendor/multi-array/Factory/MultiArrayFactory.php";
+    require_once "/path/to/your/class/Jieba.php";
+    require_once "/path/to/your/class/Finalseg.php";
+    use Fukuball\Jieba;
+    use Fukuball\Finalseg;
+    Jieba::init();
+    Finalseg::init();
+
+    $seg_list = Jieba::cut("怜香惜玉也得要看对象啊！");
+    var_dump($seg_list);
 
     seg_list = jieba.cut("我来到北京清华大学",cut_all=True)
     print "Full Mode:", "/ ".join(seg_list) #全模式
@@ -43,19 +67,59 @@ Interface
 
 Output:
 
-    Full Mode: 我/ 来/ 来到/ 到/ 北/ 北京/ 京/ 清/ 清华/ 清华大学/ 华/ 华大/ 大/ 大学/ 学
-
-    Default Mode: 我/ 来到/ 北京/ 清华大学
-
-    他, 来到, 了, 网易, 杭研, 大厦    (此處，“杭研“並沒有在詞典中，但是也被 Viterbi 算法識別出來了)
-
-Performance
-=========
-待測試
-
-線上展示
-=========
-待上線
+    array(7) {
+      [0]=>
+      string(12) "怜香惜玉"
+      [1]=>
+      string(3) "也"
+      [2]=>
+      string(3) "得"
+      [3]=>
+      string(3) "要"
+      [4]=>
+      string(3) "看"
+      [5]=>
+      string(6) "对象"
+      [6]=>
+      string(3) "啊"
+    }
+    Full Mode:
+    array(3) {
+      [0]=>
+      string(6) "来到"
+      [1]=>
+      string(6) "北京"
+      [2]=>
+      string(6) "大学"
+    }
+    Default Mode:
+    array(5) {
+      [0]=>
+      string(3) "我"
+      [1]=>
+      string(6) "来到"
+      [2]=>
+      string(6) "北京"
+      [3]=>
+      string(6) "清华"
+      [4]=>
+      string(6) "大学"
+    }
+    array(6) {
+      [0]=>
+      string(3) "他"
+      [1]=>
+      string(6) "来到"
+      [2]=>
+      string(3) "了"
+      [3]=>
+      string(6) "网易"
+      [4]=>
+      string(6) "杭研"
+      [5]=>
+      string(6) "大厦"
+    }
+    (此處，“杭研“並沒有在詞典中，但是也被 Viterbi 算法識別出來了
 
 License
 =========
