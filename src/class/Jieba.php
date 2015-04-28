@@ -54,7 +54,7 @@ class Jieba
         echo "Building Trie...\n";
 
         $t1 = microtime(true);
-        self::$trie = Jieba::gen_trie(dirname(dirname(__FILE__))."/dict/dict2.txt");
+        self::$trie = Jieba::gen_trie(dirname(dirname(__FILE__))."/dict/dict.test.txt");
         foreach (self::$FREQ as $key=>$value) {
             self::$FREQ[$key] = ($value/self::$total);
         }
