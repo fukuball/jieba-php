@@ -17,20 +17,26 @@ Usage
 
 代碼示例
 
-    composer require fukuball/jieba-php:dev-master
+```php
+composer require fukuball/jieba-php:dev-master
+```
 
 代碼示例
 
-    require_once "/path/to/your/vendor/autoload.php";
+```php
+require_once "/path/to/your/vendor/autoload.php";
+```
 
 * 手動安裝：將 jieba-php 放置適當目錄後，透過 require_once 引用
 
 代碼示例
 
-    require_once "/path/to/your/vendor/multi-array/MultiArray.php";
-    require_once "/path/to/your/vendor/multi-array/Factory/MultiArrayFactory.php";
-    require_once "/path/to/your/class/Jieba.php";
-    require_once "/path/to/your/class/Finalseg.php";
+```php
+require_once "/path/to/your/vendor/multi-array/MultiArray.php";
+require_once "/path/to/your/vendor/multi-array/Factory/MultiArrayFactory.php";
+require_once "/path/to/your/class/Jieba.php";
+require_once "/path/to/your/class/Finalseg.php";
+```
 
 Algorithm
 ========
@@ -48,106 +54,110 @@ Interface
 
 代碼示例 (Tutorial)
 
-    ini_set('memory_limit', '1024M');
+```php
+ini_set('memory_limit', '1024M');
 
-    require_once "/path/to/your/vendor/multi-array/MultiArray.php";
-    require_once "/path/to/your/vendor/multi-array/Factory/MultiArrayFactory.php";
-    require_once "/path/to/your/class/Jieba.php";
-    require_once "/path/to/your/class/Finalseg.php";
-    use Fukuball\Jieba;
-    use Fukuball\Finalseg;
-    Jieba::init();
-    Finalseg::init();
+require_once "/path/to/your/vendor/multi-array/MultiArray.php";
+require_once "/path/to/your/vendor/multi-array/Factory/MultiArrayFactory.php";
+require_once "/path/to/your/class/Jieba.php";
+require_once "/path/to/your/class/Finalseg.php";
+use Fukuball\Jieba;
+use Fukuball\Finalseg;
+Jieba::init();
+Finalseg::init();
 
-    $seg_list = Jieba::cut("怜香惜玉也得要看对象啊！");
-    var_dump($seg_list);
+$seg_list = Jieba::cut("怜香惜玉也得要看对象啊！");
+var_dump($seg_list);
 
-    seg_list = jieba.cut("我来到北京清华大学",cut_all=True)
-    print "Full Mode:", "/ ".join(seg_list) #全模式
+seg_list = jieba.cut("我来到北京清华大学",cut_all=True)
+print "Full Mode:", "/ ".join(seg_list) #全模式
 
-    seg_list = jieba.cut("我来到北京清华大学",cut_all=False)
-    print "Default Mode:", "/ ".join(seg_list) #默認模式
+seg_list = jieba.cut("我来到北京清华大学",cut_all=False)
+print "Default Mode:", "/ ".join(seg_list) #默認模式
 
-    seg_list = jieba.cut("他来到了网易杭研大厦")
-    print ", ".join(seg_list)
+seg_list = jieba.cut("他来到了网易杭研大厦")
+print ", ".join(seg_list)
+```
 
 Output:
 
-    array(7) {
-      [0]=>
-      string(12) "怜香惜玉"
-      [1]=>
-      string(3) "也"
-      [2]=>
-      string(3) "得"
-      [3]=>
-      string(3) "要"
-      [4]=>
-      string(3) "看"
-      [5]=>
-      string(6) "对象"
-      [6]=>
-      string(3) "啊"
-    }
-    Full Mode:
-    array(15) {
-      [0]=>
-      string(3) "我"
-      [1]=>
-      string(3) "来"
-      [2]=>
-      string(6) "来到"
-      [3]=>
-      string(3) "到"
-      [4]=>
-      string(3) "北"
-      [5]=>
-      string(6) "北京"
-      [6]=>
-      string(3) "京"
-      [7]=>
-      string(3) "清"
-      [8]=>
-      string(6) "清华"
-      [9]=>
-      string(12) "清华大学"
-      [10]=>
-      string(3) "华"
-      [11]=>
-      string(6) "华大"
-      [12]=>
-      string(3) "大"
-      [13]=>
-      string(6) "大学"
-      [14]=>
-      string(3) "学"
-    }
-    Default Mode:
-    array(4) {
-      [0]=>
-      string(3) "我"
-      [1]=>
-      string(6) "来到"
-      [2]=>
-      string(6) "北京"
-      [3]=>
-      string(12) "清华大学"
-    }
-    array(6) {
-      [0]=>
-      string(3) "他"
-      [1]=>
-      string(6) "来到"
-      [2]=>
-      string(3) "了"
-      [3]=>
-      string(6) "网易"
-      [4]=>
-      string(6) "杭研"
-      [5]=>
-      string(6) "大厦"
-    }
-    (此處，“杭研“並沒有在詞典中，但是也被 Viterbi 算法識別出來了)
+```php
+array(7) {
+  [0]=>
+  string(12) "怜香惜玉"
+  [1]=>
+  string(3) "也"
+  [2]=>
+  string(3) "得"
+  [3]=>
+  string(3) "要"
+  [4]=>
+  string(3) "看"
+  [5]=>
+  string(6) "对象"
+  [6]=>
+  string(3) "啊"
+}
+Full Mode:
+array(15) {
+  [0]=>
+  string(3) "我"
+  [1]=>
+  string(3) "来"
+  [2]=>
+  string(6) "来到"
+  [3]=>
+  string(3) "到"
+  [4]=>
+  string(3) "北"
+  [5]=>
+  string(6) "北京"
+  [6]=>
+  string(3) "京"
+  [7]=>
+  string(3) "清"
+  [8]=>
+  string(6) "清华"
+  [9]=>
+  string(12) "清华大学"
+  [10]=>
+  string(3) "华"
+  [11]=>
+  string(6) "华大"
+  [12]=>
+  string(3) "大"
+  [13]=>
+  string(6) "大学"
+  [14]=>
+  string(3) "学"
+}
+Default Mode:
+array(4) {
+  [0]=>
+  string(3) "我"
+  [1]=>
+  string(6) "来到"
+  [2]=>
+  string(6) "北京"
+  [3]=>
+  string(12) "清华大学"
+}
+array(6) {
+  [0]=>
+  string(3) "他"
+  [1]=>
+  string(6) "来到"
+  [2]=>
+  string(3) "了"
+  [3]=>
+  string(6) "网易"
+  [4]=>
+  string(6) "杭研"
+  [5]=>
+  string(6) "大厦"
+}
+(此處，“杭研“並沒有在詞典中，但是也被 Viterbi 算法識別出來了)
+```
 
 License
 =========
