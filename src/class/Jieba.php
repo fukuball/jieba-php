@@ -178,9 +178,7 @@ class Jieba
             if (self::$trie->exists($next_word_key)) {
                 array_push($word_c, $c);
                 $next_word_key_value = self::$trie->get($next_word_key);
-                if ($next_word_key_value == array("end"=>"")
-                 || in_array(array("end"=>""), $next_word_key_value)
-                ) {
+                if ($next_word_key_value == array("end"=>"")) {
                     array_push($words, mb_substr($sentence, $i, (($j+1)-$i), 'UTF-8'));
                 }
                 $j += 1;
@@ -238,14 +236,10 @@ class Jieba
             if (self::$trie->exists($next_word_key)) {
                 array_push($word_c, $c);
                 $next_word_key_value = self::$trie->get($next_word_key);
-                if ($next_word_key_value == array("end"=>"")
-                 || in_array(array("end"=>""), $next_word_key_value)
-                ) {
-                    //exist and leaf node
-                    if (!isset($DAG[$i])) {
-                        $DAG[$i] = array();
-                    }
-                    array_push($DAG[$i], $j);
+                if ($next_word_key_value == array("end"=>"")) {
+
+                    $DAG[$i] = array($j);
+
                 }
                 $j += 1;
                 if ($j >= $N) {
@@ -262,8 +256,7 @@ class Jieba
 
         for ($i=0; $i<$N; $i++) {
             if (!isset($DAG[$i])) {
-                $DAG[$i] = array();
-                array_push($DAG[$i], $i);
+                $DAG[$i] = array($i);
             }
         }
 
