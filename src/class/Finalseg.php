@@ -97,14 +97,14 @@ class Finalseg
         $V[0] = array();
         $path = array();
 
-        foreach ($states as $key=>$state) {
+        foreach ($states as $key => $state) {
             $y = $state;
             $c = mb_substr($obs, 0, 1, 'UTF-8');
             $prob_emit = 0.0;
             if (isset(self::$prob_emit[$y][$c])) {
                 $prob_emit = self::$prob_emit[$y][$c];
             } else {
-                $prob_emit = array_values(self::$prob_emit[$y])[0];
+                $prob_emit = 0;
             }
             $V[0][$y] = self::$prob_start[$y]*$prob_emit;
             $path[$y] = $y;
@@ -114,10 +114,10 @@ class Finalseg
             $c = mb_substr($obs, $t, 1, 'UTF-8');
             $V[$t] = array();
             $newpath = array();
-            foreach ($states as $key=>$state) {
+            foreach ($states as $key => $state) {
                 $y = $state;
                 $temp_prob_array = array();
-                foreach ($states as $key=>$state0) {
+                foreach ($states as $key => $state0) {
                     $y0 = $state0;
                     $prob_trans = 0.0;
                     if (isset(self::$prob_trans[$y0][$y])) {
@@ -139,7 +139,7 @@ class Finalseg
                 $V[$t][$y] = $max_prob;
                 if (is_array($path[$max_key])) {
                     $newpath[$y] = array();
-                    foreach ($path[$max_key] as $key=>$path_value) {
+                    foreach ($path[$max_key] as $key => $path_value) {
                         array_push($newpath[$y], $path_value);
                     }
                     array_push($newpath[$y], $y);
@@ -153,7 +153,7 @@ class Finalseg
         $es_states = array('E','S');
         $temp_prob_array = array();
         $len = mb_strlen($obs, 'UTF-8');
-        foreach ($es_states as $key=>$state) {
+        foreach ($es_states as $key => $state) {
             $y = $state;
             $temp_prob_array[$y] = $V[$len-1][$y];
         }
