@@ -90,7 +90,7 @@ Output:
       string(3) "啊"
     }
     Full Mode:
-    array(12) {
+    array(15) {
       [0]=>
       string(3) "我"
       [1]=>
@@ -102,18 +102,24 @@ Output:
       [4]=>
       string(3) "北"
       [5]=>
-      string(3) "京"
+      string(6) "北京"
       [6]=>
-      string(3) "清"
+      string(3) "京"
       [7]=>
-      string(12) "清华大学"
+      string(3) "清"
       [8]=>
-      string(3) "华"
+      string(6) "清华"
       [9]=>
-      string(6) "华大"
+      string(12) "清华大学"
       [10]=>
-      string(3) "大"
+      string(3) "华"
       [11]=>
+      string(6) "华大"
+      [12]=>
+      string(3) "大"
+      [13]=>
+      string(6) "大学"
+      [14]=>
       string(3) "学"
     }
     Default Mode:
