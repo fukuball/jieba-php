@@ -3,7 +3,7 @@ jieba-php
 [![Build Status](https://travis-ci.org/fukuball/jieba-php.svg?branch=master)](https://travis-ci.org/fukuball/jieba-php)
 [![Latest Stable Version](https://poser.pugx.org/fukuball/jieba-php/v/stable.png)](https://packagist.org/packages/fukuball/jieba-php)
 
-"結巴"中文分詞：做最好的 PHP 中文分詞、中文斷詞組件，目前翻譯版本為 jieba-0.16 版本，未來再慢慢往上升級，效能也需要再改善，請有興趣的開發者一起加入開發！
+"結巴"中文分詞：做最好的 PHP 中文分詞、中文斷詞組件，目前翻譯版本為 jieba-0.16 版本，未來再慢慢往上升級，效能也需要再改善，請有興趣的開發者一起加入開發！若想使用 Python 版本請前往 [fxsjy/jieba](https://github.com/fxsjy/jieba)
 
 Feature
 ========
@@ -42,8 +42,8 @@ Interface
 ========
 * 組件只提供 jieba.cut 方法用於分詞
 * cut 方法接受兩個輸入參數: 1) 第一個參數為需要分詞的字符串 2）cut_all 參數用來控制分詞模式
-* 待分詞的字符串可以是 gbk 字符串、utf-8 字符串或者 unicode
-* jieba.cut 返回的結構是一個可迭代的 generator，可以使用 for 循環來獲得分詞後得到的每一個詞語(unicode)，也可以用 list(jieba.cut(...)) 轉化為 list
+* 待分詞的字符串可以是 utf-8 字符串
+* jieba.cut 返回的結構是一個可迭代的 array
 
 
 代碼示例 (Tutorial)
