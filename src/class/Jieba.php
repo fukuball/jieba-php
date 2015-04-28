@@ -28,7 +28,6 @@ use Tebru\MultiArray;
  */
 class Jieba
 {
-
     public static $total = 0.0;
     public static $trie = array();
     public static $FREQ = array();
@@ -54,8 +53,8 @@ class Jieba
         echo "Building Trie...\n";
 
         $t1 = microtime(true);
-        self::$trie = Jieba::gen_trie(dirname(dirname(__FILE__))."/dict/dict.small.txt");
-        foreach (self::$FREQ as $key=>$value) {
+        self::$trie = Jieba::genTrie(dirname(dirname(__FILE__))."/dict/dict.small.txt");
+        foreach (self::$FREQ as $key => $value) {
             self::$FREQ[$key] = ($value/self::$total);
         }
         self::$min_freq = min(self::$FREQ);
@@ -99,14 +98,14 @@ class Jieba
     }// end function calc
 
     /**
-     * Static method gen_trie
+     * Static method genTrie
      *
      * @param string $f_name  # input f_name
      * @param array  $options # other options
      *
      * @return array self::$trie
      */
-    public static function gen_trie($f_name, $options = array())
+    public static function genTrie($f_name, $options = array())
     {
 
         $defaults = array(
@@ -141,17 +140,17 @@ class Jieba
 
         return self::$trie;
 
-    }// end function gen_trie
+    }// end function genTrie
 
     /**
-     * Static method __cut_all
+     * Static method __cutAll
      *
      * @param string $sentence # input sentence
      * @param array  $options  # other options
      *
      * @return array $words
      */
-    public static function __cut_all($sentence, $options = array())
+    public static function __cutAll($sentence, $options = array())
     {
 
         $defaults = array(
@@ -179,8 +178,8 @@ class Jieba
             if (self::$trie->exists($next_word_key)) {
                 array_push($word_c, $c);
                 $next_word_key_value = self::$trie->get($next_word_key);
-                if (   $next_word_key_value == array("end"=>"")
-                    || in_array(array("end"=>""), $next_word_key_value)
+                if ($next_word_key_value == array("end"=>"")
+                 || in_array(array("end"=>""), $next_word_key_value)
                 ) {
                     array_push($words, mb_substr($sentence, $i, (($j+1)-$i), 'UTF-8'));
                 }
@@ -200,17 +199,17 @@ class Jieba
 
         return $words;
 
-    }// end function __cut_all
+    }// end function __cutAll
 
     /**
-     * Static method __cut_DAG
+     * Static method __cutDAG
      *
      * @param string $sentence # input sentence
      * @param array  $options  # other options
      *
      * @return array $words
      */
-    public static function __cut_DAG($sentence, $options = array())
+    public static function __cutDAG($sentence, $options = array())
     {
 
         $defaults = array(
@@ -239,8 +238,8 @@ class Jieba
             if (self::$trie->exists($next_word_key)) {
                 array_push($word_c, $c);
                 $next_word_key_value = self::$trie->get($next_word_key);
-                if (   $next_word_key_value == array("end"=>"")
-                    || in_array(array("end"=>""), $next_word_key_value)
+                if ($next_word_key_value == array("end"=>"")
+                 || in_array(array("end"=>""), $next_word_key_value)
                 ) {
                     //exist and leaf node
                     if (!isset($DAG[$i])) {
@@ -288,7 +287,7 @@ class Jieba
                         $buf = '';
                     } else {
                         $regognized = Finalseg::__cut($buf);
-                        foreach ($regognized as $key=>$word) {
+                        foreach ($regognized as $key => $word) {
                             array_push($words, $word);
                         }
                         $buf = '';
@@ -305,7 +304,7 @@ class Jieba
                 array_push($words, $buf);
             } else {
                 $regognized = Finalseg::__cut($buf);
-                foreach ($regognized as $key=>$word) {
+                foreach ($regognized as $key => $word) {
                     array_push($words, $word);
                 }
             }
@@ -313,7 +312,7 @@ class Jieba
 
         return $words;
 
-    }// end function __cut_DAG
+    }// end function __cutDAG
 
     /**
      * Static method cut
@@ -345,9 +344,9 @@ class Jieba
             if (preg_match('/'.$re_han_pattern.'/u', $blk)) {
 
                 if ($cut_all) {
-                    $words = Jieba::__cut_all($blk);
+                    $words = Jieba::__cutAll($blk);
                 } else {
-                    $words = Jieba::__cut_DAG($blk);
+                    $words = Jieba::__cutDAG($blk);
                 }
 
                 foreach ($words as $word) {
@@ -366,7 +365,4 @@ class Jieba
         return $seg_list;
 
     }// end function cut
-
-
 }// end of class Jieba
-?>

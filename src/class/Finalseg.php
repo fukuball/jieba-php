@@ -26,7 +26,6 @@ namespace Fukuball;
  */
 class Finalseg
 {
-
     public static $prob_start = array();
     public static $prob_trans = array();
     public static $prob_emit = array();
@@ -197,10 +196,10 @@ class Finalseg
             $pos = $pos_list[$i];
             if ($pos=='B') {
                 $begin = $i;
-            } else if ($pos=='E') {
+            } elseif ($pos=='E') {
                 array_push($words, mb_substr($sentence, $begin, (($i+1)-$begin), 'UTF-8'));
                 $next = $i+1;
-            } else if ($pos=='S') {
+            } elseif ($pos=='S') {
                 array_push($words, $char);
                 $next = $i+1;
             }
@@ -261,6 +260,4 @@ class Finalseg
         return $seg_list;
 
     }// end function cut
-
-}// end of class Finalseg
-?>
+}
