@@ -16,14 +16,17 @@ Usage
 * 自動安裝：使用 composer 安裝後，透過 autoload 引用
 
 代碼示例
+
     composer require fukuball/jieba-php:dev-master
 
 代碼示例
+
     require_once "/path/to/your/vendor/autoload.php";
 
 * 手動安裝：將 jieba-php 放置適當目錄後，透過 require_once 引用
 
 代碼示例
+
     require_once "/path/to/your/vendor/multi-array/MultiArray.php";
     require_once "/path/to/your/vendor/multi-array/Factory/MultiArrayFactory.php";
     require_once "/path/to/your/class/Jieba.php";
