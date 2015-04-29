@@ -5,6 +5,11 @@ jieba-php
 
 "結巴"中文分詞：做最好的 PHP 中文分詞、中文斷詞組件，目前翻譯版本為 jieba-0.16 版本，未來再慢慢往上升級，效能也需要再改善，請有興趣的開發者一起加入開發！若想使用 Python 版本請前往 [fxsjy/jieba](https://github.com/fxsjy/jieba)
 
+線上展示
+========
+* 網站網址：[http://jieba-php.fukuball.com](http://jieba-php.fukuball.com)
+* 網站原始碼：[https://github.com/fukuball/jieba-php.fukuball.com](https://github.com/fukuball/jieba-php.fukuball.com)
+
 Feature
 ========
 * 支持兩種分詞模式：
