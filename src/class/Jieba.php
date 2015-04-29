@@ -50,7 +50,9 @@ class Jieba
 
         $options = array_merge($defaults, $options);
 
-        echo "Building Trie...\n";
+        if ($options['mode']=='test') {
+            echo "Building Trie...\n";
+        }
 
         $t1 = microtime(true);
         self::$trie = Jieba::genTrie(dirname(dirname(__FILE__))."/dict/dict.txt");
@@ -59,8 +61,10 @@ class Jieba
         }
         self::$min_freq = min(self::$FREQ);
 
-        echo "loading model cost ".(microtime(true) - $t1)." seconds.\n";
-        echo "Trie has been built succesfully.\n";
+        if ($options['mode']=='test') {
+            echo "loading model cost ".(microtime(true) - $t1)." seconds.\n";
+            echo "Trie has been built succesfully.\n";
+        }
 
     }// end function init
 

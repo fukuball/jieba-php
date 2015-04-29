@@ -20,7 +20,7 @@ require_once dirname(__FILE__)."/class/Jieba.php";
 require_once dirname(__FILE__)."/class/Finalseg.php";
 use Fukuball\Jieba;
 use Fukuball\Finalseg;
-Jieba::init();
+Jieba::init(array('mode'=>'test'));
 Finalseg::init();
 
 $seg_list = Jieba::cut("怜香惜玉也得要看对象啊！");
