@@ -83,18 +83,22 @@ class Jieba
         $N = mb_strlen($sentence, 'UTF-8');
         self::$route = array();
         self::$route[$N] = array($N => 1.0);
-
-        $previous_key = $N;
         for ($i=($N-1); $i>=0; $i--) {
-            $w_c = mb_substr($sentence, $i, (($DAG[$i][0]+1)-$i), 'UTF-8');
-            $previous_freq = self::$route[$i+1][$previous_key];
-            if (isset(self::$FREQ[$w_c])) {
-                $current_freq = (float) $previous_freq*self::$FREQ[$w_c]/self::$min_freq;
-            } else {
-                $current_freq = (float) $previous_freq*self::$min_freq;
+            $candidates = array();
+            foreach ($DAG[$i] as $x) {
+                $w_c = mb_substr($sentence, $i, (($x+1)-$i), 'UTF-8');
+                $previous_freq = current(self::$route[$x+1]);
+                if (isset(self::$FREQ[$w_c])) {
+                    $current_freq = (float) $previous_freq*self::$FREQ[$w_c];
+                } else {
+                    $current_freq = (float) $previous_freq*self::$min_freq;
+                }
+                $candidates[$x] = $current_freq;
             }
-            self::$route[$i] = array($DAG[$i][0] => $current_freq);
-            $previous_key = $DAG[$i][0];
+            arsort($candidates);
+            $max_prob = reset($candidates);
+            $max_key = key($candidates);
+            self::$route[$i] = array($max_key => $max_prob);
         }
 
         return self::$route;
@@ -182,6 +186,7 @@ class Jieba
                 $next_word_key_value = self::$trie->get($next_word_key);
                 if ($next_word_key_value == array("end"=>"")
                  || isset($next_word_key_value["end"])
+                 || isset($next_word_key_value[0]["end"])
                 ) {
                     array_push($words, mb_substr($sentence, $i, (($j+1)-$i), 'UTF-8'));
                 }
@@ -240,10 +245,14 @@ class Jieba
             if (self::$trie->exists($next_word_key)) {
                 array_push($word_c, $c);
                 $next_word_key_value = self::$trie->get($next_word_key);
-                if ($next_word_key_value == array("end"=>"")) {
-
-                    $DAG[$i] = array($j);
-
+                if ($next_word_key_value == array("end"=>"")
+                 || isset($next_word_key_value["end"])
+                 || isset($next_word_key_value[0]["end"])
+                ) {
+                    if (!isset($DAG[$i])) {
+                        $DAG[$i] = array();
+                    }
+                    array_push($DAG[$i], $j);
                 }
                 $j += 1;
                 if ($j >= $N) {
