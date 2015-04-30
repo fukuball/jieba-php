@@ -21,8 +21,7 @@ class JiebaTest extends PHPUnit_Framework_TestCase
         $case_array = array(
             "怜香惜玉",
             "也",
-            "得",
-            "要",
+            "得要",
             "看",
             "对象",
             "啊"
