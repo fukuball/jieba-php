@@ -45,7 +45,8 @@ class Jieba
     {
 
         $defaults = array(
-            'mode'=>'default'
+            'mode'=>'default',
+            'dict'=>'normal'
         );
 
         $options = array_merge($defaults, $options);
@@ -54,8 +55,14 @@ class Jieba
             echo "Building Trie...\n";
         }
 
+        if ($options['dict']=='small') {
+            $f_name = "dict.small.txt";
+        } else {
+            $f_name = "dict.txt";
+        }
+
         $t1 = microtime(true);
-        self::$trie = Jieba::genTrie(dirname(dirname(__FILE__))."/dict/dict.txt");
+        self::$trie = Jieba::genTrie(dirname(dirname(__FILE__))."/dict/".$f_name);
         foreach (self::$FREQ as $key => $value) {
             self::$FREQ[$key] = ($value/self::$total);
         }
