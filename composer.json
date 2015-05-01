@@ -1,6 +1,8 @@
 {
     "name": "fukuball/jieba-php",
+    "type": "library",
     "description": "結巴中文分詞（PHP 版本）：做最好的 PHP 中文分詞、中文斷詞組件",
+    "keywords": ["Jieba", "結巴", "中文分詞", "中文斷詞", "php"],
     "license": "MIT",
     "version": "0.16",
     "authors": [
