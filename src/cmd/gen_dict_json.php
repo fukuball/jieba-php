@@ -1,16 +1,16 @@
 #!/usr/bin/php
 <?php
 /**
- * demo.php
+ * gen_dict_json.php
  *
  * PHP version 5
  *
  * @category PHP
- * @package  /
+ * @package  /src/cmd/
  * @author   Fukuball Lin <fukuball@gmail.com>
  * @license  MIT Licence
- * @version  GIT: <fukuball/iloveck101>
- * @link     https://github.com/fukuball/iloveck101
+ * @version  GIT: <fukuball/jieba-php>
+ * @link     https://github.com/fukuball/jieba-php
  */
 ini_set('memory_limit', '1024M');
 

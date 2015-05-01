@@ -5,11 +5,11 @@
  * PHP version 5
  *
  * @category PHP
- * @package  /class/
+ * @package  /src/class/
  * @author   Fukuball Lin <fukuball@gmail.com>
  * @license  MIT Licence
- * @version  GIT: <fukuball/iloveck101>
- * @link     https://github.com/fukuball/iloveck101
+ * @version  GIT: <fukuball/jieba-php>
+ * @link     https://github.com/fukuball/jieba-php
  */
 
 namespace Fukuball;
@@ -18,11 +18,11 @@ namespace Fukuball;
  * Finalseg
  *
  * @category PHP
- * @package  /class/
+ * @package  /src/class/
  * @author   Fukuball Lin <fukuball@gmail.com>
  * @license  MIT Licence
- * @version  Release: <0.0.1>
- * @link     https://github.com/fukuball/iloveck101
+ * @version  Release: <0.16>
+ * @link     https://github.com/fukuball/jieba-php
  */
 class Finalseg
 {
