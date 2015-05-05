@@ -78,7 +78,7 @@ class JiebaTest extends PHPUnit_Framework_TestCase
             "学"
         );
 
-        $seg_list = Jieba::cut("我来到北京清华大学");
+        $seg_list = Jieba::cut("我来到北京清华大学", true);
         $this->assertEquals($case_array, $seg_list);
 
     }
