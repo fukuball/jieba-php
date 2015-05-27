@@ -76,10 +76,10 @@ Finalseg::init();
 $seg_list = Jieba::cut("怜香惜玉也得要看对象啊！");
 var_dump($seg_list);
 
-seg_list = jieba.cut("我来到北京清华大学",cut_all=True)
+seg_list = jieba.cut("我来到北京清华大学", true)
 print "Full Mode:", "/ ".join(seg_list) #全模式
 
-seg_list = jieba.cut("我来到北京清华大学",cut_all=False)
+seg_list = jieba.cut("我来到北京清华大学", false)
 print "Default Mode:", "/ ".join(seg_list) #默認模式
 
 seg_list = jieba.cut("他来到了网易杭研大厦")
@@ -164,6 +164,64 @@ array(6) {
   string(6) "大厦"
 }
 (此處，“杭研“並沒有在詞典中，但是也被 Viterbi 算法識別出來了)
+```
+
+功能：關鍵詞提取
+================
+* JiebaAnalyse::extract_tags($content, $top_k)
+* content 為待提取的文本
+* top_k 為返回幾個權重最大的關鍵詞，默認值為20
+
+代碼示例 (關鍵詞提取)
+
+```php
+ini_set('memory_limit', '600M');
+
+require_once "/path/to/your/vendor/multi-array/MultiArray.php";
+require_once "/path/to/your/vendor/multi-array/Factory/MultiArrayFactory.php";
+require_once "/path/to/your/class/Jieba.php";
+require_once "/path/to/your/class/Finalseg.php";
+require_once "/path/to/your/class/JiebaAnalyse.php";
+use Fukuball\Jieba;
+use Fukuball\Finalseg;
+use Fukuball\JiebaAnalyse;
+Jieba::init(array('mode'=>'test','dict'=>'samll'));
+Finalseg::init();
+JiebaAnalyse::init();
+
+$top_k = 10;
+$content = file_get_contents("/path/to/your/dict/lyric.txt", "r");
+
+$tags = JiebaAnalyse::extract_tags($content, $top_k);
+
+var_dump($tags);
+```
+
+Output:
+```php
+array(10) {
+  ["是否"]=>
+  float(1.2196321889395)
+  ["一般"]=>
+  float(1.0032459890209)
+  ["肌迫"]=>
+  float(0.64654314660465)
+  ["怯懦"]=>
+  float(0.44762844339349)
+  ["藉口"]=>
+  float(0.32327157330233)
+  ["逼不得已"]=>
+  float(0.32327157330233)
+  ["不安全感"]=>
+  float(0.26548304656279)
+  ["同感"]=>
+  float(0.23929673812326)
+  ["有把握"]=>
+  float(0.21043366018744)
+  ["空洞"]=>
+  float(0.20598261709442)
+}
+
 ```
 
 License
