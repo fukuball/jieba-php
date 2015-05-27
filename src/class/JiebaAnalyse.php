@@ -62,7 +62,7 @@ class JiebaAnalyse
     }// end function init
 
     /**
-     * Static method extract_tags
+     * Static method extractTags
      *
      * @param string  $content  # input content
      * @param int     $top_k    # top_k
@@ -70,7 +70,7 @@ class JiebaAnalyse
      *
      * @return array $tags
      */
-    public static function extract_tags($content, $top_k = 20, $options = array())
+    public static function extractTags($content, $top_k = 20, $options = array())
     {
 
         $defaults = array(
@@ -120,6 +120,5 @@ class JiebaAnalyse
 
         return $tags;
 
-    }// end function extract_tags
-
+    }// end function extractTags
 }// end of class JiebaAnalyse

@@ -168,7 +168,7 @@ array(6) {
 
 功能：關鍵詞提取
 ================
-* JiebaAnalyse::extract_tags($content, $top_k)
+* JiebaAnalyse::extractTags($content, $top_k)
 * content 為待提取的文本
 * top_k 為返回幾個權重最大的關鍵詞，默認值為20
 
@@ -192,7 +192,7 @@ JiebaAnalyse::init();
 $top_k = 10;
 $content = file_get_contents("/path/to/your/dict/lyric.txt", "r");
 
-$tags = JiebaAnalyse::extract_tags($content, $top_k);
+$tags = JiebaAnalyse::extractTags($content, $top_k);
 
 var_dump($tags);
 ```

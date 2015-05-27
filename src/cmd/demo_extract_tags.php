@@ -29,7 +29,7 @@ JiebaAnalyse::init();
 $top_k = 10;
 $content = file_get_contents(dirname(dirname(__FILE__))."/dict/lyric.txt", "r");
 
-$tags = JiebaAnalyse::extract_tags($content, $top_k);
+$tags = JiebaAnalyse::extractTags($content, $top_k);
 
 var_dump($tags);
 ?>
