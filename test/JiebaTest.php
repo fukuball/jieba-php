@@ -1,6 +1,7 @@
 <?php
 use Fukuball\Jieba;
 use Fukuball\Finalseg;
+use Fukuball\JiebaAnalyse;
 
 class JiebaTest extends PHPUnit_Framework_TestCase
 {
@@ -16,6 +17,14 @@ class JiebaTest extends PHPUnit_Framework_TestCase
         Finalseg::init();
         $array_count = count(Finalseg::$prob_start);
         $this->assertEquals(4, $array_count);
+    }
+
+    public function testJiebaAnalyseInit()
+    {
+        Jieba::init();
+        JiebaAnalyse::init();
+        $this->assertGreaterThan(0, JiebaAnalyse::$max_idf);
+
     }
 
     public function testJiebaCut()
@@ -98,5 +107,28 @@ class JiebaTest extends PHPUnit_Framework_TestCase
 
         $seg_list = Finalseg::cut("怜香惜玉也得要看对象啊！");
         $this->assertEquals($case_array, $seg_list);
+    }
+
+    public function testExtractTags()
+    {
+        $case_array = array(
+            "是否"=>1.2196321889395,
+            "一般"=>1.0032459890209,
+            "肌迫"=>0.64654314660465,
+            "怯懦"=>0.44762844339349,
+            "藉口"=>0.32327157330233,
+            "逼不得已"=>0.32327157330233,
+            "不安全感"=>0.26548304656279,
+            "同感"=>0.23929673812326,
+            "有把握"=>0.21043366018744,
+            "空洞"=>0.20598261709442
+        );
+
+        $top_k = 10;
+        $content = file_get_contents(dirname(dirname(__FILE__))."/src/dict/lyric.txt", "r");
+
+        $tags = JiebaAnalyse::extractTags($content, $top_k);
+        $this->assertEquals($case_array, $tags);
+
     }
 }
