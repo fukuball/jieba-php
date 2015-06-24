@@ -50,6 +50,7 @@ Algorithm
 * 基於 Trie 樹結構實現高效的詞圖掃描，生成句子中漢字構成的有向無環圖（DAG)
 * 採用了記憶化搜索實現最大概率路徑的計算, 找出基於詞頻的最大切分組合
 * 對於未登錄詞，採用了基於漢字位置概率的模型，使用了 Viterbi 算法
+* BEMS 的解釋 [https://github.com/fxsjy/jieba/issues/7](https://github.com/fxsjy/jieba/issues/7)
 
 Interface
 ========
