@@ -156,6 +156,40 @@ class Jieba
     }// end function genTrie
 
     /**
+     * Static method loadUserDict
+     *
+     * @param string $f_name  # input f_name
+     * @param array  $options # other options
+     *
+     * @return array self::$trie
+     */
+    public static function loadUserDict($f_name, $options = array())
+    {
+
+        $content = fopen($f_name, "r");
+        while (($line = fgets($content)) !== false) {
+            $explode_line = explode(" ", trim($line));
+            $word = $explode_line[0];
+            $freq = $explode_line[1];
+            $freq = (float) $freq;
+            self::$FREQ[$word] = $freq;
+            self::$total += $freq;
+            $l = mb_strlen($word, 'UTF-8');
+            $word_c = array();
+            for ($i=0; $i<$l; $i++) {
+                $c = mb_substr($word, $i, 1, 'UTF-8');
+                array_push($word_c, $c);
+            }
+            $word_c_key = implode('.', $word_c);
+            self::$trie->set($word_c_key, array("end"=>""));
+        }
+        fclose($content);
+
+        return self::$trie;
+
+    }// end function loadUserDict
+
+    /**
      * Static method __cutAll
      *
      * @param string $sentence # input sentence

@@ -1,11 +1,11 @@
 jieba-php
-========
+=========
 [![Build Status](https://travis-ci.org/fukuball/jieba-php.svg?branch=master)](https://travis-ci.org/fukuball/jieba-php)
 [![Coverage Status](https://coveralls.io/repos/fukuball/jieba-php/badge.svg?branch=master)](https://coveralls.io/r/fukuball/jieba-php?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/fukuball/jieba-php/v/stable.png)](https://packagist.org/packages/fukuball/jieba-php)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/fukuball/jieba-php/master/LICENSE)
 
-"結巴"中文分詞：做最好的 PHP 中文分詞、中文斷詞組件，目前翻譯版本為 jieba-0.17 版本，未來再慢慢往上升級，效能也需要再改善，請有興趣的開發者一起加入開發！若想使用 Python 版本請前往 [fxsjy/jieba](https://github.com/fxsjy/jieba)
+"結巴"中文分詞：做最好的 PHP 中文分詞、中文斷詞組件，目前翻譯版本為 jieba-0.19 版本，未來再慢慢往上升級，效能也需要再改善，請有興趣的開發者一起加入開發！若想使用 Python 版本請前往 [fxsjy/jieba](https://github.com/fxsjy/jieba)
 
 線上展示
 ========
@@ -59,6 +59,8 @@ Interface
 * 待分詞的字符串可以是 utf-8 字符串
 * jieba.cut 返回的結構是一個可迭代的 array
 
+功能 1)：分词
+============
 
 代碼示例 (Tutorial)
 
@@ -167,8 +169,24 @@ array(6) {
 (此處，“杭研“並沒有在詞典中，但是也被 Viterbi 算法識別出來了)
 ```
 
-功能：關鍵詞提取
-================
+功能 2)：添加自定義詞典
+====================
+
+* 開發者可以指定自己自定義的詞典，以便包含 jieba 詞庫裡沒有的詞。雖然 jieba 有新詞識別能力，但是自行添加新詞可以保證更高的正確率
+* 用法： Jieba::loadUserDict(file_name) # file_name 為自定義詞典的絕對路徑
+* 詞典格式和 dict.txt 一樣，一個詞佔一行；每一行分為兩部分，一部分為詞語，另一部分為詞頻，用空格隔開
+* 範例：
+
+  云计算 5
+  李小福 2
+  创新办 3
+
+  之前： 李小福 / 是 / 创新 / 办 / 主任 / 也 / 是 / 云 / 计算 / 方面 / 的 / 专家 /
+  加載自定義詞庫後：　李小福 / 是 / 创新办 / 主任 / 也 / 是 / 云计算 / 方面 / 的 / 专家 /
+
+
+功能 3)：關鍵詞提取
+==============
 * JiebaAnalyse::extractTags($content, $top_k)
 * content 為待提取的文本
 * top_k 為返回幾個權重最大的關鍵詞，默認值為20
