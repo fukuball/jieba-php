@@ -35,3 +35,8 @@ after_script:
   # or enable logging
   - vendor/bin/coveralls -v
   #- vendor/bin/coveralls -c tests/coveralls.yml -v
+
+before_install:
+  - pip install codecov
+after_success:
+  - codecov
