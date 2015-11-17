@@ -5,19 +5,18 @@
 
 namespace Tebru;
 
+use ArrayAccess;
+use ArrayIterator;
+use InvalidArgumentException;
+use IteratorAggregate;
+use OutOfBoundsException;
+use Traversable;
+
 interface JsonSerializable {
 
     public function jsonSerialize();
 
 }
-
-use ArrayAccess;
-use ArrayIterator;
-use InvalidArgumentException;
-use IteratorAggregate;
-use JsonSerializable;
-use OutOfBoundsException;
-use Traversable;
 
 /**
  * Class MultiArray
