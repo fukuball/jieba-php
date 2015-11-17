@@ -8,6 +8,10 @@ jieba-php
 
 "結巴"中文分詞：做最好的 PHP 中文分詞、中文斷詞組件，目前翻譯版本為 jieba-0.19 版本，未來再慢慢往上升級，效能也需要再改善，請有興趣的開發者一起加入開發！若想使用 Python 版本請前往 [fxsjy/jieba](https://github.com/fxsjy/jieba)
 
+"Jieba" (Chinese for "to stutter") Chinese text segmentation: built to be the best PHP Chinese word segmentation module.
+
+_Scroll down for English documentation._
+
 線上展示
 ========
 * 網站網址：[http://jieba-php.fukuball.com](http://jieba-php.fukuball.com)
@@ -190,9 +194,221 @@ array(6) {
 ==============
 * JiebaAnalyse::extractTags($content, $top_k)
 * content 為待提取的文本
-* top_k 為返回幾個權重最大的關鍵詞，默認值為20
+* top_k 為返回幾個 TF/IDF 權重最大的關鍵詞，默認值為 20
 
 代碼示例 (關鍵詞提取)
+
+```php
+ini_set('memory_limit', '600M');
+
+require_once "/path/to/your/vendor/multi-array/MultiArray.php";
+require_once "/path/to/your/vendor/multi-array/Factory/MultiArrayFactory.php";
+require_once "/path/to/your/class/Jieba.php";
+require_once "/path/to/your/class/Finalseg.php";
+require_once "/path/to/your/class/JiebaAnalyse.php";
+use Fukuball\Jieba;
+use Fukuball\Finalseg;
+use Fukuball\JiebaAnalyse;
+Jieba::init(array('mode'=>'test','dict'=>'samll'));
+Finalseg::init();
+JiebaAnalyse::init();
+
+$top_k = 10;
+$content = file_get_contents("/path/to/your/dict/lyric.txt", "r");
+
+$tags = JiebaAnalyse::extractTags($content, $top_k);
+
+var_dump($tags);
+```
+
+Output:
+```php
+array(10) {
+  ["是否"]=>
+  float(1.2196321889395)
+  ["一般"]=>
+  float(1.0032459890209)
+  ["肌迫"]=>
+  float(0.64654314660465)
+  ["怯懦"]=>
+  float(0.44762844339349)
+  ["藉口"]=>
+  float(0.32327157330233)
+  ["逼不得已"]=>
+  float(0.32327157330233)
+  ["不安全感"]=>
+  float(0.26548304656279)
+  ["同感"]=>
+  float(0.23929673812326)
+  ["有把握"]=>
+  float(0.21043366018744)
+  ["空洞"]=>
+  float(0.20598261709442)
+}
+
+```
+
+Online Demo
+========
+* Demo Site Url：[http://jieba-php.fukuball.com](http://jieba-php.fukuball.com)
+* Demo Site Repo：[https://github.com/fukuball/jieba-php.fukuball.com](https://github.com/fukuball/jieba-php.fukuball.com)
+
+Feature
+========
+* Support two types of segmentation mode:
+* 1）Default mode, attempt to cut the sentence into the most accurate segmentation, which is suitable for text analysis;
+* 2）Full mode, break the words of the sentence into words scanned, which is suitable for search engines.
+
+Usage
+========
+* Installation: Use composer to install jieba-php, then require the autoload file to use jieba-php.
+
+Algorithm
+========
+* Based on the Trie tree structure to achieve efficient word graph scanning; sentences using Chinese characters constitute a directed acyclic graph (DAG).
+* Employs memory search to calculate the maximum probability path, in order to identify the maximum tangential points based on word frequency combination.
+* For unknown words, the character position probability-based model is used, using the Viterbi algorithm.
+* The meaning of BEMS [https://github.com/fxsjy/jieba/issues/7](https://github.com/fxsjy/jieba/issues/7).
+
+Interface
+========
+* Provide `jieba.cut` to segment words.
+* Method `cut` accepts two parameters: 1) first parameter is the string to segmentation 2）the second parameter `cut_all` to control segmentation mode.
+* The string to segmentation may use utf-8 string.
+* `jieba.cut` return an segmented array.
+
+Function 1) Segmentation
+============
+
+Example (Tutorial)
+
+```php
+ini_set('memory_limit', '1024M');
+
+require_once "/path/to/your/vendor/multi-array/MultiArray.php";
+require_once "/path/to/your/vendor/multi-array/Factory/MultiArrayFactory.php";
+require_once "/path/to/your/class/Jieba.php";
+require_once "/path/to/your/class/Finalseg.php";
+use Fukuball\Jieba;
+use Fukuball\Finalseg;
+Jieba::init();
+Finalseg::init();
+
+$seg_list = Jieba::cut("怜香惜玉也得要看对象啊！");
+var_dump($seg_list);
+
+seg_list = jieba.cut("我来到北京清华大学", true)
+print "Full Mode:", "/ ".join(seg_list) #全模式
+
+seg_list = jieba.cut("我来到北京清华大学", false)
+print "Default Mode:", "/ ".join(seg_list) #默認模式
+
+seg_list = jieba.cut("他来到了网易杭研大厦")
+print ", ".join(seg_list)
+```
+
+Output:
+
+```php
+array(7) {
+  [0]=>
+  string(12) "怜香惜玉"
+  [1]=>
+  string(3) "也"
+  [2]=>
+  string(3) "得"
+  [3]=>
+  string(3) "要"
+  [4]=>
+  string(3) "看"
+  [5]=>
+  string(6) "对象"
+  [6]=>
+  string(3) "啊"
+}
+Full Mode:
+array(15) {
+  [0]=>
+  string(3) "我"
+  [1]=>
+  string(3) "来"
+  [2]=>
+  string(6) "来到"
+  [3]=>
+  string(3) "到"
+  [4]=>
+  string(3) "北"
+  [5]=>
+  string(6) "北京"
+  [6]=>
+  string(3) "京"
+  [7]=>
+  string(3) "清"
+  [8]=>
+  string(6) "清华"
+  [9]=>
+  string(12) "清华大学"
+  [10]=>
+  string(3) "华"
+  [11]=>
+  string(6) "华大"
+  [12]=>
+  string(3) "大"
+  [13]=>
+  string(6) "大学"
+  [14]=>
+  string(3) "学"
+}
+Default Mode:
+array(4) {
+  [0]=>
+  string(3) "我"
+  [1]=>
+  string(6) "来到"
+  [2]=>
+  string(6) "北京"
+  [3]=>
+  string(12) "清华大学"
+}
+array(6) {
+  [0]=>
+  string(3) "他"
+  [1]=>
+  string(6) "来到"
+  [2]=>
+  string(3) "了"
+  [3]=>
+  string(6) "网易"
+  [4]=>
+  string(6) "杭研"
+  [5]=>
+  string(6) "大厦"
+}
+(In this case, "杭研" is not in the dictionary, but is identified by the Viterbi algorithm)
+```
+
+Function 2) Add a custom dictionary
+====================
+
+* Developers can specify their own custom dictionary to include in the jieba thesaurus. jieba has the ability to identify new words, but adding your own new words can ensure a higher rate of correct segmentation.
+* Usage: `Jieba::loadUserDict(file_name)` # file_name is a custom dictionary path.
+* The dictionary format is the same as that of `dict.txt`: one word per line; each line is divided into two parts, the first is the word itself, the other is the word frequency, separated by a space.
+* Example:
+
+  云计算 5
+  李小福 2
+  创新办 3
+
+  之前： 李小福 / 是 / 创新 / 办 / 主任 / 也 / 是 / 云 / 计算 / 方面 / 的 / 专家 /
+  加載自定義詞庫後：　李小福 / 是 / 创新办 / 主任 / 也 / 是 / 云计算 / 方面 / 的 / 专家 /
+
+Function 3) Keyword Extraction
+==============
+* JiebaAnalyse::extractTags($content, $top_k)
+* content: the text to be extracted
+* top_k: to return several TF/IDF weights for the biggest keywords, the default value is 20
+
+Example (keyword extraction)
 
 ```php
 ini_set('memory_limit', '600M');
