@@ -5,6 +5,16 @@
 
 namespace Tebru;
 
+if(phpversion() == '5.3') {
+
+    interface JsonSerializable {
+
+        public function jsonSerialize();
+
+    }
+
+}
+
 use ArrayAccess;
 use ArrayIterator;
 use InvalidArgumentException;
@@ -36,14 +46,14 @@ class MultiArray implements IteratorAggregate, JsonSerializable, ArrayAccess
      * Stores array object was created with
      * @var array $storage
      */
-    public $storage = [];
+    public $storage = array();
 
     /**
      * A cache of keys that have been verified and values
      *
      * @var array $cache
      */
-    public $cache = [];
+    public $cache = array();
 
     /**
      * Constructor
@@ -233,7 +243,7 @@ class MultiArray implements IteratorAggregate, JsonSerializable, ArrayAccess
         }
 
         if (!isset($element[$checkKey])) {
-            $element[$checkKey] = [];
+            $element[$checkKey] = array();
         }
 
         if (!is_array($element[$checkKey])) {
