@@ -23,6 +23,7 @@
     "autoload": {
         "files": [
             "src/class/Jieba.php",
+            "src/class/JiebaAnalyse.php",
             "src/class/Finalseg.php",
             "src/vendor/multi-array/MultiArray.php",
             "src/vendor/multi-array/Factory/MultiArrayFactory.php"
