@@ -294,7 +294,7 @@ class Posseg
 
             if ($pos=='B') {
                 $begin = $i;
-            } else if ($pos=='E') {
+            } elseif ($pos=='E') {
                 eval('$this_pos_array = array'.$pos_list[$i].';');
                 $this_pos = $this_pos_array[1];
                 $this_word_pair = array(
@@ -303,7 +303,7 @@ class Posseg
                 );
                 array_push($words, $this_word_pair);
                 $next = $i+1;
-            } else if ($pos=='S') {
+            } elseif ($pos=='S') {
                 eval('$this_pos_array = array'.$pos_list[$i].';');
                 $this_pos = $this_pos_array[1];
                 $this_word_pair = array(
@@ -445,11 +445,18 @@ class Posseg
 
         $re_han_pattern = '([\x{4E00}-\x{9FA5}]+)';
         $re_skip_pattern = '([a-zA-Z0-9+#\n]+)';
-        $re_punctuation_pattern = '([\x{ff5e}\x{ff01}\x{ff08}\x{ff09}\x{300e}\x{300c}\x{300d}\x{300f}\x{3001}\x{ff1a}\x{ff1b}\x{ff0c}\x{ff1f}\x{3002}]+)';
+        $re_punctuation_pattern = '([\x{ff5e}\x{ff01}\x{ff08}\x{ff09}\x{300e}'.
+                                    '\x{300c}\x{300d}\x{300f}\x{3001}\x{ff1a}\x{ff1b}'.
+                                    '\x{ff0c}\x{ff1f}\x{3002}]+)';
         $re_eng_pattern = '[a-zA-Z+#]+';
         $re_num_pattern = '[0-9]+';
 
-        preg_match_all('/('.$re_han_pattern.'|'.$re_skip_pattern.'|'.$re_punctuation_pattern.')/u', $sentence, $matches, PREG_PATTERN_ORDER);
+        preg_match_all(
+            '/('.$re_han_pattern.'|'.$re_skip_pattern.'|'.$re_punctuation_pattern.')/u',
+            $sentence,
+            $matches,
+            PREG_PATTERN_ORDER
+        );
         $blocks = $matches[0];
 
         foreach ($blocks as $blk) {
@@ -462,15 +469,15 @@ class Posseg
                     array_push($seg_list, $word);
                 }
 
-            } else if (preg_match('/'.$re_skip_pattern.'/u', $blk)) {
+            } elseif (preg_match('/'.$re_skip_pattern.'/u', $blk)) {
 
                 if (preg_match('/'.$re_num_pattern.'/u', $blk)) {
                     array_push($seg_list, array("word"=>$blk, "tag"=>"m"));
-                } else if (preg_match('/'.$re_eng_pattern.'/u', $blk)) {
+                } elseif (preg_match('/'.$re_eng_pattern.'/u', $blk)) {
                     array_push($seg_list, array("word"=>$blk, "tag"=>"eng"));
                 }
 
-            } else if (preg_match('/'.$re_punctuation_pattern.'/u', $blk)) {
+            } elseif (preg_match('/'.$re_punctuation_pattern.'/u', $blk)) {
 
                 array_push($seg_list, array("word"=>$blk, "tag"=>"x"));
 
@@ -481,5 +488,4 @@ class Posseg
         return $seg_list;
 
     }// end function cut
-
 }
