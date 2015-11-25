@@ -23,7 +23,7 @@ use Fukuball\Finalseg;
 Jieba::init(array('mode'=>'test','dict'=>'samll'));
 Finalseg::init();
 
-$seg_list = Jieba::cut("怜香惜玉也得要看对象啊！");
+$seg_list = Jieba::cut("怜香惜玉也得要看对象啊！我来到北京清华大学");
 var_dump($seg_list);
 
 echo "Full Mode: \n";

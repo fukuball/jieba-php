@@ -250,14 +250,14 @@ class Jieba
     }// end function __cutAll
 
     /**
-     * Static method __cutDAG
+     * Static method getDAG
      *
      * @param string $sentence # input sentence
      * @param array  $options  # other options
      *
-     * @return array $words
+     * @return array $DAG
      */
-    public static function __cutDAG($sentence, $options = array())
+    public static function getDAG($sentence, $options = array())
     {
 
         $defaults = array(
@@ -266,12 +266,9 @@ class Jieba
 
         $options = array_merge($defaults, $options);
 
-        $words = array();
-
         $N = mb_strlen($sentence, 'UTF-8');
         $i = 0;
         $j = 0;
-        $p = self::$trie;
         $DAG = array();
         $word_c = array();
 
@@ -313,6 +310,32 @@ class Jieba
                 $DAG[$i] = array($i);
             }
         }
+
+        return $DAG;
+
+    }// end function getDAG
+
+    /**
+     * Static method __cutDAG
+     *
+     * @param string $sentence # input sentence
+     * @param array  $options  # other options
+     *
+     * @return array $words
+     */
+    public static function __cutDAG($sentence, $options = array())
+    {
+
+        $defaults = array(
+            'mode'=>'default'
+        );
+
+        $options = array_merge($defaults, $options);
+
+        $words = array();
+
+        $N = mb_strlen($sentence, 'UTF-8');
+        $DAG = self::getDAG($sentence);
 
         self::calc($sentence, $DAG);
 
