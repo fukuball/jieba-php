@@ -19,9 +19,9 @@ require_once dirname(dirname(__FILE__))."/vendor/multi-array/Factory/MultiArrayF
 require_once dirname(dirname(__FILE__))."/class/Jieba.php";
 require_once dirname(dirname(__FILE__))."/class/Finalseg.php";
 require_once dirname(dirname(__FILE__))."/class/Posseg.php";
-use Fukuball\Jieba;
-use Fukuball\Finalseg;
-use Fukuball\Posseg;
+use Fukuball\Jieba\Jieba;
+use Fukuball\Jieba\Finalseg;
+use Fukuball\Jieba\Posseg;
 Jieba::init();
 Finalseg::init();
 Posseg::init();

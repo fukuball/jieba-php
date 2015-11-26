@@ -12,7 +12,7 @@
  * @link     https://github.com/fukuball/jieba-php
  */
 
-namespace Fukuball;
+namespace Fukuball\Jieba;
 
 /**
  * JiebaAnalyse

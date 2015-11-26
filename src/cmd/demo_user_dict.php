@@ -18,8 +18,8 @@ require_once dirname(dirname(__FILE__))."/vendor/multi-array/MultiArray.php";
 require_once dirname(dirname(__FILE__))."/vendor/multi-array/Factory/MultiArrayFactory.php";
 require_once dirname(dirname(__FILE__))."/class/Jieba.php";
 require_once dirname(dirname(__FILE__))."/class/Finalseg.php";
-use Fukuball\Jieba;
-use Fukuball\Finalseg;
+use Fukuball\Jieba\Jieba;
+use Fukuball\Jieba\Finalseg;
 Jieba::init(array('mode'=>'test','dict'=>'samll'));
 Finalseg::init();
 

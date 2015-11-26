@@ -19,9 +19,9 @@ require_once dirname(dirname(__FILE__))."/vendor/multi-array/Factory/MultiArrayF
 require_once dirname(dirname(__FILE__))."/class/Jieba.php";
 require_once dirname(dirname(__FILE__))."/class/Finalseg.php";
 require_once dirname(dirname(__FILE__))."/class/JiebaAnalyse.php";
-use Fukuball\Jieba;
-use Fukuball\Finalseg;
-use Fukuball\JiebaAnalyse;
+use Fukuball\Jieba\Jieba;
+use Fukuball\Jieba\Finalseg;
+use Fukuball\Jieba\JiebaAnalyse;
 Jieba::init(array('mode'=>'test','dict'=>'samll'));
 Finalseg::init();
 JiebaAnalyse::init();
