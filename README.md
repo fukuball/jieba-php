@@ -5,6 +5,7 @@ jieba-php
 [![codecov.io](http://codecov.io/github/fukuball/jieba-php/coverage.svg?branch=master)](http://codecov.io/github/fukuball/jieba-php?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/fukuball/jieba-php/v/stable.png)](https://packagist.org/packages/fukuball/jieba-php)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/fukuball/jieba-php/master/LICENSE)
+[![Mad with Love](https://img.shields.io/badge/made%20with-%e2%9d%a4-ff69b4.svg)](http://www.fukuball.com)
 
 "結巴"中文分詞：做最好的 PHP 中文分詞、中文斷詞組件，目前翻譯版本為 jieba-0.19 版本，未來再慢慢往上升級，效能也需要再改善，請有興趣的開發者一起加入開發！若想使用 Python 版本請前往 [fxsjy/jieba](https://github.com/fxsjy/jieba)
 
@@ -245,7 +246,183 @@ array(10) {
   ["空洞"]=>
   float(0.20598261709442)
 }
+```
 
+功能 4)：词性分词
+==============
+
+代碼示例 (Tutorial)
+
+```php
+ini_set('memory_limit', '600M');
+
+require_once dirname(dirname(__FILE__))."/vendor/multi-array/MultiArray.php";
+require_once dirname(dirname(__FILE__))."/vendor/multi-array/Factory/MultiArrayFactory.php";
+require_once dirname(dirname(__FILE__))."/class/Jieba.php";
+require_once dirname(dirname(__FILE__))."/class/Finalseg.php";
+require_once dirname(dirname(__FILE__))."/class/Posseg.php";
+use Fukuball\Jieba\Jieba;
+use Fukuball\Jieba\Finalseg;
+use Fukuball\Jieba\Posseg;
+Jieba::init();
+Finalseg::init();
+Posseg::init();
+
+$seg_list = Posseg::cut("这是一个伸手不见五指的黑夜。我叫孙悟空，我爱北京，我爱Python和C++。");
+var_dump($seg_list);
+```
+
+Output:
+```php
+array(21) {
+  [0]=>
+  array(2) {
+    ["word"]=>
+    string(3) "这"
+    ["tag"]=>
+    string(1) "r"
+  }
+  [1]=>
+  array(2) {
+    ["word"]=>
+    string(3) "是"
+    ["tag"]=>
+    string(1) "v"
+  }
+  [2]=>
+  array(2) {
+    ["word"]=>
+    string(6) "一个"
+    ["tag"]=>
+    string(1) "m"
+  }
+  [3]=>
+  array(2) {
+    ["word"]=>
+    string(18) "伸手不见五指"
+    ["tag"]=>
+    string(1) "i"
+  }
+  [4]=>
+  array(2) {
+    ["word"]=>
+    string(3) "的"
+    ["tag"]=>
+    string(2) "uj"
+  }
+  [5]=>
+  array(2) {
+    ["word"]=>
+    string(6) "黑夜"
+    ["tag"]=>
+    string(1) "n"
+  }
+  [6]=>
+  array(2) {
+    ["word"]=>
+    string(3) "。"
+    ["tag"]=>
+    string(1) "x"
+  }
+  [7]=>
+  array(2) {
+    ["word"]=>
+    string(3) "我"
+    ["tag"]=>
+    string(1) "r"
+  }
+  [8]=>
+  array(2) {
+    ["word"]=>
+    string(3) "叫"
+    ["tag"]=>
+    string(1) "v"
+  }
+  [9]=>
+  array(2) {
+    ["word"]=>
+    string(9) "孙悟空"
+    ["tag"]=>
+    string(2) "nr"
+  }
+  [10]=>
+  array(2) {
+    ["word"]=>
+    string(3) "，"
+    ["tag"]=>
+    string(1) "x"
+  }
+  [11]=>
+  array(2) {
+    ["word"]=>
+    string(3) "我"
+    ["tag"]=>
+    string(1) "r"
+  }
+  [12]=>
+  array(2) {
+    ["word"]=>
+    string(3) "爱"
+    ["tag"]=>
+    string(1) "v"
+  }
+  [13]=>
+  array(2) {
+    ["word"]=>
+    string(6) "北京"
+    ["tag"]=>
+    string(2) "ns"
+  }
+  [14]=>
+  array(2) {
+    ["word"]=>
+    string(3) "，"
+    ["tag"]=>
+    string(1) "x"
+  }
+  [15]=>
+  array(2) {
+    ["word"]=>
+    string(3) "我"
+    ["tag"]=>
+    string(1) "r"
+  }
+  [16]=>
+  array(2) {
+    ["word"]=>
+    string(3) "爱"
+    ["tag"]=>
+    string(1) "v"
+  }
+  [17]=>
+  array(2) {
+    ["word"]=>
+    string(6) "Python"
+    ["tag"]=>
+    string(3) "eng"
+  }
+  [18]=>
+  array(2) {
+    ["word"]=>
+    string(3) "和"
+    ["tag"]=>
+    string(1) "c"
+  }
+  [19]=>
+  array(2) {
+    ["word"]=>
+    string(3) "C++"
+    ["tag"]=>
+    string(3) "eng"
+  }
+  [20]=>
+  array(2) {
+    ["word"]=>
+    string(3) "。"
+    ["tag"]=>
+    string(1) "x"
+  }
+}
 ```
 
 Online Demo
@@ -458,6 +635,182 @@ array(10) {
   float(0.20598261709442)
 }
 
+```
+Function 4) Word Segmentation and Tagging
+==============
+
+Example (word tagging)
+
+```php
+ini_set('memory_limit', '600M');
+
+require_once dirname(dirname(__FILE__))."/vendor/multi-array/MultiArray.php";
+require_once dirname(dirname(__FILE__))."/vendor/multi-array/Factory/MultiArrayFactory.php";
+require_once dirname(dirname(__FILE__))."/class/Jieba.php";
+require_once dirname(dirname(__FILE__))."/class/Finalseg.php";
+require_once dirname(dirname(__FILE__))."/class/Posseg.php";
+use Fukuball\Jieba\Jieba;
+use Fukuball\Jieba\Finalseg;
+use Fukuball\Jieba\Posseg;
+Jieba::init();
+Finalseg::init();
+Posseg::init();
+
+$seg_list = Posseg::cut("这是一个伸手不见五指的黑夜。我叫孙悟空，我爱北京，我爱Python和C++。");
+var_dump($seg_list);
+```
+
+Output:
+```php
+array(21) {
+  [0]=>
+  array(2) {
+    ["word"]=>
+    string(3) "这"
+    ["tag"]=>
+    string(1) "r"
+  }
+  [1]=>
+  array(2) {
+    ["word"]=>
+    string(3) "是"
+    ["tag"]=>
+    string(1) "v"
+  }
+  [2]=>
+  array(2) {
+    ["word"]=>
+    string(6) "一个"
+    ["tag"]=>
+    string(1) "m"
+  }
+  [3]=>
+  array(2) {
+    ["word"]=>
+    string(18) "伸手不见五指"
+    ["tag"]=>
+    string(1) "i"
+  }
+  [4]=>
+  array(2) {
+    ["word"]=>
+    string(3) "的"
+    ["tag"]=>
+    string(2) "uj"
+  }
+  [5]=>
+  array(2) {
+    ["word"]=>
+    string(6) "黑夜"
+    ["tag"]=>
+    string(1) "n"
+  }
+  [6]=>
+  array(2) {
+    ["word"]=>
+    string(3) "。"
+    ["tag"]=>
+    string(1) "x"
+  }
+  [7]=>
+  array(2) {
+    ["word"]=>
+    string(3) "我"
+    ["tag"]=>
+    string(1) "r"
+  }
+  [8]=>
+  array(2) {
+    ["word"]=>
+    string(3) "叫"
+    ["tag"]=>
+    string(1) "v"
+  }
+  [9]=>
+  array(2) {
+    ["word"]=>
+    string(9) "孙悟空"
+    ["tag"]=>
+    string(2) "nr"
+  }
+  [10]=>
+  array(2) {
+    ["word"]=>
+    string(3) "，"
+    ["tag"]=>
+    string(1) "x"
+  }
+  [11]=>
+  array(2) {
+    ["word"]=>
+    string(3) "我"
+    ["tag"]=>
+    string(1) "r"
+  }
+  [12]=>
+  array(2) {
+    ["word"]=>
+    string(3) "爱"
+    ["tag"]=>
+    string(1) "v"
+  }
+  [13]=>
+  array(2) {
+    ["word"]=>
+    string(6) "北京"
+    ["tag"]=>
+    string(2) "ns"
+  }
+  [14]=>
+  array(2) {
+    ["word"]=>
+    string(3) "，"
+    ["tag"]=>
+    string(1) "x"
+  }
+  [15]=>
+  array(2) {
+    ["word"]=>
+    string(3) "我"
+    ["tag"]=>
+    string(1) "r"
+  }
+  [16]=>
+  array(2) {
+    ["word"]=>
+    string(3) "爱"
+    ["tag"]=>
+    string(1) "v"
+  }
+  [17]=>
+  array(2) {
+    ["word"]=>
+    string(6) "Python"
+    ["tag"]=>
+    string(3) "eng"
+  }
+  [18]=>
+  array(2) {
+    ["word"]=>
+    string(3) "和"
+    ["tag"]=>
+    string(1) "c"
+  }
+  [19]=>
+  array(2) {
+    ["word"]=>
+    string(3) "C++"
+    ["tag"]=>
+    string(3) "eng"
+  }
+  [20]=>
+  array(2) {
+    ["word"]=>
+    string(3) "。"
+    ["tag"]=>
+    string(1) "x"
+  }
+}
 ```
 
 License
