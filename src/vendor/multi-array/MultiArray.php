@@ -3,7 +3,7 @@
  * File MultiArray.php
  */
 
-namespace Tebru;
+namespace Fukuball\Tebru;
 
 use ArrayAccess;
 use ArrayIterator;

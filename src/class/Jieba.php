@@ -14,7 +14,7 @@
 
 namespace Fukuball\Jieba;
 
-use Tebru\MultiArray;
+use Fukuball\Tebru\MultiArray;
 
 /**
  * Jieba

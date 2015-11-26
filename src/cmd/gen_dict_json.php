@@ -16,7 +16,7 @@ ini_set('memory_limit', '1024M');
 
 require_once dirname(dirname(__FILE__))."/vendor/multi-array/MultiArray.php";
 require_once dirname(dirname(__FILE__))."/vendor/multi-array/Factory/MultiArrayFactory.php";
-use Tebru\MultiArray;
+use Fukuball\Tebru\MultiArray;
 
 $content = fopen(dirname(dirname(__FILE__))."/dict/dict.txt", "r");
 

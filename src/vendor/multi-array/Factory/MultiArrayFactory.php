@@ -3,9 +3,9 @@
  * File MultiArrayFactory.php
  */
 
-namespace Tebru\Factory;
+namespace Fukuball\Tebru\Factory;
 
-use Tebru\MultiArray;
+use Fukuball\Tebru\MultiArray;
 
 /**
  * Class MultiArrayFactory
