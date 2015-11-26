@@ -232,7 +232,8 @@ class Posseg
         $mem_path_end_keys = array_keys(end($mem_path));
 
         foreach ($mem_path_end_keys as $y) {
-            $last[$y] = end($V)[$y];
+            $end_array = end($V);
+            $last[$y] = $end_array[$y];
         }
 
         arsort($last);
