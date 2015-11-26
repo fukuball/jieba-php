@@ -7,7 +7,7 @@ jieba-php
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/fukuball/jieba-php/master/LICENSE)
 [![Mad with Love](https://img.shields.io/badge/made%20with-%e2%9d%a4-ff69b4.svg)](http://www.fukuball.com)
 
-"結巴"中文分詞：做最好的 PHP 中文分詞、中文斷詞組件，目前翻譯版本為 jieba-0.19 版本，未來再慢慢往上升級，效能也需要再改善，請有興趣的開發者一起加入開發！若想使用 Python 版本請前往 [fxsjy/jieba](https://github.com/fxsjy/jieba)
+"結巴"中文分詞：做最好的 PHP 中文分詞、中文斷詞組件，目前翻譯版本為 jieba-0.20 版本，未來再慢慢往上升級，效能也需要再改善，請有興趣的開發者一起加入開發！若想使用 Python 版本請前往 [fxsjy/jieba](https://github.com/fxsjy/jieba)
 
 "Jieba" (Chinese for "to stutter") Chinese text segmentation: built to be the best PHP Chinese word segmentation module.
 
@@ -639,7 +639,7 @@ array(10) {
 ```
 Function 4) Word Segmentation and Tagging
 ==============
-* Word Tagging Meaning:[https://gist.github.com/luw2007/6016931](https://gist.github.com/luw2007/6016931)
+* Word Tagging Meaning：[https://gist.github.com/luw2007/6016931](https://gist.github.com/luw2007/6016931)
 
 Example (word tagging)
 
@@ -819,34 +819,34 @@ array(21) {
 ==============
 ```
 a 形容词 (取英语形容词 adjective 的第 1 个字母。)
-  ad 副形词 (直接作状语的形容词。形容词代码 a 和副词代码 d 并在一起。)
-  ag 形容词性语素 (形容词性语素。形容词代码为 a，语素代码 ｇ 前面置以 a。)
-  an 名形词 (具有名词功能的形容词。形容词代码 a 和名词代码 n 并在一起。)
-b 区别词 (取汉字 “别” 的声母。)
+  ad 副形词 (直接作状语的形容词，形容词代码 a 和副词代码 d 并在一起。)
+  ag 形容词性语素 (形容词性语素，形容词代码为 a，语素代码 ｇ 前面置以 a。)
+  an 名形词 (具有名词功能的形容词，形容词代码 a 和名词代码 n 并在一起。)
+b 区别词 (取汉字「别」的声母。)
 c 连词 (取英语连词 conjunction 的第 1 个字母。)
 d 副词 (取 adverb 的第 2 个字母，因其第 1 个字母已用于形容词。)
   df 副词*
-  dg 副语素 (副词性语素。副词代码为 d，语素代码 ｇ 前面置以 d。)
+  dg 副语素 (副词性语素，副词代码为 d，语素代码 ｇ 前面置以 d。)
 e 叹词 (取英语叹词 exclamation 的第 1 个字母。)
 eng 外语
-f 方位词 (取汉字 “方” 的声母。)
-g 语素 (绝大多数语素都能作为合成词的“词根”，取汉字“根”的声母。)
+f 方位词 (取汉字「方」的声母。)
+g 语素 (绝大多数语素都能作为合成词的「词根」，取汉字「根」的声母。)
 h 前接成分 (取英语 head 的第 1 个字母。)
 i 成语 (取英语成语 idiom 的第 1 个字母。)
-j 简称略语 (取汉字 “简” 的声母。)
+j 简称略语 (取汉字「简」的声母。)
 k 后接成分
-l 习用语 (习用语尚未成为成语，有点“临时性”，取“临”的声母。)
+l 习用语 (习用语尚未成为成语，有点「临时性」，取「临」的声母。)
 m 数词 (取英语 numeral 的第 3 个字母，n，u 已有他用。)
   mg 数语素
   mq 数词*
 n 名词 (取英语名词 noun 的第 1 个字母。)
-  ng 名语素 (名词性语素。名词代码为 n，语素代码 ｇ 前面置以 N。)
-  nr 人名 (名词代码n和 “人(ren)” 的声母并在一起。)
+  ng 名语素 (名词性语素，名词代码为 n，语素代码 ｇ 前面置以 n。)
+  nr 人名 (名词代码n和「人(ren)」的声母并在一起。)
   nrfg 名词*
   nrt 名词*
   ns 地名 (名词代码 n 和处所词代码 s 并在一起。)
-  nt 机构团体 (“团”的声母为 t，名词代码 n 和 t 并在一起。)
-  nz 其他专名 (“专”的声母的第 1 个字母为 z，名词代码 n 和 z 并在一起。)
+  nt 机构团体 (「团」的声母为 t，名词代码 n 和 t 并在一起。)
+  nz 其他专名 (「专」的声母的第 1 个字母为 z，名词代码 n 和 z 并在一起。)
 o 拟声词 (取英语拟声词 onomatopoeia 的第 1 个字母。)
 p 介词 (取英语介词 prepositional 的第 1 个字母。)
 q 量词 (取英语 quantity 的第 1 个字母。)
@@ -856,7 +856,7 @@ r 代词 (取英语代词 pronoun的 第 2 个字母，因 p 已用于介词。)
   rz 代词*
 s 处所词 (取英语 space 的第 1 个字母。)
 t 时间词 (取英语 time 的第 1 个字母。)
-  tg 时语素 (时间词性语素。时间词代码为 t，在语素的代码 g 前面置以 T。)
+  tg 时语素 (时间词性语素，时间词代码为 t，在语素的代码 g 前面置以 t。)
 u 助词 (取英语助词 auxiliary 的第 2 个字母，因 a 已用于形容词。)
   ud 助词*
   ug 助词*
@@ -865,15 +865,15 @@ u 助词 (取英语助词 auxiliary 的第 2 个字母，因 a 已用于形容�
   uv 助词*
   uz 助词*
 v 动词 (取英语动词 verb 的第一个字母。)
-  vd 副动词 (直接作状语的动词。动词和副词的代码并在一起。)
+  vd 副动词 (直接作状语的动词，动词和副词的代码并在一起。)
   vg 动语素
   vi 动词*
-  vn 名动词 (指具有名词功能的动词。动词和名词的代码并在一起。)
+  vn 名动词 (指具有名词功能的动词，动词和名词的代码并在一起。)
   vq 动词*
 w 标点符号
 x 非语素字 (非语素字只是一个符号，字母 x 通常用于代表未知数、符号。)
-y 语气词 (取汉字 “语” 的声母。)
-z 状态词 (取汉字 “状” 的声母的前一个字母。)
+y 语气词 (取汉字「语」的声母。)
+z 状态词 (取汉字「状」的声母的前一个字母。)
   zg 状态词*
 ```
 
