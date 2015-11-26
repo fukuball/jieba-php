@@ -530,5 +530,4 @@ class Posseg
         return $new_seg_list;
 
     }// end function posTagReadable
-
 }
