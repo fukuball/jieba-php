@@ -32,6 +32,7 @@ class Posseg
     public static $prob_emit = array();
     public static $char_state = array();
     public static $word_tag = array();
+    public static $pos_tag_readable = array();
 
     /**
      * Static method init
@@ -62,6 +63,16 @@ class Posseg
             $word = $explode_line[0];
             $tag = $explode_line[1];
             self::$word_tag[$word] = $tag;
+        }
+        fclose($content);
+
+        $content = fopen(dirname(dirname(__FILE__))."/dict/pos_tag_readable.txt", "r");
+
+        while (($line = fgets($content)) !== false) {
+            $explode_line = explode(" ", trim($line));
+            $tag = $explode_line[0];
+            $meaning = $explode_line[1];
+            self::$pos_tag_readable[$tag] = $meaning;
         }
         fclose($content);
 
@@ -480,7 +491,7 @@ class Posseg
 
             } elseif (preg_match('/'.$re_punctuation_pattern.'/u', $blk)) {
 
-                array_push($seg_list, array("word"=>$blk, "tag"=>"x"));
+                array_push($seg_list, array("word"=>$blk, "tag"=>"w"));
 
             }
 
@@ -489,4 +500,35 @@ class Posseg
         return $seg_list;
 
     }// end function cut
+
+    /**
+     * Static method posTagReadable
+     *
+     * @param array $seg_list # input seg_list
+     * @param array $options  # other options
+     *
+     * @return array $new_seg_list
+     */
+    public static function posTagReadable($seg_list, $options = array())
+    {
+
+        $defaults = array(
+            'mode'=>'default'
+        );
+
+        $options = array_merge($defaults, $options);
+
+        $new_seg_list = array();
+
+        foreach ($seg_list as $seg) {
+
+            $seg['tag_readable'] = self::$pos_tag_readable[$seg['tag']];
+            array_push($new_seg_list, $seg);
+
+        }
+
+        return $new_seg_list;
+
+    }// end function posTagReadable
+
 }

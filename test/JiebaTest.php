@@ -194,7 +194,7 @@ class JiebaTest extends PHPUnit_Framework_TestCase
             ),
             array(
                 "word" => "。",
-                "tag" => "x"
+                "tag" => "w"
             ),
             array(
                 "word" => "我",
@@ -210,7 +210,7 @@ class JiebaTest extends PHPUnit_Framework_TestCase
             ),
             array(
                 "word" => "，",
-                "tag" => "x"
+                "tag" => "w"
             ),
             array(
                 "word" => "我",
@@ -226,7 +226,7 @@ class JiebaTest extends PHPUnit_Framework_TestCase
             ),
             array(
                 "word" => "，",
-                "tag" => "x"
+                "tag" => "w"
             ),
             array(
                 "word" => "我",
@@ -250,7 +250,7 @@ class JiebaTest extends PHPUnit_Framework_TestCase
             ),
             array(
                 "word" => "。",
-                "tag" => "x"
+                "tag" => "w"
             )
         );
 
