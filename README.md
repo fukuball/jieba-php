@@ -4,8 +4,8 @@ jieba-php
 [![Coverage Status](https://coveralls.io/repos/fukuball/jieba-php/badge.svg?branch=master)](https://coveralls.io/r/fukuball/jieba-php?branch=master)
 [![codecov.io](http://codecov.io/github/fukuball/jieba-php/coverage.svg?branch=master)](http://codecov.io/github/fukuball/jieba-php?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/fukuball/jieba-php/v/stable.png)](https://packagist.org/packages/fukuball/jieba-php)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/fukuball/jieba-php/master/LICENSE)
-[![Mad with Love](https://img.shields.io/badge/made%20with-%e2%9d%a4-ff69b4.svg)](http://www.fukuball.com)
+[![Codacy Badge](https://api.codacy.com/project/badge/grade/9360ebe8fc2d47d8a64f49f57d2f016f)](https://www.codacy.com/app/fukuball/jieba-php)
+[![Made with Love](https://img.shields.io/badge/made%20with-%e2%9d%a4-ff69b4.svg)](http://www.fukuball.com)
 
 "結巴"中文分詞：做最好的 PHP 中文分詞、中文斷詞組件，目前翻譯版本為 jieba-0.20 版本，未來再慢慢往上升級，效能也需要再改善，請有興趣的開發者一起加入開發！若想使用 Python 版本請前往 [fxsjy/jieba](https://github.com/fxsjy/jieba)
 
