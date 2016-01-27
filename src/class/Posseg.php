@@ -56,12 +56,13 @@ class Posseg
         self::$char_state = self::loadModel(dirname(dirname(__FILE__)).'/model/pos/char_state.json');
 
 
-        $content = fopen(dirname(dirname(__FILE__))."/dict/pos_tags.txt", "r");
+        $content = fopen(dirname(dirname(__FILE__))."/dict/dict.txt", "r");
 
         while (($line = fgets($content)) !== false) {
             $explode_line = explode(" ", trim($line));
             $word = $explode_line[0];
-            $tag = $explode_line[1];
+            $freq = $explode_line[1];
+            $tag = $explode_line[2];
             self::$word_tag[$word] = $tag;
         }
         fclose($content);

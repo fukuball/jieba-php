@@ -137,6 +137,7 @@ class Jieba
             $explode_line = explode(" ", trim($line));
             $word = $explode_line[0];
             $freq = $explode_line[1];
+            $tag = $explode_line[2];
             $freq = (float) $freq;
             self::$FREQ[$word] = $freq;
             self::$total += $freq;
@@ -208,39 +209,31 @@ class Jieba
 
         $words = array();
 
-        $N = mb_strlen($sentence, 'UTF-8');
-        $i = 0;
-        $j = 0;
-        $p = self::$trie;
-        $word_c = array();
+        $DAG = self::getDAG($sentence);
+        $old_j = -1;
 
-        while ($i < $N) {
-            $c = mb_substr($sentence, $j, 1, 'UTF-8');
-            if (count($word_c)==0) {
-                $next_word_key = $c;
-            } else {
-                $next_word_key = implode('.', $word_c).'.'.$c;
-            }
+        foreach ($DAG as $k => $L) {
 
-            if (self::$trie->exists($next_word_key)) {
-                array_push($word_c, $c);
-                $next_word_key_value = self::$trie->get($next_word_key);
-                if ($next_word_key_value == array("end"=>"")
-                 || isset($next_word_key_value["end"])
-                 || isset($next_word_key_value[0]["end"])
-                ) {
-                    array_push($words, mb_substr($sentence, $i, (($j+1)-$i), 'UTF-8'));
-                }
-                $j += 1;
-                if ($j >= $N) {
-                    $word_c = array();
-                    $i += 1;
-                    $j = $i;
-                }
+            if (count($L) == 1 && $k > $old_j) {
+
+                $word = mb_substr($sentence, $k, (($L[0]-$k)+1), 'UTF-8');
+                array_push($words, $word);
+                $old_j = $L[0];
+
             } else {
-                $word_c = array();
-                $i += 1;
-                $j = $i;
+
+                foreach ($L as $j) {
+
+                    if ($j > $k) {
+
+                        $word = mb_substr($sentence, $k, ($j-$k)+1, 'UTF-8');
+                        array_push($words, $word);
+                        $old_j = $j;
+
+                    }
+
+                }
+
             }
 
         }

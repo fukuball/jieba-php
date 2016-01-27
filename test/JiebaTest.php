@@ -79,20 +79,12 @@ class JiebaTest extends PHPUnit_Framework_TestCase
 
         $case_array = array(
             "我",
-            "来",
             "来到",
-            "到",
-            "北",
             "北京",
-            "京",
-            "清",
             "清华",
             "清华大学",
-            "华",
             "华大",
-            "大",
-            "大学",
-            "学"
+            "大学"
         );
 
         $seg_list = Jieba::cut("我来到北京清华大学", true);
