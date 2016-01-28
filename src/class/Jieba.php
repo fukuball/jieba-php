@@ -349,7 +349,7 @@ class Jieba
                         array_push($words, $buf);
                         $buf = '';
                     } else {
-                        $regognized = Finalseg::__cut($buf);
+                        $regognized = Finalseg::cut($buf);
                         foreach ($regognized as $key => $word) {
                             array_push($words, $word);
                         }
@@ -366,7 +366,7 @@ class Jieba
             if (mb_strlen($buf, 'UTF-8')==1) {
                 array_push($words, $buf);
             } else {
-                $regognized = Finalseg::__cut($buf);
+                $regognized = Finalseg::cut($buf);
                 foreach ($regognized as $key => $word) {
                     array_push($words, $word);
                 }
@@ -399,7 +399,12 @@ class Jieba
 
         $re_han_pattern = '([\x{4E00}-\x{9FA5}]+)';
         $re_skip_pattern = '([a-zA-Z0-9+#\n]+)';
-        preg_match_all('/('.$re_han_pattern.'|'.$re_skip_pattern.')/u', $sentence, $matches, PREG_PATTERN_ORDER);
+        preg_match_all(
+            '/('.$re_han_pattern.'|'.$re_skip_pattern.')/u',
+            $sentence,
+            $matches,
+            PREG_PATTERN_ORDER
+        );
         $blocks = $matches[0];
 
         foreach ($blocks as $blk) {
