@@ -92,6 +92,35 @@ class JiebaTest extends PHPUnit_Framework_TestCase
 
     }
 
+    public function testJiebaCutForSearch()
+    {
+
+        $case_array = array(
+            "小明",
+            "硕士",
+            "毕业",
+            "于",
+            "中国",
+            "科学",
+            "学院",
+            "科学院",
+            "中国科学院",
+            "计算",
+            "计算所",
+            "后",
+            "在",
+            "日本",
+            "京都",
+            "大学",
+            "日本京都大学",
+            "深造"
+        );
+
+        $seg_list = Jieba::cutForSEarch("小明硕士毕业于中国科学院计算所，后在日本京都大学深造");
+        $this->assertEquals($case_array, $seg_list);
+
+    }
+
     public function testFinalsegCut()
     {
         $case_array = array(

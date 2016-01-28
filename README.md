@@ -20,8 +20,9 @@ _Scroll down for English documentation._
 Feature
 ========
 * 支持兩種分詞模式：
-* 1）默認模式，試圖將句子最精確地切開，適合文本分析；
-* 2）全模式，把句子中所有的可以成詞的詞語都掃描出來，適合搜索引擎。（需要充足的字典）
+* 1）默認精確模式，試圖將句子最精確地切開，適合文本分析；
+* 2）全模式，把句子中所有的可以成詞的詞語都掃描出來，但是不能解決歧義。（需要充足的字典）
+* 3) 搜尋引擎模式，在精確模式的基礎上，對長詞再次切分，提高召回率，適合用於搜尋引擎分詞。
 
 Usage
 ========
@@ -52,9 +53,9 @@ require_once "/path/to/your/class/Finalseg.php";
 
 Algorithm
 ========
-* 基於 Trie 樹結構實現高效的詞圖掃描，生成句子中漢字構成的有向無環圖（DAG)
-* 採用了記憶化搜索實現最大概率路徑的計算, 找出基於詞頻的最大切分組合
-* 對於未登錄詞，採用了基於漢字位置概率的模型，使用了 Viterbi 算法
+* 基於 Trie 樹結構實現高效的詞圖掃描，生成句子中漢字所有可能成詞情況所構成的有向無環圖（DAG)
+* 採用了動態規劃查找最大概率路徑, 找出基於詞頻的最大切分組合
+* 對於未登錄詞，採用了基於漢字成詞能力的 HMM 模型，使用了 Viterbi 算法
 * BEMS 的解釋 [https://github.com/fxsjy/jieba/issues/7](https://github.com/fxsjy/jieba/issues/7)
 
 Interface
@@ -66,6 +67,10 @@ Interface
 
 功能 1)：分词
 ============
+* `cut` 方法接受想個輸入參數： 1) 第一個參數為需要分詞的字符串 2）cut_all 參數用來控制分詞模式
+* `cutForSearch` 方法接受一個參數：需要分詞的字符串，該方法適合用於搜索引擎構建倒排索引的分詞，粒度比較細
+* 注意：待分詞的字符串是 utf-8 字符串
+* `cut` 以及 `cutForSearch` 返回的結構是一個可迭代的 array
 
 代碼示例 (Tutorial)
 
@@ -85,13 +90,16 @@ $seg_list = Jieba::cut("怜香惜玉也得要看对象啊！");
 var_dump($seg_list);
 
 seg_list = jieba.cut("我来到北京清华大学", true)
-print "Full Mode:", "/ ".join(seg_list) #全模式
+var_dump($seg_list); #全模式
 
 seg_list = jieba.cut("我来到北京清华大学", false)
-print "Default Mode:", "/ ".join(seg_list) #默認模式
+var_dump($seg_list); #默認精確模式
 
 seg_list = jieba.cut("他来到了网易杭研大厦")
-print ", ".join(seg_list)
+var_dump($seg_list);
+
+seg_list = jieba.cut_for_search("小明硕士毕业于中国科学院计算所，后在日本京都大学深造") #搜索引擎模式
+var_dump($seg_list);
 ```
 
 Output:
@@ -113,6 +121,7 @@ array(7) {
   [6]=>
   string(3) "啊"
 }
+
 Full Mode:
 array(15) {
   [0]=>
@@ -146,6 +155,7 @@ array(15) {
   [14]=>
   string(3) "学"
 }
+
 Default Mode:
 array(4) {
   [0]=>
@@ -172,6 +182,46 @@ array(6) {
   string(6) "大厦"
 }
 (此處，“杭研“並沒有在詞典中，但是也被 Viterbi 算法識別出來了)
+
+Search Engine Mode:
+array(18) {
+  [0]=>
+  string(6) "小明"
+  [1]=>
+  string(6) "硕士"
+  [2]=>
+  string(6) "毕业"
+  [3]=>
+  string(3) "于"
+  [4]=>
+  string(6) "中国"
+  [5]=>
+  string(6) "科学"
+  [6]=>
+  string(6) "学院"
+  [7]=>
+  string(9) "科学院"
+  [8]=>
+  string(15) "中国科学院"
+  [9]=>
+  string(6) "计算"
+  [10]=>
+  string(9) "计算所"
+  [11]=>
+  string(3) "后"
+  [12]=>
+  string(3) "在"
+  [13]=>
+  string(6) "日本"
+  [14]=>
+  string(6) "京都"
+  [15]=>
+  string(6) "大学"
+  [16]=>
+  string(18) "日本京都大学"
+  [17]=>
+  string(6) "深造"
+}
 ```
 
 功能 2)：添加自定義詞典
@@ -179,16 +229,17 @@ array(6) {
 
 * 開發者可以指定自己自定義的詞典，以便包含 jieba 詞庫裡沒有的詞。雖然 jieba 有新詞識別能力，但是自行添加新詞可以保證更高的正確率
 * 用法： Jieba::loadUserDict(file_name) # file_name 為自定義詞典的絕對路徑
-* 詞典格式和 dict.txt 一樣，一個詞佔一行；每一行分為兩部分，一部分為詞語，另一部分為詞頻，用空格隔開
+* 詞典格式和 dict.txt 一樣，一個詞佔一行；每一行分為三部分，一部分為詞語，一部分為詞頻，一部分為詞性，用空格隔開
 * 範例：
 
-  云计算 5
-  李小福 2
-  创新办 3
+  云计算 5 n
+  李小福 2 n
+  创新办 3 n
 
   之前： 李小福 / 是 / 创新 / 办 / 主任 / 也 / 是 / 云 / 计算 / 方面 / 的 / 专家 /
   加載自定義詞庫後：　李小福 / 是 / 创新办 / 主任 / 也 / 是 / 云计算 / 方面 / 的 / 专家 /
 
+說明："通过用户自定义词典来增强歧义纠错能力" --- https://github.com/fxsjy/jieba/issues/14
 
 功能 3)：關鍵詞提取
 ==============
@@ -247,7 +298,7 @@ array(10) {
 }
 ```
 
-功能 4)：词性分词
+功能 4)：詞性分詞
 ==============
 * 詞性說明：[https://gist.github.com/luw2007/6016931](https://gist.github.com/luw2007/6016931)
 
@@ -425,6 +476,15 @@ array(21) {
 }
 ```
 
+常見問題
+========
+1) 模型的數據是如何生成的？ https://github.com/fxsjy/jieba/issues/7
+2) 這個庫的授權是？ https://github.com/fxsjy/jieba/issues/2
+
+
+jieba-php English Document
+=========
+
 Online Demo
 ========
 * Demo Site Url：[http://jieba-php.fukuball.com](http://jieba-php.fukuball.com)
@@ -432,9 +492,10 @@ Online Demo
 
 Feature
 ========
-* Support two types of segmentation mode:
-* 1）Default mode, attempt to cut the sentence into the most accurate segmentation, which is suitable for text analysis;
-* 2）Full mode, break the words of the sentence into words scanned, which is suitable for search engines.
+* Support three types of segmentation mode:
+* 1) Accurate Mode, attempt to cut the sentence into the most accurate segmentation, which is suitable for text analysis;
+* 2) Full Mode, break the words of the sentence into words scanned
+* 3) Search Engine Mode, based on the Accurate Mode, with an attempt to cut the long words into several short words, which can enhance the recall rate
 
 Usage
 ========
@@ -444,15 +505,15 @@ Algorithm
 ========
 * Based on the Trie tree structure to achieve efficient word graph scanning; sentences using Chinese characters constitute a directed acyclic graph (DAG).
 * Employs memory search to calculate the maximum probability path, in order to identify the maximum tangential points based on word frequency combination.
-* For unknown words, the character position probability-based model is used, using the Viterbi algorithm.
+* For unknown words, the character position HMM-based model is used, using the Viterbi algorithm.
 * The meaning of BEMS [https://github.com/fxsjy/jieba/issues/7](https://github.com/fxsjy/jieba/issues/7).
 
 Interface
 ========
-* Provide `jieba.cut` to segment words.
-* Method `cut` accepts two parameters: 1) first parameter is the string to segmentation 2）the second parameter `cut_all` to control segmentation mode.
+* The `cut` method accepts two parameters: 1) first parameter is the string to segmentation 2）the second parameter `cut_all` to control segmentation mode.
 * The string to segmentation may use utf-8 string.
-* `jieba.cut` return an segmented array.
+* `cutForSearch` accpets only on parameter: the string that requires segmentation, and it will cut the sentence into short words
+* `cut` and `cutForSearch` return an segmented array.
 
 Function 1) Segmentation
 ============
@@ -475,13 +536,16 @@ $seg_list = Jieba::cut("怜香惜玉也得要看对象啊！");
 var_dump($seg_list);
 
 seg_list = jieba.cut("我来到北京清华大学", true)
-print "Full Mode:", "/ ".join(seg_list) #全模式
+var_dump($seg_list); #全模式
 
 seg_list = jieba.cut("我来到北京清华大学", false)
-print "Default Mode:", "/ ".join(seg_list) #默認模式
+var_dump($seg_list); #默認精確模式
 
 seg_list = jieba.cut("他来到了网易杭研大厦")
-print ", ".join(seg_list)
+var_dump($seg_list);
+
+seg_list = jieba.cut_for_search("小明硕士毕业于中国科学院计算所，后在日本京都大学深造") #搜索引擎模式
+var_dump($seg_list);
 ```
 
 Output:
@@ -503,6 +567,7 @@ array(7) {
   [6]=>
   string(3) "啊"
 }
+
 Full Mode:
 array(15) {
   [0]=>
@@ -536,6 +601,7 @@ array(15) {
   [14]=>
   string(3) "学"
 }
+
 Default Mode:
 array(4) {
   [0]=>
@@ -561,7 +627,47 @@ array(6) {
   [5]=>
   string(6) "大厦"
 }
-(In this case, "杭研" is not in the dictionary, but is identified by the Viterbi algorithm)
+(此處，“杭研“並沒有在詞典中，但是也被 Viterbi 算法識別出來了)
+
+Search Engine Mode:
+array(18) {
+  [0]=>
+  string(6) "小明"
+  [1]=>
+  string(6) "硕士"
+  [2]=>
+  string(6) "毕业"
+  [3]=>
+  string(3) "于"
+  [4]=>
+  string(6) "中国"
+  [5]=>
+  string(6) "科学"
+  [6]=>
+  string(6) "学院"
+  [7]=>
+  string(9) "科学院"
+  [8]=>
+  string(15) "中国科学院"
+  [9]=>
+  string(6) "计算"
+  [10]=>
+  string(9) "计算所"
+  [11]=>
+  string(3) "后"
+  [12]=>
+  string(3) "在"
+  [13]=>
+  string(6) "日本"
+  [14]=>
+  string(6) "京都"
+  [15]=>
+  string(6) "大学"
+  [16]=>
+  string(18) "日本京都大学"
+  [17]=>
+  string(6) "深造"
+}
 ```
 
 Function 2) Add a custom dictionary

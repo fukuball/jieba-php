@@ -428,4 +428,69 @@ class Jieba
         return $seg_list;
 
     }// end function cut
+
+    /**
+     * Static method cutForSearch
+     *
+     * @param string  $sentence # input sentence
+     * @param array   $options  # other options
+     *
+     * @return array $seg_list
+     */
+    public static function cutForSearch($sentence, $options = array())
+    {
+
+        $defaults = array(
+            'mode'=>'default'
+        );
+
+        $options = array_merge($defaults, $options);
+
+        $seg_list = array();
+
+        $cut_seg_list = Jieba::cut($sentence);
+
+        foreach ($cut_seg_list as $w) {
+
+            $len = mb_strlen($w, 'UTF-8');
+
+            if ($len>2) {
+
+                for ($i=0; $i<($len-1); $i++) {
+
+                    $gram2 = mb_substr($w, $i, 2, 'UTF-8');
+
+                    if (isset(self::$FREQ[$gram2])) {
+
+                        array_push($seg_list, $gram2);
+
+                    }
+
+                }
+
+            }
+
+            if (mb_strlen($w, 'UTF-8')>3) {
+
+                for ($i=0; $i<($len-2); $i++) {
+
+                    $gram3 = mb_substr($w, $i, 3, 'UTF-8');
+
+                    if (isset(self::$FREQ[$gram3])) {
+
+                        array_push($seg_list, $gram3);
+
+                    }
+
+                }
+
+            }
+
+            array_push($seg_list, $w);
+
+        }
+
+        return $seg_list;
+
+    }// end function cutForSearch
 }// end of class Jieba
