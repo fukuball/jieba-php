@@ -14,8 +14,6 @@
 
 namespace Fukuball\Jieba;
 
-define("MIN_FLOAT", -3.14e+100);
-
 /**
  * Finalseg
  *
@@ -107,7 +105,7 @@ class Finalseg
             } else {
                 $prob_emit = MIN_FLOAT;
             }
-            $V[0][$y] = self::$prob_start[$y]*$prob_emit;
+            $V[0][$y] = self::$prob_start[$y] + $prob_emit;
             $path[$y] = $y;
         }
 
@@ -132,7 +130,7 @@ class Finalseg
                     } else {
                         $prob_emit = MIN_FLOAT;
                     }
-                    $temp_prob_array[$y0] = $V[$t-1][$y0]*$prob_trans*$prob_emit;
+                    $temp_prob_array[$y0] = $V[$t-1][$y0] + $prob_trans + $prob_emit;
                 }
                 arsort($temp_prob_array);
                 $max_prob = reset($temp_prob_array);

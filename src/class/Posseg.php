@@ -14,8 +14,6 @@
 
 namespace Fukuball\Jieba;
 
-define("MIN_FLOAT", -3.14e+100);
-
 /**
  * Posseg
  *
@@ -164,7 +162,7 @@ class Posseg
             } else {
                 $prob_emit = MIN_FLOAT;
             }
-            $V[0][$y] = self::$prob_start[$y]*$prob_emit;
+            $V[0][$y] = self::$prob_start[$y] + $prob_emit;
             $mem_path[0][$y] = '';
         }
 
@@ -231,7 +229,7 @@ class Posseg
                     } else {
                         $prob_emit = MIN_FLOAT;
                     }
-                    $temp_prob_array[$y0] = $V[$t-1][$y0]*$prob_trans*$prob_emit;
+                    $temp_prob_array[$y0] = $V[$t-1][$y0] + $prob_trans + $prob_emit;
                 }
                 arsort($temp_prob_array);
                 $max_prob = reset($temp_prob_array);
@@ -385,16 +383,16 @@ class Posseg
             if (preg_match('/'.$re_han_pattern.'/u', $blk)) {
                 $blk_words = self::__cut($blk);
                 foreach ($blk_words as $blk_word) {
-                    array_push($worlds, $blk_word);
+                    array_push($words, $blk_word);
                 }
             } elseif (preg_match('/'.$re_skip_pattern.'/u', $blk)) {
                 if (preg_match('/'.$re_num_pattern.'/u', $blk)) {
-                    array_push($worlds, array("word"=>$blk, "tag"=>"m"));
+                    array_push($words, array("word"=>$blk, "tag"=>"m"));
                 } elseif (preg_match('/'.$re_eng_pattern.'/u', $blk)) {
-                    array_push($worlds, array("word"=>$blk, "tag"=>"eng"));
+                    array_push($words, array("word"=>$blk, "tag"=>"eng"));
                 }
             } elseif (preg_match('/'.$re_punctuation_pattern.'/u', $blk)) {
-                array_push($worlds, array("word"=>$blk, "tag"=>"w"));
+                array_push($words, array("word"=>$blk, "tag"=>"w"));
             }
 
         }

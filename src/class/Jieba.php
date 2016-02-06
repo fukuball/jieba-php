@@ -16,6 +16,8 @@ namespace Fukuball\Jieba;
 
 use Fukuball\Tebru\MultiArray;
 
+define("MIN_FLOAT", -3.14e+100);
+
 /**
  * Jieba
  *
@@ -340,51 +342,35 @@ class Jieba
             $y = $current_route_keys[0]+1;
             $l_word = mb_substr($sentence, $x, ($y-$x), 'UTF-8');
 
-            var_dump($l_word);
-
             if (($y-$x)==1) {
                 $buf = $buf.$l_word;
-                var_dump($buf);
             } else {
 
                 if (mb_strlen($buf, 'UTF-8')>0) {
                     if (mb_strlen($buf, 'UTF-8')==1) {
-                        var_dump("1");
                         array_push($words, $buf);
-                        var_dump($buf);
                         $buf = '';
                     } else {
-                        var_dump("2");
                         $regognized = Finalseg::cut($buf);
                         foreach ($regognized as $key => $word) {
                             array_push($words, $word);
-                            var_dump($word);
                         }
                         $buf = '';
                     }
 
                 }
-                var_dump("3");
                 array_push($words, $l_word);
-                var_dump($l_word);
             }
             $x = $y;
         }
 
-        var_dump("7");
-        var_dump($buf);
-
         if (mb_strlen($buf, 'UTF-8')>0) {
             if (mb_strlen($buf, 'UTF-8')==1) {
-                var_dump("4");
                 array_push($words, $buf);
-                var_dump($buf);
             } else {
-                var_dump("5");
                 $regognized = Finalseg::cut($buf);
                 foreach ($regognized as $key => $word) {
                     array_push($words, $word);
-                    var_dump($word);
                 }
             }
         }
