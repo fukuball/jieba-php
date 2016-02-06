@@ -64,7 +64,7 @@ class Jieba
         $t1 = microtime(true);
         self::$trie = Jieba::genTrie(dirname(dirname(__FILE__))."/dict/".$f_name);
         foreach (self::$FREQ as $key => $value) {
-            self::$FREQ[$key] = ($value/self::$total);
+            self::$FREQ[$key] = log($value / self::$total);
         }
         self::$min_freq = min(self::$FREQ);
 
@@ -96,9 +96,9 @@ class Jieba
                 $w_c = mb_substr($sentence, $i, (($x+1)-$i), 'UTF-8');
                 $previous_freq = current(self::$route[$x+1]);
                 if (isset(self::$FREQ[$w_c])) {
-                    $current_freq = (float) $previous_freq*self::$FREQ[$w_c];
+                    $current_freq = (float) $previous_freq + self::$FREQ[$w_c];
                 } else {
-                    $current_freq = (float) $previous_freq*self::$min_freq;
+                    $current_freq = (float) $previous_freq + self::$min_freq;
                 }
                 $candidates[$x] = $current_freq;
             }
@@ -173,8 +173,8 @@ class Jieba
             $word = $explode_line[0];
             $freq = $explode_line[1];
             $freq = (float) $freq;
-            self::$FREQ[$word] = $freq;
             self::$total += $freq;
+            self::$FREQ[$word] = log($freq / self::$total);
             $l = mb_strlen($word, 'UTF-8');
             $word_c = array();
             for ($i=0; $i<$l; $i++) {
@@ -340,35 +340,51 @@ class Jieba
             $y = $current_route_keys[0]+1;
             $l_word = mb_substr($sentence, $x, ($y-$x), 'UTF-8');
 
+            var_dump($l_word);
+
             if (($y-$x)==1) {
                 $buf = $buf.$l_word;
+                var_dump($buf);
             } else {
 
                 if (mb_strlen($buf, 'UTF-8')>0) {
                     if (mb_strlen($buf, 'UTF-8')==1) {
+                        var_dump("1");
                         array_push($words, $buf);
+                        var_dump($buf);
                         $buf = '';
                     } else {
+                        var_dump("2");
                         $regognized = Finalseg::cut($buf);
                         foreach ($regognized as $key => $word) {
                             array_push($words, $word);
+                            var_dump($word);
                         }
                         $buf = '';
                     }
 
                 }
+                var_dump("3");
                 array_push($words, $l_word);
+                var_dump($l_word);
             }
             $x = $y;
         }
 
+        var_dump("7");
+        var_dump($buf);
+
         if (mb_strlen($buf, 'UTF-8')>0) {
             if (mb_strlen($buf, 'UTF-8')==1) {
+                var_dump("4");
                 array_push($words, $buf);
+                var_dump($buf);
             } else {
+                var_dump("5");
                 $regognized = Finalseg::cut($buf);
                 foreach ($regognized as $key => $word) {
                     array_push($words, $word);
+                    var_dump($word);
                 }
             }
         }
@@ -398,7 +414,7 @@ class Jieba
         $seg_list = array();
 
         $re_han_pattern = '([\x{4E00}-\x{9FA5}]+)';
-        $re_skip_pattern = '([a-zA-Z0-9+#\n]+)';
+        $re_skip_pattern = '([a-zA-Z0-9+#\r\n]+)';
         preg_match_all(
             '/('.$re_han_pattern.'|'.$re_skip_pattern.')/u',
             $sentence,

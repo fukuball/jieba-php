@@ -26,17 +26,17 @@ Finalseg::init();
 $seg_list = Jieba::cut("怜香惜玉也得要看对象啊！");
 var_dump($seg_list);
 
-echo "Full Mode: \n";
-$seg_list = Jieba::cut("我来到北京清华大学", true);
-var_dump($seg_list);
-
-echo "Default Mode: \n";
-$seg_list = Jieba::cut("我来到北京清华大学", false);
-var_dump($seg_list);
-
-$seg_list = Jieba::cut("他来到了网易杭研大厦");
-var_dump($seg_list);
-
-$seg_list = Jieba::cutForSearch("小明硕士毕业于中国科学院计算所，后在日本京都大学深造");
-var_dump($seg_list);
+//echo "Full Mode: \n";
+//$seg_list = Jieba::cut("我来到北京清华大学", true);
+//var_dump($seg_list);
+//
+//echo "Default Mode: \n";
+//$seg_list = Jieba::cut("我来到北京清华大学", false);
+//var_dump($seg_list);
+//
+//$seg_list = Jieba::cut("他来到了网易杭研大厦");
+//var_dump($seg_list);
+//
+//$seg_list = Jieba::cutForSearch("小明硕士毕业于中国科学院计算所，后在日本京都大学深造");
+//var_dump($seg_list);
 ?>

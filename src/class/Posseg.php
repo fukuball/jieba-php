@@ -14,6 +14,8 @@
 
 namespace Fukuball\Jieba;
 
+define("MIN_FLOAT", -3.14e+100);
+
 /**
  * Posseg
  *
@@ -160,7 +162,7 @@ class Posseg
             if (isset(self::$prob_emit[$y][$c])) {
                 $prob_emit = self::$prob_emit[$y][$c];
             } else {
-                $prob_emit = 0;
+                $prob_emit = MIN_FLOAT;
             }
             $V[0][$y] = self::$prob_start[$y]*$prob_emit;
             $mem_path[0][$y] = '';
@@ -221,13 +223,13 @@ class Posseg
                     if (isset(self::$prob_trans[$y0][$y])) {
                         $prob_trans = self::$prob_trans[$y0][$y];
                     } else {
-                        $prob_trans = 0;
+                        $prob_trans = MIN_FLOAT;
                     }
                     $prob_emit = 0.0;
                     if (isset(self::$prob_emit[$y][$c])) {
                         $prob_emit = self::$prob_emit[$y][$c];
                     } else {
-                        $prob_emit = 0;
+                        $prob_emit = MIN_FLOAT;
                     }
                     $temp_prob_array[$y0] = $V[$t-1][$y0]*$prob_trans*$prob_emit;
                 }
@@ -344,6 +346,64 @@ class Posseg
     }// end function __cut
 
     /**
+     * Static method __cutDetail
+     *
+     * @param string $sentence # input sentence
+     * @param array  $options  # other options
+     *
+     * @return array $words
+     */
+    public static function __cutDetail($sentence, $options = array())
+    {
+
+        $defaults = array(
+            'mode'=>'default'
+        );
+
+        $options = array_merge($defaults, $options);
+
+        $words = array();
+
+        $re_han_pattern = '([\x{4E00}-\x{9FA5}]+)';
+        $re_skip_pattern = '([a-zA-Z0-9+#\r\n]+)';
+        $re_punctuation_pattern = '([\x{ff5e}\x{ff01}\x{ff08}\x{ff09}\x{300e}'.
+                                    '\x{300c}\x{300d}\x{300f}\x{3001}\x{ff1a}\x{ff1b}'.
+                                    '\x{ff0c}\x{ff1f}\x{3002}]+)';
+        $re_eng_pattern = '[a-zA-Z+#]+';
+        $re_num_pattern = '[0-9]+';
+
+        preg_match_all(
+            '/('.$re_han_pattern.'|'.$re_skip_pattern.'|'.$re_punctuation_pattern.')/u',
+            $sentence,
+            $matches,
+            PREG_PATTERN_ORDER
+        );
+        $blocks = $matches[0];
+
+        foreach ($blocks as $blk) {
+
+            if (preg_match('/'.$re_han_pattern.'/u', $blk)) {
+                $blk_words = self::__cut($blk);
+                foreach ($blk_words as $blk_word) {
+                    array_push($worlds, $blk_word);
+                }
+            } elseif (preg_match('/'.$re_skip_pattern.'/u', $blk)) {
+                if (preg_match('/'.$re_num_pattern.'/u', $blk)) {
+                    array_push($worlds, array("word"=>$blk, "tag"=>"m"));
+                } elseif (preg_match('/'.$re_eng_pattern.'/u', $blk)) {
+                    array_push($worlds, array("word"=>$blk, "tag"=>"eng"));
+                }
+            } elseif (preg_match('/'.$re_punctuation_pattern.'/u', $blk)) {
+                array_push($worlds, array("word"=>$blk, "tag"=>"w"));
+            }
+
+        }
+
+        return $words;
+
+    }// end function __cutDetail
+
+    /**
      * Static method __cutDAG
      *
      * @param string $sentence # input sentence
@@ -392,7 +452,7 @@ class Posseg
                         );
                         $buf = '';
                     } else {
-                        $regognized = self::__cut($buf);
+                        $regognized = self::__cutDetail($buf);
                         foreach ($regognized as $key => $word) {
                             array_push($words, $word);
                         }
@@ -426,7 +486,7 @@ class Posseg
                     array("word"=>$buf, "tag"=>$buf_tag)
                 );
             } else {
-                $regognized = self::__cut($buf);
+                $regognized = self::__cutDetail($buf);
                 foreach ($regognized as $key => $word) {
                     array_push($words, $word);
                 }
@@ -457,7 +517,7 @@ class Posseg
         $seg_list = array();
 
         $re_han_pattern = '([\x{4E00}-\x{9FA5}]+)';
-        $re_skip_pattern = '([a-zA-Z0-9+#\n]+)';
+        $re_skip_pattern = '([a-zA-Z0-9+#\r\n]+)';
         $re_punctuation_pattern = '([\x{ff5e}\x{ff01}\x{ff08}\x{ff09}\x{300e}'.
                                     '\x{300c}\x{300d}\x{300f}\x{3001}\x{ff1a}\x{ff1b}'.
                                     '\x{ff0c}\x{ff1f}\x{3002}]+)';

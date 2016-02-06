@@ -14,6 +14,8 @@
 
 namespace Fukuball\Jieba;
 
+define("MIN_FLOAT", -3.14e+100);
+
 /**
  * Finalseg
  *
@@ -103,7 +105,7 @@ class Finalseg
             if (isset(self::$prob_emit[$y][$c])) {
                 $prob_emit = self::$prob_emit[$y][$c];
             } else {
-                $prob_emit = 0;
+                $prob_emit = MIN_FLOAT;
             }
             $V[0][$y] = self::$prob_start[$y]*$prob_emit;
             $path[$y] = $y;
@@ -122,13 +124,13 @@ class Finalseg
                     if (isset(self::$prob_trans[$y0][$y])) {
                         $prob_trans = self::$prob_trans[$y0][$y];
                     } else {
-                        $prob_trans = 0;
+                        $prob_trans = MIN_FLOAT;
                     }
                     $prob_emit = 0.0;
                     if (isset(self::$prob_emit[$y][$c])) {
                         $prob_emit = self::$prob_emit[$y][$c];
                     } else {
-                        $prob_emit = 0;
+                        $prob_emit = MIN_FLOAT;
                     }
                     $temp_prob_array[$y0] = $V[$t-1][$y0]*$prob_trans*$prob_emit;
                 }
@@ -234,7 +236,7 @@ class Finalseg
         $seg_list = array();
 
         $re_han_pattern = '([\x{4E00}-\x{9FA5}]+)';
-        $re_skip_pattern = '([a-zA-Z0-9+#\n]+)';
+        $re_skip_pattern = '([a-zA-Z0-9+#\r\n]+)';
         preg_match_all(
             '/('.$re_han_pattern.'|'.$re_skip_pattern.')/u',
             $sentence,
