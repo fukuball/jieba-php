@@ -6,7 +6,9 @@ jieba-php
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/9360ebe8fc2d47d8a64f49f57d2f016f)](https://www.codacy.com/app/fukuball/jieba-php)
 [![Made with Love](https://img.shields.io/badge/made%20with-%e2%9d%a4-ff69b4.svg)](http://www.fukuball.com)
 
-"結巴"中文分詞：做最好的 PHP 中文分詞、中文斷詞組件，目前翻譯版本為 jieba-0.20 版本，未來再慢慢往上升級，效能也需要再改善，請有興趣的開發者一起加入開發！若想使用 Python 版本請前往 [fxsjy/jieba](https://github.com/fxsjy/jieba)
+"結巴"中文分詞：做最好的 PHP 中文分詞、中文斷詞組件，目前翻譯版本為 jieba-0.25 版本，未來再慢慢往上升級，效能也需要再改善，請有興趣的開發者一起加入開發！若想使用 Python 版本請前往 [fxsjy/jieba](https://github.com/fxsjy/jieba)
+
+現在已經可以支援繁體中文！只要將字典切換為 big 模式即可！
 
 "Jieba" (Chinese for "to stutter") Chinese text segmentation: built to be the best PHP Chinese word segmentation module.
 
@@ -476,6 +478,67 @@ array(21) {
 }
 ```
 
+功能 5)：切換成繁體字典
+==============
+
+代碼示例 (Tutorial)
+
+```php
+ini_set('memory_limit', '1024M');
+
+require_once dirname(dirname(__FILE__))."/vendor/multi-array/MultiArray.php";
+require_once dirname(dirname(__FILE__))."/vendor/multi-array/Factory/MultiArrayFactory.php";
+require_once dirname(dirname(__FILE__))."/class/Jieba.php";
+require_once dirname(dirname(__FILE__))."/class/Finalseg.php";
+use Fukuball\Jieba\Jieba;
+use Fukuball\Jieba\Finalseg;
+Jieba::init(array('mode'=>'default','dict'=>'big'));
+Finalseg::init();
+
+$seg_list = Jieba::cut("怜香惜玉也得要看对象啊！");
+var_dump($seg_list);
+
+$seg_list = Jieba::cut("憐香惜玉也得要看對象啊！");
+var_dump($seg_list);
+```
+
+Output:
+
+```php
+array(7) {
+  [0]=>
+  string(12) "怜香惜玉"
+  [1]=>
+  string(3) "也"
+  [2]=>
+  string(3) "得"
+  [3]=>
+  string(3) "要"
+  [4]=>
+  string(3) "看"
+  [5]=>
+  string(6) "对象"
+  [6]=>
+  string(3) "啊"
+}
+array(7) {
+  [0]=>
+  string(12) "憐香惜玉"
+  [1]=>
+  string(3) "也"
+  [2]=>
+  string(3) "得"
+  [3]=>
+  string(3) "要"
+  [4]=>
+  string(3) "看"
+  [5]=>
+  string(6) "對象"
+  [6]=>
+  string(3) "啊"
+}
+```
+
 常見問題
 ========
 1) 模型的數據是如何生成的？ https://github.com/fxsjy/jieba/issues/7
@@ -917,6 +980,67 @@ array(21) {
     ["tag"]=>
     string(1) "w"
   }
+}
+```
+
+Function 5)：Use Traditional Chinese
+==============
+
+Example (Tutorial)
+
+```php
+ini_set('memory_limit', '1024M');
+
+require_once dirname(dirname(__FILE__))."/vendor/multi-array/MultiArray.php";
+require_once dirname(dirname(__FILE__))."/vendor/multi-array/Factory/MultiArrayFactory.php";
+require_once dirname(dirname(__FILE__))."/class/Jieba.php";
+require_once dirname(dirname(__FILE__))."/class/Finalseg.php";
+use Fukuball\Jieba\Jieba;
+use Fukuball\Jieba\Finalseg;
+Jieba::init(array('mode'=>'default','dict'=>'big'));
+Finalseg::init();
+
+$seg_list = Jieba::cut("怜香惜玉也得要看对象啊！");
+var_dump($seg_list);
+
+$seg_list = Jieba::cut("憐香惜玉也得要看對象啊！");
+var_dump($seg_list);
+```
+
+Output:
+
+```php
+array(7) {
+  [0]=>
+  string(12) "怜香惜玉"
+  [1]=>
+  string(3) "也"
+  [2]=>
+  string(3) "得"
+  [3]=>
+  string(3) "要"
+  [4]=>
+  string(3) "看"
+  [5]=>
+  string(6) "对象"
+  [6]=>
+  string(3) "啊"
+}
+array(7) {
+  [0]=>
+  string(12) "憐香惜玉"
+  [1]=>
+  string(3) "也"
+  [2]=>
+  string(3) "得"
+  [3]=>
+  string(3) "要"
+  [4]=>
+  string(3) "看"
+  [5]=>
+  string(6) "對象"
+  [6]=>
+  string(3) "啊"
 }
 ```
 

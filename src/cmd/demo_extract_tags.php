@@ -12,7 +12,7 @@
  * @version  GIT: <fukuball/jieba-php>
  * @link     https://github.com/fukuball/jieba-php
  */
-ini_set('memory_limit', '600M');
+ini_set('memory_limit', '1024M');
 
 require_once dirname(dirname(__FILE__))."/vendor/multi-array/MultiArray.php";
 require_once dirname(dirname(__FILE__))."/vendor/multi-array/Factory/MultiArrayFactory.php";
@@ -22,7 +22,7 @@ require_once dirname(dirname(__FILE__))."/class/JiebaAnalyse.php";
 use Fukuball\Jieba\Jieba;
 use Fukuball\Jieba\Finalseg;
 use Fukuball\Jieba\JiebaAnalyse;
-Jieba::init(array('mode'=>'test','dict'=>'samll'));
+Jieba::init(array('mode'=>'test','dict'=>'big'));
 Finalseg::init();
 JiebaAnalyse::init();
 

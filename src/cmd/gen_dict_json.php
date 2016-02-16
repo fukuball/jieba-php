@@ -18,7 +18,7 @@ require_once dirname(dirname(__FILE__))."/vendor/multi-array/MultiArray.php";
 require_once dirname(dirname(__FILE__))."/vendor/multi-array/Factory/MultiArrayFactory.php";
 use Fukuball\Tebru\MultiArray;
 
-$content = fopen(dirname(dirname(__FILE__))."/dict/dict.txt", "r");
+$content = fopen(dirname(dirname(__FILE__))."/dict/dict.big.txt", "r");
 
 $trie = new MultiArray(array());
 
@@ -39,6 +39,6 @@ while (($line = fgets($content)) !== false) {
 
 }
 
-file_put_contents(dirname(dirname(__FILE__))."/dict/dict.txt.json", json_encode($trie->storage));
-file_put_contents(dirname(dirname(__FILE__))."/dict/dict.txt.cache.json", json_encode($trie->cache));
+file_put_contents(dirname(dirname(__FILE__))."/dict/dict.big.txt.json", json_encode($trie->storage));
+file_put_contents(dirname(dirname(__FILE__))."/dict/dict.big.txt.cache.json", json_encode($trie->cache));
 ?>
