@@ -59,7 +59,7 @@ class Jieba
 
         if ($options['dict']=='small') {
             $f_name = "dict.small.txt";
-        } else if ($options['dict']=='big') {
+        } elseif ($options['dict']=='big') {
             $f_name = "dict.big.txt";
         } else {
             $f_name = "dict.txt";
