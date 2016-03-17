@@ -116,7 +116,7 @@ class JiebaAnalyse
 
         arsort($tf_idf_list);
 
-        $tags = array_slice($tf_idf_list, 0, $top_k);
+        $tags = array_slice($tf_idf_list, 0, $top_k, true);
 
         return $tags;
 
