@@ -54,10 +54,18 @@ class Posseg
         self::$prob_trans = self::loadModel(dirname(dirname(__FILE__)).'/model/pos/prob_trans.json');
         self::$prob_emit = self::loadModel(dirname(dirname(__FILE__)).'/model/pos/prob_emit.json');
         self::$char_state = self::loadModel(dirname(dirname(__FILE__)).'/model/pos/char_state.json');
+        $content = fopen(dirname(dirname(__FILE__))."/dict/".Jieba::$dictname, "r");
 
+        while (($line = fgets($content)) !== false) {
+            $explode_line = explode(" ", trim($line));
+            $word = $explode_line[0];
+            $freq = $explode_line[1];
+            $tag = $explode_line[2];
+            self::$word_tag[$word] = $tag;
+        }
+        fclose($content);
 
-        $content = fopen(dirname(dirname(__FILE__))."/dict/dict.txt", "r");
-
+        $content = fopen(Jieba::$user_dictname, "r");
         while (($line = fgets($content)) !== false) {
             $explode_line = explode(" ", trim($line));
             $word = $explode_line[0];
@@ -510,7 +518,7 @@ class Posseg
             'mode'=>'default'
         );
 
-        $options = array_merge($defaults, $options);
+        @$options = array_merge($defaults, $options);
 
         $seg_list = array();
 

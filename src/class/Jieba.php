@@ -35,6 +35,8 @@ class Jieba
     public static $FREQ = array();
     public static $min_freq = 0.0;
     public static $route = array();
+    public static $dictname;
+    public static $user_dictname;
 
     /**
      * Static method init
@@ -59,8 +61,9 @@ class Jieba
 
         if ($options['dict']=='small') {
             $f_name = "dict.small.txt";
-        } elseif ($options['dict']=='big') {
+        } else if ($options['dict']=='big') {
             $f_name = "dict.big.txt";
+            self::$dictname="dict.big.txt";
         } else {
             $f_name = "dict.txt";
         }
@@ -170,12 +173,13 @@ class Jieba
      */
     public static function loadUserDict($f_name, $options = array())
     {
-
+        self::$user_dictname=$f_name;
         $content = fopen($f_name, "r");
         while (($line = fgets($content)) !== false) {
             $explode_line = explode(" ", trim($line));
             $word = $explode_line[0];
             $freq = $explode_line[1];
+            $tag = $explode_line[2];
             $freq = (float) $freq;
             self::$total += $freq;
             self::$FREQ[$word] = log($freq / self::$total);
