@@ -54,8 +54,8 @@ class Posseg
         self::$prob_trans = self::loadModel(dirname(dirname(__FILE__)).'/model/pos/prob_trans.json');
         self::$prob_emit = self::loadModel(dirname(dirname(__FILE__)).'/model/pos/prob_emit.json');
         self::$char_state = self::loadModel(dirname(dirname(__FILE__)).'/model/pos/char_state.json');
+
         $content = fopen(dirname(dirname(__FILE__))."/dict/".Jieba::$dictname, "r");
-
         while (($line = fgets($content)) !== false) {
             $explode_line = explode(" ", trim($line));
             $word = $explode_line[0];
@@ -65,15 +65,23 @@ class Posseg
         }
         fclose($content);
 
-        $content = fopen(Jieba::$user_dictname, "r");
-        while (($line = fgets($content)) !== false) {
-            $explode_line = explode(" ", trim($line));
-            $word = $explode_line[0];
-            $freq = $explode_line[1];
-            $tag = $explode_line[2];
-            self::$word_tag[$word] = $tag;
+        if(sizeof(Jieba::$user_dictname)!=0)
+        {
+
+          for($i=0;$i<sizeof(Jieba::$user_dictname);$i++)
+          {
+            $content = fopen(Jieba::$user_dictname[$i], "r");
+            while (($line = fgets($content)) !== false) {
+                $explode_line = explode(" ", trim($line));
+                $word = $explode_line[0];
+                $freq = $explode_line[1];
+                $tag = $explode_line[2];
+                self::$word_tag[$word] = $tag;
+            }
+            fclose($content);
+          }
+
         }
-        fclose($content);
 
         $content = fopen(dirname(dirname(__FILE__))."/dict/pos_tag_readable.txt", "r");
 

@@ -36,7 +36,7 @@ class Jieba
     public static $min_freq = 0.0;
     public static $route = array();
     public static $dictname;
-    public static $user_dictname;
+    public static $user_dictname=array();
 
     /**
      * Static method init
@@ -173,7 +173,7 @@ class Jieba
      */
     public static function loadUserDict($f_name, $options = array())
     {
-        self::$user_dictname=$f_name;
+        array_push(self::$user_dictname,$f_name);
         $content = fopen($f_name, "r");
         while (($line = fgets($content)) !== false) {
             $explode_line = explode(" ", trim($line));
