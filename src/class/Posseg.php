@@ -67,7 +67,7 @@ class Posseg
 
 
         if (sizeof(Jieba::$user_dictname)!=0) {
-            for ($i=0;$i<sizeof(Jieba::$user_dictname);$i++) {
+            for ($i = 0; $i<sizeof(Jieba::$user_dictname); $i++) {
                 $content = fopen(Jieba::$user_dictname[$i], "r");
                 while (($line = fgets($content)) !== false) {
                     $explode_line = explode(" ", trim($line));
