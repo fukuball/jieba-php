@@ -26,7 +26,6 @@ namespace Fukuball\Jieba;
  */
 class Posseg
 {
-
     public static $prob_start = array();
     public static $prob_trans = array();
     public static $prob_emit = array();
@@ -43,7 +42,6 @@ class Posseg
      */
     public static function init($options = array())
     {
-
         $defaults = array(
             'mode'=>'default'
         );
@@ -55,17 +53,32 @@ class Posseg
         self::$prob_emit = self::loadModel(dirname(dirname(__FILE__)).'/model/pos/prob_emit.json');
         self::$char_state = self::loadModel(dirname(dirname(__FILE__)).'/model/pos/char_state.json');
 
-
-        $content = fopen(dirname(dirname(__FILE__))."/dict/dict.txt", "r");
-
-        while (($line = fgets($content)) !== false) {
-            $explode_line = explode(" ", trim($line));
-            $word = $explode_line[0];
-            $freq = $explode_line[1];
-            $tag = $explode_line[2];
-            self::$word_tag[$word] = $tag;
+        if (Jieba::$dictname!="") {
+            $content = fopen(dirname(dirname(__FILE__))."/dict/".Jieba::$dictname, "r");
+            while (($line = fgets($content)) !== false) {
+                $explode_line = explode(" ", trim($line));
+                $word = $explode_line[0];
+                $freq = $explode_line[1];
+                $tag = $explode_line[2];
+                self::$word_tag[$word] = $tag;
+            }
+            fclose($content);
         }
-        fclose($content);
+
+
+        if (sizeof(Jieba::$user_dictname)!=0) {
+            for ($i = 0; $i<sizeof(Jieba::$user_dictname); $i++) {
+                $content = fopen(Jieba::$user_dictname[$i], "r");
+                while (($line = fgets($content)) !== false) {
+                    $explode_line = explode(" ", trim($line));
+                    $word = $explode_line[0];
+                    $freq = $explode_line[1];
+                    $tag = $explode_line[2];
+                    self::$word_tag[$word] = $tag;
+                }
+                fclose($content);
+            }
+        }
 
         $content = fopen(dirname(dirname(__FILE__))."/dict/pos_tag_readable.txt", "r");
 
@@ -76,7 +89,6 @@ class Posseg
             self::$pos_tag_readable[$tag] = $meaning;
         }
         fclose($content);
-
     }// end function init
 
     /**
@@ -89,7 +101,6 @@ class Posseg
      */
     public static function loadModel($f_name, $options = array())
     {
-
         $defaults = array(
             'mode'=>'default'
         );
@@ -97,7 +108,6 @@ class Posseg
         $options = array_merge($defaults, $options);
 
         return json_decode(file_get_contents($f_name), true);
-
     }// end function loadModel
 
     /**
@@ -111,13 +121,11 @@ class Posseg
      */
     public static function getTopStates($t_state_v, $top_k = 4, $options = array())
     {
-
         arsort($t_state_v);
 
         $top_states = array_slice($t_state_v, 0, $top_k);
 
         return $top_states;
-
     }// end function getTopStates
 
     /**
@@ -130,7 +138,6 @@ class Posseg
      */
     public static function viterbi($sentence, $options = array())
     {
-
         $defaults = array(
             'mode'=>'default'
         );
@@ -167,7 +174,6 @@ class Posseg
         }
 
         for ($t=1; $t<mb_strlen($obs, 'UTF-8'); $t++) {
-
             $c = mb_substr($obs, $t, 1, 'UTF-8');
             $V[$t] = array();
             $mem_path[$t] = array();
@@ -187,7 +193,6 @@ class Posseg
             $prev_states_expect_next = array();
 
             foreach ($prev_states as $prev_state) {
-
                 $prev_states_expect_next
                     = array_unique(
                         array_merge(
@@ -208,9 +213,7 @@ class Posseg
             $obs_states = array_intersect($obs_states, $prev_states_expect_next);
 
             if (count($obs_states)==0) {
-
                 $obs_states = $all_states;
-
             }
 
 
@@ -237,7 +240,6 @@ class Posseg
                 $V[$t][$y] = $max_prob;
                 $mem_path[$t][$y] = $max_key;
             }
-
         }
 
         $last = array();
@@ -268,7 +270,6 @@ class Posseg
         }
 
         return array("prob"=>$return_prob, "pos_list"=>$route);
-
     }// end function viterbi
 
     /**
@@ -281,7 +282,6 @@ class Posseg
      */
     public static function __cut($sentence, $options = array())
     {
-
         $defaults = array(
             'mode'=>'default'
         );
@@ -300,7 +300,6 @@ class Posseg
         $len = mb_strlen($sentence, 'UTF-8');
 
         for ($i=0; $i<$len; $i++) {
-
             $char = mb_substr($sentence, $i, 1, 'UTF-8');
             eval('$pos_array = array'.$pos_list[$i].';');
             $pos = $pos_array[0];
@@ -326,7 +325,6 @@ class Posseg
                 array_push($words, $this_word_pair);
                 $next = $i+1;
             }
-
         }
 
         if ($next<$len) {
@@ -340,7 +338,6 @@ class Posseg
         }
 
         return $words;
-
     }// end function __cut
 
     /**
@@ -353,7 +350,6 @@ class Posseg
      */
     public static function __cutDetail($sentence, $options = array())
     {
-
         $defaults = array(
             'mode'=>'default'
         );
@@ -379,7 +375,6 @@ class Posseg
         $blocks = $matches[0];
 
         foreach ($blocks as $blk) {
-
             if (preg_match('/'.$re_han_pattern.'/u', $blk)) {
                 $blk_words = self::__cut($blk);
                 foreach ($blk_words as $blk_word) {
@@ -394,11 +389,9 @@ class Posseg
             } elseif (preg_match('/'.$re_punctuation_pattern.'/u', $blk)) {
                 array_push($words, array("word"=>$blk, "tag"=>"w"));
             }
-
         }
 
         return $words;
-
     }// end function __cutDetail
 
     /**
@@ -411,7 +404,6 @@ class Posseg
      */
     public static function __cutDAG($sentence, $options = array())
     {
-
         $defaults = array(
             'mode'=>'default'
         );
@@ -436,7 +428,6 @@ class Posseg
             if (($y-$x)==1) {
                 $buf = $buf.$l_word;
             } else {
-
                 if (mb_strlen($buf, 'UTF-8')>0) {
                     if (mb_strlen($buf, 'UTF-8')==1) {
                         if (isset(self::$word_tag[$buf])) {
@@ -456,7 +447,6 @@ class Posseg
                         }
                         $buf = '';
                     }
-
                 }
 
                 if (isset(self::$word_tag[$l_word])) {
@@ -492,7 +482,6 @@ class Posseg
         }
 
         return $words;
-
     }// end function __cutDAG
 
     /**
@@ -505,12 +494,11 @@ class Posseg
      */
     public static function cut($sentence, $options = array())
     {
-
         $defaults = array(
             'mode'=>'default'
         );
 
-        $options = array_merge($defaults, $options);
+        @$options = array_merge($defaults, $options);
 
         $seg_list = array();
 
@@ -531,33 +519,24 @@ class Posseg
         $blocks = $matches[0];
 
         foreach ($blocks as $blk) {
-
             if (preg_match('/'.$re_han_pattern.'/u', $blk)) {
-
                 $words = Posseg::__cutDAG($blk);
 
                 foreach ($words as $word) {
                     array_push($seg_list, $word);
                 }
-
             } elseif (preg_match('/'.$re_skip_pattern.'/u', $blk)) {
-
                 if (preg_match('/'.$re_num_pattern.'/u', $blk)) {
                     array_push($seg_list, array("word"=>$blk, "tag"=>"m"));
                 } elseif (preg_match('/'.$re_eng_pattern.'/u', $blk)) {
                     array_push($seg_list, array("word"=>$blk, "tag"=>"eng"));
                 }
-
             } elseif (preg_match('/'.$re_punctuation_pattern.'/u', $blk)) {
-
                 array_push($seg_list, array("word"=>$blk, "tag"=>"w"));
-
             }
-
         }
 
         return $seg_list;
-
     }// end function cut
 
     /**
@@ -570,7 +549,6 @@ class Posseg
      */
     public static function posTagReadable($seg_list, $options = array())
     {
-
         $defaults = array(
             'mode'=>'default'
         );
@@ -580,13 +558,10 @@ class Posseg
         $new_seg_list = array();
 
         foreach ($seg_list as $seg) {
-
             $seg['tag_readable'] = self::$pos_tag_readable[$seg['tag']];
             array_push($new_seg_list, $seg);
-
         }
 
         return $new_seg_list;
-
     }// end function posTagReadable
 }

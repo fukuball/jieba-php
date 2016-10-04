@@ -35,6 +35,8 @@ class Jieba
     public static $FREQ = array();
     public static $min_freq = 0.0;
     public static $route = array();
+    public static $dictname;
+    public static $user_dictname=array();
 
     /**
      * Static method init
@@ -45,7 +47,6 @@ class Jieba
      */
     public static function init($options = array())
     {
-
         $defaults = array(
             'mode'=>'default',
             'dict'=>'normal'
@@ -59,10 +60,13 @@ class Jieba
 
         if ($options['dict']=='small') {
             $f_name = "dict.small.txt";
+            self::$dictname="dict.small.txt";
         } elseif ($options['dict']=='big') {
             $f_name = "dict.big.txt";
+            self::$dictname="dict.big.txt";
         } else {
             $f_name = "dict.txt";
+            self::$dictname="dict.txt";
         }
 
         $t1 = microtime(true);
@@ -76,7 +80,6 @@ class Jieba
             echo "loading model cost ".(microtime(true) - $t1)." seconds.\n";
             echo "Trie has been built succesfully.\n";
         }
-
     }// end function init
 
     /**
@@ -90,7 +93,6 @@ class Jieba
      */
     public static function calc($sentence, $DAG, $options = array())
     {
-
         $N = mb_strlen($sentence, 'UTF-8');
         self::$route = array();
         self::$route[$N] = array($N => 1.0);
@@ -113,7 +115,6 @@ class Jieba
         }
 
         return self::$route;
-
     }// end function calc
 
     /**
@@ -126,7 +127,6 @@ class Jieba
      */
     public static function genTrie($f_name, $options = array())
     {
-
         $defaults = array(
             'mode'=>'default'
         );
@@ -157,7 +157,6 @@ class Jieba
         fclose($content);
 
         return self::$trie;
-
     }// end function genTrie
 
     /**
@@ -170,12 +169,13 @@ class Jieba
      */
     public static function loadUserDict($f_name, $options = array())
     {
-
+        array_push(self::$user_dictname, $f_name);
         $content = fopen($f_name, "r");
         while (($line = fgets($content)) !== false) {
             $explode_line = explode(" ", trim($line));
             $word = $explode_line[0];
             $freq = $explode_line[1];
+            $tag = $explode_line[2];
             $freq = (float) $freq;
             self::$total += $freq;
             self::$FREQ[$word] = log($freq / self::$total);
@@ -191,7 +191,6 @@ class Jieba
         fclose($content);
 
         return self::$trie;
-
     }// end function loadUserDict
 
     /**
@@ -204,7 +203,6 @@ class Jieba
      */
     public static function __cutAll($sentence, $options = array())
     {
-
         $defaults = array(
             'mode'=>'default'
         );
@@ -217,33 +215,22 @@ class Jieba
         $old_j = -1;
 
         foreach ($DAG as $k => $L) {
-
             if (count($L) == 1 && $k > $old_j) {
-
                 $word = mb_substr($sentence, $k, (($L[0]-$k)+1), 'UTF-8');
                 array_push($words, $word);
                 $old_j = $L[0];
-
             } else {
-
                 foreach ($L as $j) {
-
                     if ($j > $k) {
-
                         $word = mb_substr($sentence, $k, ($j-$k)+1, 'UTF-8');
                         array_push($words, $word);
                         $old_j = $j;
-
                     }
-
                 }
-
             }
-
         }
 
         return $words;
-
     }// end function __cutAll
 
     /**
@@ -256,7 +243,6 @@ class Jieba
      */
     public static function getDAG($sentence, $options = array())
     {
-
         $defaults = array(
             'mode'=>'default'
         );
@@ -309,7 +295,6 @@ class Jieba
         }
 
         return $DAG;
-
     }// end function getDAG
 
     /**
@@ -322,7 +307,6 @@ class Jieba
      */
     public static function __cutDAG($sentence, $options = array())
     {
-
         $defaults = array(
             'mode'=>'default'
         );
@@ -347,7 +331,6 @@ class Jieba
             if (($y-$x)==1) {
                 $buf = $buf.$l_word;
             } else {
-
                 if (mb_strlen($buf, 'UTF-8')>0) {
                     if (mb_strlen($buf, 'UTF-8')==1) {
                         array_push($words, $buf);
@@ -359,7 +342,6 @@ class Jieba
                         }
                         $buf = '';
                     }
-
                 }
                 array_push($words, $l_word);
             }
@@ -378,7 +360,6 @@ class Jieba
         }
 
         return $words;
-
     }// end function __cutDAG
 
     /**
@@ -392,7 +373,6 @@ class Jieba
      */
     public static function cut($sentence, $cut_all = false, $options = array())
     {
-
         $defaults = array(
             'mode'=>'default'
         );
@@ -412,9 +392,7 @@ class Jieba
         $blocks = $matches[0];
 
         foreach ($blocks as $blk) {
-
             if (preg_match('/'.$re_han_pattern.'/u', $blk)) {
-
                 if ($cut_all) {
                     $words = Jieba::__cutAll($blk);
                 } else {
@@ -424,18 +402,12 @@ class Jieba
                 foreach ($words as $word) {
                     array_push($seg_list, $word);
                 }
-
             } else {
-
                 array_push($seg_list, $blk);
-
             }// end else (preg_match('/'.$re_han_pattern.'/u', $blk))
-
-
         }// end foreach ($blocks as $blk)
 
         return $seg_list;
-
     }// end function cut
 
     /**
@@ -448,7 +420,6 @@ class Jieba
      */
     public static function cutForSearch($sentence, $options = array())
     {
-
         $defaults = array(
             'mode'=>'default'
         );
@@ -460,46 +431,31 @@ class Jieba
         $cut_seg_list = Jieba::cut($sentence);
 
         foreach ($cut_seg_list as $w) {
-
             $len = mb_strlen($w, 'UTF-8');
 
             if ($len>2) {
-
                 for ($i=0; $i<($len-1); $i++) {
-
                     $gram2 = mb_substr($w, $i, 2, 'UTF-8');
 
                     if (isset(self::$FREQ[$gram2])) {
-
                         array_push($seg_list, $gram2);
-
                     }
-
                 }
-
             }
 
             if (mb_strlen($w, 'UTF-8')>3) {
-
                 for ($i=0; $i<($len-2); $i++) {
-
                     $gram3 = mb_substr($w, $i, 3, 'UTF-8');
 
                     if (isset(self::$FREQ[$gram3])) {
-
                         array_push($seg_list, $gram3);
-
                     }
-
                 }
-
             }
 
             array_push($seg_list, $w);
-
         }
 
         return $seg_list;
-
     }// end function cutForSearch
 }// end of class Jieba
