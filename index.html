@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Jieba-php by fukuball</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Jieba-php</h1>
+      <h2 class="project-tagline">&quot;結巴&quot;中文分詞：做最好的 PHP 中文分詞、中文斷詞組件。 / &quot;Jieba&quot; (Chinese for &quot;to stutter&quot;) Chinese text segmentation: built to be the best PHP Chinese word segmentation module.</h2>
+      <a href="https://github.com/fukuball/jieba-php" class="btn">View on GitHub</a>
+      <a href="https://github.com/fukuball/jieba-php/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/fukuball/jieba-php/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="jieba-php" class="anchor" href="#jieba-php" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>jieba-php</h1>
+
+<p><a href="https://travis-ci.org/fukuball/jieba-php"><img src="https://travis-ci.org/fukuball/jieba-php.svg?branch=master" alt="Build Status"></a>
+<a href="http://codecov.io/github/fukuball/jieba-php?branch=master"><img src="http://codecov.io/github/fukuball/jieba-php/coverage.svg?branch=master" alt="codecov.io"></a>
+<a href="https://packagist.org/packages/fukuball/jieba-php"><img src="https://poser.pugx.org/fukuball/jieba-php/v/stable.png" alt="Latest Stable Version"></a>
+<a href="https://www.codacy.com/app/fukuball/jieba-php"><img src="https://api.codacy.com/project/badge/grade/9360ebe8fc2d47d8a64f49f57d2f016f" alt="Codacy Badge"></a>
+<a href="http://www.fukuball.com"><img src="https://img.shields.io/badge/made%20with-%e2%9d%a4-ff69b4.svg" alt="Made with Love"></a></p>
+
+<p>"結巴"中文分詞：做最好的 PHP 中文分詞、中文斷詞組件，目前翻譯版本為 jieba-0.25 版本，未來再慢慢往上升級，效能也需要再改善，請有興趣的開發者一起加入開發！若想使用 Python 版本請前往 <a href="https://github.com/fxsjy/jieba">fxsjy/jieba</a></p>
+
+<p>現在已經可以支援繁體中文！只要將字典切換為 big 模式即可！</p>
+
+<p>"Jieba" (Chinese for "to stutter") Chinese text segmentation: built to be the best PHP Chinese word segmentation module.</p>
+
+<p><em>Scroll down for English documentation.</em></p>
+
+<h1>
+<a id="線上展示" class="anchor" href="#%E7%B7%9A%E4%B8%8A%E5%B1%95%E7%A4%BA" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>線上展示</h1>
+
+<ul>
+<li>網站網址：<a href="http://jieba-php.fukuball.com">http://jieba-php.fukuball.com</a>
+</li>
+<li>網站原始碼：<a href="https://github.com/fukuball/jieba-php.fukuball.com">https://github.com/fukuball/jieba-php.fukuball.com</a>
+</li>
+</ul>
+
+<h1>
+<a id="feature" class="anchor" href="#feature" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Feature</h1>
+
+<ul>
+<li>支持三種分詞模式：</li>
+<li>1）默認精確模式，試圖將句子最精確地切開，適合文本分析；</li>
+<li>2）全模式，把句子中所有的可以成詞的詞語都掃描出來，但是不能解決歧義。（需要充足的字典）</li>
+<li>3) 搜尋引擎模式，在精確模式的基礎上，對長詞再次切分，提高召回率，適合用於搜尋引擎分詞。</li>
+</ul>
+
+<h1>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h1>
+
+<ul>
+<li>自動安裝：使用 composer 安裝後，透過 autoload 引用</li>
+</ul>
+
+<p>代碼示例</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-c1">composer</span> <span class="pl-k">require</span> <span class="pl-c1">fukuball</span><span class="pl-k">/</span><span class="pl-c1">jieba</span><span class="pl-k">-</span><span class="pl-c1">php</span>:<span class="pl-c1">dev</span><span class="pl-k">-</span><span class="pl-c1">master</span></span></pre></div>
+
+<p>代碼示例</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/vendor/autoload.php<span class="pl-pds">"</span></span>;</span></pre></div>
+
+<ul>
+<li>手動安裝：將 jieba-php 放置適當目錄後，透過 require_once 引用</li>
+</ul>
+
+<p>代碼示例</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/vendor/multi-array/MultiArray.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/vendor/multi-array/Factory/MultiArrayFactory.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/class/Jieba.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/class/Finalseg.php<span class="pl-pds">"</span></span>;</span></pre></div>
+
+<h1>
+<a id="algorithm" class="anchor" href="#algorithm" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Algorithm</h1>
+
+<ul>
+<li>基於 Trie 樹結構實現高效的詞圖掃描，生成句子中漢字所有可能成詞情況所構成的有向無環圖（DAG)</li>
+<li>採用了動態規劃查找最大概率路徑, 找出基於詞頻的最大切分組合</li>
+<li>對於未登錄詞，採用了基於漢字成詞能力的 HMM 模型，使用了 Viterbi 算法</li>
+<li>BEMS 的解釋 <a href="https://github.com/fxsjy/jieba/issues/7">https://github.com/fxsjy/jieba/issues/7</a>
+</li>
+</ul>
+
+<h1>
+<a id="interface" class="anchor" href="#interface" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Interface</h1>
+
+<ul>
+<li>組件只提供 jieba.cut 方法用於分詞</li>
+<li>cut 方法接受兩個輸入參數: 1) 第一個參數為需要分詞的字符串 2）cut_all 參數用來控制分詞模式</li>
+<li>待分詞的字符串可以是 utf-8 字符串</li>
+<li>jieba.cut 返回的結構是一個可迭代的 array</li>
+</ul>
+
+<h1>
+<a id="功能-1分词" class="anchor" href="#%E5%8A%9F%E8%83%BD-1%E5%88%86%E8%AF%8D" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>功能 1)：分词</h1>
+
+<ul>
+<li>
+<code>cut</code> 方法接受想個輸入參數： 1) 第一個參數為需要分詞的字符串 2）cut_all 參數用來控制分詞模式</li>
+<li>
+<code>cutForSearch</code> 方法接受一個參數：需要分詞的字符串，該方法適合用於搜索引擎構建倒排索引的分詞，粒度比較細</li>
+<li>注意：待分詞的字符串是 utf-8 字符串</li>
+<li>
+<code>cut</code> 以及 <code>cutForSearch</code> 返回的結構是一個可迭代的 array</li>
+</ul>
+
+<p>代碼示例 (Tutorial)</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-c1">ini_set</span>(<span class="pl-s"><span class="pl-pds">'</span>memory_limit<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>1024M<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/vendor/multi-array/MultiArray.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/vendor/multi-array/Factory/MultiArrayFactory.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/class/Jieba.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/class/Finalseg.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\Jieba</span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\Finalseg</span>;</span>
+<span class="pl-s1"><span class="pl-c1">Jieba</span><span class="pl-k">::</span>init();</span>
+<span class="pl-s1"><span class="pl-c1">Finalseg</span><span class="pl-k">::</span>init();</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$seg_list</span> <span class="pl-k">=</span> <span class="pl-c1">Jieba</span><span class="pl-k">::</span>cut(<span class="pl-s"><span class="pl-pds">"</span>怜香惜玉也得要看对象啊！<span class="pl-pds">"</span></span>);</span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$seg_list</span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$seg_list</span> <span class="pl-k">=</span> <span class="pl-c1">Jieba</span><span class="pl-k">::</span>cut(<span class="pl-s"><span class="pl-pds">"</span>我来到北京清华大学<span class="pl-pds">"</span></span>, <span class="pl-c1">true</span>);</span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$seg_list</span>); <span class="pl-c">#全模式</span></span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$seg_list</span> <span class="pl-k">=</span> <span class="pl-c1">Jieba</span><span class="pl-k">::</span>cut(<span class="pl-s"><span class="pl-pds">"</span>我来到北京清华大学<span class="pl-pds">"</span></span>, <span class="pl-c1">false</span>);</span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$seg_list</span>); <span class="pl-c">#默認精確模式</span></span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$seg_list</span> <span class="pl-k">=</span> <span class="pl-c1">Jieba</span><span class="pl-k">::</span>cut(<span class="pl-s"><span class="pl-pds">"</span>他来到了网易杭研大厦<span class="pl-pds">"</span></span>);</span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$seg_list</span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$seg_list</span> <span class="pl-k">=</span> <span class="pl-c1">Jieba</span><span class="pl-k">::</span>cutForSearch(<span class="pl-s"><span class="pl-pds">"</span>小明硕士毕业于中国科学院计算所，后在日本京都大学深造<span class="pl-pds">"</span></span>); <span class="pl-c">#搜索引擎模式</span></span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$seg_list</span>);</span></pre></div>
+
+<p>Output:</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-c1">array</span>(<span class="pl-c1">7</span>) {</span>
+<span class="pl-s1">  [<span class="pl-c1">0</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">12</span>) <span class="pl-s"><span class="pl-pds">"</span>怜香惜玉<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">1</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>也<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">2</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>得<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">3</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>要<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">4</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>看<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">5</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>对象<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">6</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>啊<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">}</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">Full</span> <span class="pl-c1">Mode</span>:</span>
+<span class="pl-s1"><span class="pl-c1">array</span>(<span class="pl-c1">15</span>) {</span>
+<span class="pl-s1">  [<span class="pl-c1">0</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>我<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">1</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>来<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">2</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>来到<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">3</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>到<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">4</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>北<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">5</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>北京<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">6</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>京<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">7</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>清<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">8</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>清华<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">9</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">12</span>) <span class="pl-s"><span class="pl-pds">"</span>清华大学<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">10</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>华<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">11</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>华大<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">12</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>大<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">13</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>大学<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">14</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>学<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">}</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">Default</span> <span class="pl-c1">Mode</span>:</span>
+<span class="pl-s1"><span class="pl-c1">array</span>(<span class="pl-c1">4</span>) {</span>
+<span class="pl-s1">  [<span class="pl-c1">0</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>我<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">1</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>来到<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">2</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>北京<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">3</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">12</span>) <span class="pl-s"><span class="pl-pds">"</span>清华大学<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">}</span>
+<span class="pl-s1"><span class="pl-c1">array</span>(<span class="pl-c1">6</span>) {</span>
+<span class="pl-s1">  [<span class="pl-c1">0</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>他<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">1</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>来到<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">2</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>了<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">3</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>网易<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">4</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>杭研<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">5</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>大厦<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">}</span>
+<span class="pl-s1">(此處，“杭研“並沒有在詞典中，但是也被 <span class="pl-c1">Viterbi</span> 算法識別出來了)</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">Search</span> <span class="pl-c1">Engine</span> <span class="pl-c1">Mode</span>:</span>
+<span class="pl-s1"><span class="pl-c1">array</span>(<span class="pl-c1">18</span>) {</span>
+<span class="pl-s1">  [<span class="pl-c1">0</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>小明<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">1</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>硕士<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">2</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>毕业<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">3</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>于<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">4</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>中国<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">5</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>科学<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">6</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>学院<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">7</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">9</span>) <span class="pl-s"><span class="pl-pds">"</span>科学院<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">8</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">15</span>) <span class="pl-s"><span class="pl-pds">"</span>中国科学院<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">9</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>计算<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">10</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">9</span>) <span class="pl-s"><span class="pl-pds">"</span>计算所<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">11</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>后<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">12</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>在<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">13</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>日本<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">14</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>京都<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">15</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>大学<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">16</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">18</span>) <span class="pl-s"><span class="pl-pds">"</span>日本京都大学<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">17</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>深造<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">}</span></pre></div>
+
+<h1>
+<a id="功能-2添加自定義詞典" class="anchor" href="#%E5%8A%9F%E8%83%BD-2%E6%B7%BB%E5%8A%A0%E8%87%AA%E5%AE%9A%E7%BE%A9%E8%A9%9E%E5%85%B8" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>功能 2)：添加自定義詞典</h1>
+
+<ul>
+<li>開發者可以指定自己自定義的詞典，以便包含 jieba 詞庫裡沒有的詞。雖然 jieba 有新詞識別能力，但是自行添加新詞可以保證更高的正確率</li>
+<li>用法： Jieba::loadUserDict(file_name) # file_name 為自定義詞典的絕對路徑</li>
+<li>詞典格式和 dict.txt 一樣，一個詞佔一行；每一行分為三部分，一部分為詞語，一部分為詞頻，一部分為詞性，用空格隔開</li>
+<li>
+<p>範例：</p>
+
+<p>云计算 5 n
+李小福 2 n
+创新办 3 n</p>
+
+<p>之前： 李小福 / 是 / 创新 / 办 / 主任 / 也 / 是 / 云 / 计算 / 方面 / 的 / 专家 /
+加載自定義詞庫後：　李小福 / 是 / 创新办 / 主任 / 也 / 是 / 云计算 / 方面 / 的 / 专家 /</p>
+</li>
+</ul>
+
+<p>說明："通过用户自定义词典来增强歧义纠错能力" --- <a href="https://github.com/fxsjy/jieba/issues/14">https://github.com/fxsjy/jieba/issues/14</a></p>
+
+<h1>
+<a id="功能-3關鍵詞提取" class="anchor" href="#%E5%8A%9F%E8%83%BD-3%E9%97%9C%E9%8D%B5%E8%A9%9E%E6%8F%90%E5%8F%96" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>功能 3)：關鍵詞提取</h1>
+
+<ul>
+<li>JiebaAnalyse::extractTags($content, $top_k)</li>
+<li>content 為待提取的文本</li>
+<li>top_k 為返回幾個 TF/IDF 權重最大的關鍵詞，默認值為 20</li>
+</ul>
+
+<p>代碼示例 (關鍵詞提取)</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-c1">ini_set</span>(<span class="pl-s"><span class="pl-pds">'</span>memory_limit<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>600M<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/vendor/multi-array/MultiArray.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/vendor/multi-array/Factory/MultiArrayFactory.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/class/Jieba.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/class/Finalseg.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/class/JiebaAnalyse.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\Jieba</span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\Finalseg</span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\JiebaAnalyse</span>;</span>
+<span class="pl-s1"><span class="pl-c1">Jieba</span><span class="pl-k">::</span>init(<span class="pl-c1">array</span>(<span class="pl-s"><span class="pl-pds">'</span>mode<span class="pl-pds">'</span></span><span class="pl-k">=&gt;</span><span class="pl-s"><span class="pl-pds">'</span>test<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>dict<span class="pl-pds">'</span></span><span class="pl-k">=&gt;</span><span class="pl-s"><span class="pl-pds">'</span>samll<span class="pl-pds">'</span></span>));</span>
+<span class="pl-s1"><span class="pl-c1">Finalseg</span><span class="pl-k">::</span>init();</span>
+<span class="pl-s1"><span class="pl-c1">JiebaAnalyse</span><span class="pl-k">::</span>init();</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$top_k</span> <span class="pl-k">=</span> <span class="pl-c1">10</span>;</span>
+<span class="pl-s1"><span class="pl-smi">$content</span> <span class="pl-k">=</span> <span class="pl-c1">file_get_contents</span>(<span class="pl-s"><span class="pl-pds">"</span>/path/to/your/dict/lyric.txt<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>r<span class="pl-pds">"</span></span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$tags</span> <span class="pl-k">=</span> <span class="pl-c1">JiebaAnalyse</span><span class="pl-k">::</span>extractTags(<span class="pl-smi">$content</span>, <span class="pl-smi">$top_k</span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$tags</span>);</span></pre></div>
+
+<p>Output:</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-c1">array</span>(<span class="pl-c1">10</span>) {</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>是否<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">1.2196321889395</span>)</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>一般<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">1.0032459890209</span>)</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>肌迫<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">0.64654314660465</span>)</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>怯懦<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">0.44762844339349</span>)</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>藉口<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">0.32327157330233</span>)</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>逼不得已<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">0.32327157330233</span>)</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>不安全感<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">0.26548304656279</span>)</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>同感<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">0.23929673812326</span>)</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>有把握<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">0.21043366018744</span>)</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>空洞<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">0.20598261709442</span>)</span>
+<span class="pl-s1">}</span></pre></div>
+
+<h1>
+<a id="功能-4詞性分詞" class="anchor" href="#%E5%8A%9F%E8%83%BD-4%E8%A9%9E%E6%80%A7%E5%88%86%E8%A9%9E" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>功能 4)：詞性分詞</h1>
+
+<ul>
+<li>詞性說明：<a href="https://gist.github.com/luw2007/6016931">https://gist.github.com/luw2007/6016931</a>
+</li>
+</ul>
+
+<p>代碼示例 (Tutorial)</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-c1">ini_set</span>(<span class="pl-s"><span class="pl-pds">'</span>memory_limit<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>600M<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">dirname</span>(<span class="pl-c1">dirname</span>(<span class="pl-c1">__FILE__</span>))<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>/vendor/multi-array/MultiArray.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">dirname</span>(<span class="pl-c1">dirname</span>(<span class="pl-c1">__FILE__</span>))<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>/vendor/multi-array/Factory/MultiArrayFactory.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">dirname</span>(<span class="pl-c1">dirname</span>(<span class="pl-c1">__FILE__</span>))<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>/class/Jieba.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">dirname</span>(<span class="pl-c1">dirname</span>(<span class="pl-c1">__FILE__</span>))<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>/class/Finalseg.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">dirname</span>(<span class="pl-c1">dirname</span>(<span class="pl-c1">__FILE__</span>))<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>/class/Posseg.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\Jieba</span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\Finalseg</span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\Posseg</span>;</span>
+<span class="pl-s1"><span class="pl-c1">Jieba</span><span class="pl-k">::</span>init();</span>
+<span class="pl-s1"><span class="pl-c1">Finalseg</span><span class="pl-k">::</span>init();</span>
+<span class="pl-s1"><span class="pl-c1">Posseg</span><span class="pl-k">::</span>init();</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$seg_list</span> <span class="pl-k">=</span> <span class="pl-c1">Posseg</span><span class="pl-k">::</span>cut(<span class="pl-s"><span class="pl-pds">"</span>这是一个伸手不见五指的黑夜。我叫孙悟空，我爱北京，我爱Python和C++。<span class="pl-pds">"</span></span>);</span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$seg_list</span>);</span></pre></div>
+
+<p>Output:</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-c1">array</span>(<span class="pl-c1">21</span>) {</span>
+<span class="pl-s1">  [<span class="pl-c1">0</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>这<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>r<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">1</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>是<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>v<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">2</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>一个<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>m<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">3</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">18</span>) <span class="pl-s"><span class="pl-pds">"</span>伸手不见五指<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>i<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">4</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>的<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">2</span>) <span class="pl-s"><span class="pl-pds">"</span>uj<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">5</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>黑夜<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>n<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">6</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>。<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>x<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">7</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>我<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>r<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">8</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>叫<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>v<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">9</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">9</span>) <span class="pl-s"><span class="pl-pds">"</span>孙悟空<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">2</span>) <span class="pl-s"><span class="pl-pds">"</span>nr<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">10</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>，<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>x<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">11</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>我<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>r<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">12</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>爱<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>v<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">13</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>北京<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">2</span>) <span class="pl-s"><span class="pl-pds">"</span>ns<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">14</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>，<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>x<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">15</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>我<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>r<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">16</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>爱<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>v<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">17</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>Python<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>eng<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">18</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>和<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>c<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">19</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>C++<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>eng<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">20</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>。<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>x<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">}</span></pre></div>
+
+<h1>
+<a id="功能-5切換成繁體字典" class="anchor" href="#%E5%8A%9F%E8%83%BD-5%E5%88%87%E6%8F%9B%E6%88%90%E7%B9%81%E9%AB%94%E5%AD%97%E5%85%B8" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>功能 5)：切換成繁體字典</h1>
+
+<p>代碼示例 (Tutorial)</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-c1">ini_set</span>(<span class="pl-s"><span class="pl-pds">'</span>memory_limit<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>1024M<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">dirname</span>(<span class="pl-c1">dirname</span>(<span class="pl-c1">__FILE__</span>))<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>/vendor/multi-array/MultiArray.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">dirname</span>(<span class="pl-c1">dirname</span>(<span class="pl-c1">__FILE__</span>))<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>/vendor/multi-array/Factory/MultiArrayFactory.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">dirname</span>(<span class="pl-c1">dirname</span>(<span class="pl-c1">__FILE__</span>))<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>/class/Jieba.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">dirname</span>(<span class="pl-c1">dirname</span>(<span class="pl-c1">__FILE__</span>))<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>/class/Finalseg.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\Jieba</span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\Finalseg</span>;</span>
+<span class="pl-s1"><span class="pl-c1">Jieba</span><span class="pl-k">::</span>init(<span class="pl-c1">array</span>(<span class="pl-s"><span class="pl-pds">'</span>mode<span class="pl-pds">'</span></span><span class="pl-k">=&gt;</span><span class="pl-s"><span class="pl-pds">'</span>default<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>dict<span class="pl-pds">'</span></span><span class="pl-k">=&gt;</span><span class="pl-s"><span class="pl-pds">'</span>big<span class="pl-pds">'</span></span>));</span>
+<span class="pl-s1"><span class="pl-c1">Finalseg</span><span class="pl-k">::</span>init();</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$seg_list</span> <span class="pl-k">=</span> <span class="pl-c1">Jieba</span><span class="pl-k">::</span>cut(<span class="pl-s"><span class="pl-pds">"</span>怜香惜玉也得要看对象啊！<span class="pl-pds">"</span></span>);</span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$seg_list</span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$seg_list</span> <span class="pl-k">=</span> <span class="pl-c1">Jieba</span><span class="pl-k">::</span>cut(<span class="pl-s"><span class="pl-pds">"</span>憐香惜玉也得要看對象啊！<span class="pl-pds">"</span></span>);</span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$seg_list</span>);</span></pre></div>
+
+<p>Output:</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-c1">array</span>(<span class="pl-c1">7</span>) {</span>
+<span class="pl-s1">  [<span class="pl-c1">0</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">12</span>) <span class="pl-s"><span class="pl-pds">"</span>怜香惜玉<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">1</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>也<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">2</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>得<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">3</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>要<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">4</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>看<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">5</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>对象<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">6</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>啊<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">}</span>
+<span class="pl-s1"><span class="pl-c1">array</span>(<span class="pl-c1">7</span>) {</span>
+<span class="pl-s1">  [<span class="pl-c1">0</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">12</span>) <span class="pl-s"><span class="pl-pds">"</span>憐香惜玉<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">1</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>也<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">2</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>得<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">3</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>要<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">4</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>看<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">5</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>對象<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">6</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>啊<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">}</span></pre></div>
+
+<h1>
+<a id="常見問題" class="anchor" href="#%E5%B8%B8%E8%A6%8B%E5%95%8F%E9%A1%8C" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>常見問題</h1>
+
+<p>1) 模型的數據是如何生成的？ <a href="https://github.com/fxsjy/jieba/issues/7">https://github.com/fxsjy/jieba/issues/7</a>
+2) 這個庫的授權是？ <a href="https://github.com/fxsjy/jieba/issues/2">https://github.com/fxsjy/jieba/issues/2</a></p>
+
+<h1>
+<a id="jieba-php-english-document" class="anchor" href="#jieba-php-english-document" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>jieba-php English Document</h1>
+
+<h1>
+<a id="online-demo" class="anchor" href="#online-demo" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Online Demo</h1>
+
+<ul>
+<li>Demo Site Url：<a href="http://jieba-php.fukuball.com">http://jieba-php.fukuball.com</a>
+</li>
+<li>Demo Site Repo：<a href="https://github.com/fukuball/jieba-php.fukuball.com">https://github.com/fukuball/jieba-php.fukuball.com</a>
+</li>
+</ul>
+
+<h1>
+<a id="feature-1" class="anchor" href="#feature-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Feature</h1>
+
+<ul>
+<li>Support three types of segmentation mode:</li>
+<li>1) Accurate Mode, attempt to cut the sentence into the most accurate segmentation, which is suitable for text analysis;</li>
+<li>2) Full Mode, break the words of the sentence into words scanned</li>
+<li>3) Search Engine Mode, based on the Accurate Mode, with an attempt to cut the long words into several short words, which can enhance the recall rate</li>
+</ul>
+
+<h1>
+<a id="usage-1" class="anchor" href="#usage-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h1>
+
+<ul>
+<li>Installation: Use composer to install jieba-php, then require the autoload file to use jieba-php.</li>
+</ul>
+
+<h1>
+<a id="algorithm-1" class="anchor" href="#algorithm-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Algorithm</h1>
+
+<ul>
+<li>Based on the Trie tree structure to achieve efficient word graph scanning; sentences using Chinese characters constitute a directed acyclic graph (DAG).</li>
+<li>Employs memory search to calculate the maximum probability path, in order to identify the maximum tangential points based on word frequency combination.</li>
+<li>For unknown words, the character position HMM-based model is used, using the Viterbi algorithm.</li>
+<li>The meaning of BEMS <a href="https://github.com/fxsjy/jieba/issues/7">https://github.com/fxsjy/jieba/issues/7</a>.</li>
+</ul>
+
+<h1>
+<a id="interface-1" class="anchor" href="#interface-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Interface</h1>
+
+<ul>
+<li>The <code>cut</code> method accepts two parameters: 1) first parameter is the string to segmentation 2）the second parameter <code>cut_all</code> to control segmentation mode.</li>
+<li>The string to segmentation may use utf-8 string.</li>
+<li>
+<code>cutForSearch</code> accpets only on parameter: the string that requires segmentation, and it will cut the sentence into short words</li>
+<li>
+<code>cut</code> and <code>cutForSearch</code> return an segmented array.</li>
+</ul>
+
+<h1>
+<a id="function-1-segmentation" class="anchor" href="#function-1-segmentation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Function 1) Segmentation</h1>
+
+<p>Example (Tutorial)</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-c1">ini_set</span>(<span class="pl-s"><span class="pl-pds">'</span>memory_limit<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>1024M<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/vendor/multi-array/MultiArray.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/vendor/multi-array/Factory/MultiArrayFactory.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/class/Jieba.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/class/Finalseg.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\Jieba</span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\Finalseg</span>;</span>
+<span class="pl-s1"><span class="pl-c1">Jieba</span><span class="pl-k">::</span>init();</span>
+<span class="pl-s1"><span class="pl-c1">Finalseg</span><span class="pl-k">::</span>init();</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$seg_list</span> <span class="pl-k">=</span> <span class="pl-c1">Jieba</span><span class="pl-k">::</span>cut(<span class="pl-s"><span class="pl-pds">"</span>怜香惜玉也得要看对象啊！<span class="pl-pds">"</span></span>);</span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$seg_list</span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">seg_list</span> <span class="pl-k">=</span> <span class="pl-c1">jieba</span><span class="pl-k">.</span>cut(<span class="pl-s"><span class="pl-pds">"</span>我来到北京清华大学<span class="pl-pds">"</span></span>, <span class="pl-c1">true</span>)</span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$seg_list</span>); <span class="pl-c">#全模式</span></span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">seg_list</span> <span class="pl-k">=</span> <span class="pl-c1">jieba</span><span class="pl-k">.</span>cut(<span class="pl-s"><span class="pl-pds">"</span>我来到北京清华大学<span class="pl-pds">"</span></span>, <span class="pl-c1">false</span>)</span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$seg_list</span>); <span class="pl-c">#默認精確模式</span></span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">seg_list</span> <span class="pl-k">=</span> <span class="pl-c1">jieba</span><span class="pl-k">.</span>cut(<span class="pl-s"><span class="pl-pds">"</span>他来到了网易杭研大厦<span class="pl-pds">"</span></span>)</span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$seg_list</span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">seg_list</span> <span class="pl-k">=</span> <span class="pl-c1">jieba</span><span class="pl-k">.</span>cut_for_search(<span class="pl-s"><span class="pl-pds">"</span>小明硕士毕业于中国科学院计算所，后在日本京都大学深造<span class="pl-pds">"</span></span>) <span class="pl-c">#搜索引擎模式</span></span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$seg_list</span>);</span></pre></div>
+
+<p>Output:</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-c1">array</span>(<span class="pl-c1">7</span>) {</span>
+<span class="pl-s1">  [<span class="pl-c1">0</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">12</span>) <span class="pl-s"><span class="pl-pds">"</span>怜香惜玉<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">1</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>也<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">2</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>得<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">3</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>要<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">4</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>看<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">5</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>对象<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">6</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>啊<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">}</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">Full</span> <span class="pl-c1">Mode</span>:</span>
+<span class="pl-s1"><span class="pl-c1">array</span>(<span class="pl-c1">15</span>) {</span>
+<span class="pl-s1">  [<span class="pl-c1">0</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>我<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">1</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>来<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">2</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>来到<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">3</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>到<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">4</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>北<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">5</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>北京<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">6</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>京<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">7</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>清<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">8</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>清华<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">9</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">12</span>) <span class="pl-s"><span class="pl-pds">"</span>清华大学<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">10</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>华<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">11</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>华大<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">12</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>大<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">13</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>大学<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">14</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>学<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">}</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">Default</span> <span class="pl-c1">Mode</span>:</span>
+<span class="pl-s1"><span class="pl-c1">array</span>(<span class="pl-c1">4</span>) {</span>
+<span class="pl-s1">  [<span class="pl-c1">0</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>我<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">1</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>来到<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">2</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>北京<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">3</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">12</span>) <span class="pl-s"><span class="pl-pds">"</span>清华大学<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">}</span>
+<span class="pl-s1"><span class="pl-c1">array</span>(<span class="pl-c1">6</span>) {</span>
+<span class="pl-s1">  [<span class="pl-c1">0</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>他<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">1</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>来到<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">2</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>了<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">3</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>网易<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">4</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>杭研<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">5</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>大厦<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">}</span>
+<span class="pl-s1">(此處，“杭研“並沒有在詞典中，但是也被 <span class="pl-c1">Viterbi</span> 算法識別出來了)</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">Search</span> <span class="pl-c1">Engine</span> <span class="pl-c1">Mode</span>:</span>
+<span class="pl-s1"><span class="pl-c1">array</span>(<span class="pl-c1">18</span>) {</span>
+<span class="pl-s1">  [<span class="pl-c1">0</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>小明<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">1</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>硕士<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">2</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>毕业<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">3</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>于<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">4</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>中国<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">5</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>科学<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">6</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>学院<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">7</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">9</span>) <span class="pl-s"><span class="pl-pds">"</span>科学院<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">8</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">15</span>) <span class="pl-s"><span class="pl-pds">"</span>中国科学院<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">9</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>计算<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">10</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">9</span>) <span class="pl-s"><span class="pl-pds">"</span>计算所<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">11</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>后<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">12</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>在<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">13</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>日本<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">14</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>京都<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">15</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>大学<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">16</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">18</span>) <span class="pl-s"><span class="pl-pds">"</span>日本京都大学<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">17</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>深造<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">}</span></pre></div>
+
+<h1>
+<a id="function-2-add-a-custom-dictionary" class="anchor" href="#function-2-add-a-custom-dictionary" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Function 2) Add a custom dictionary</h1>
+
+<ul>
+<li>Developers can specify their own custom dictionary to include in the jieba thesaurus. jieba has the ability to identify new words, but adding your own new words can ensure a higher rate of correct segmentation.</li>
+<li>Usage: <code>Jieba::loadUserDict(file_name)</code> # file_name is a custom dictionary path.</li>
+<li>The dictionary format is the same as that of <code>dict.txt</code>: one word per line; each line is divided into two parts, the first is the word itself, the other is the word frequency, separated by a space.</li>
+<li>
+<p>Example:</p>
+
+<p>云计算 5
+李小福 2
+创新办 3</p>
+
+<p>之前： 李小福 / 是 / 创新 / 办 / 主任 / 也 / 是 / 云 / 计算 / 方面 / 的 / 专家 /
+加載自定義詞庫後：　李小福 / 是 / 创新办 / 主任 / 也 / 是 / 云计算 / 方面 / 的 / 专家 /</p>
+</li>
+</ul>
+
+<h1>
+<a id="function-3-keyword-extraction" class="anchor" href="#function-3-keyword-extraction" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Function 3) Keyword Extraction</h1>
+
+<ul>
+<li>JiebaAnalyse::extractTags($content, $top_k)</li>
+<li>content: the text to be extracted</li>
+<li>top_k: to return several TF/IDF weights for the biggest keywords, the default value is 20</li>
+</ul>
+
+<p>Example (keyword extraction)</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-c1">ini_set</span>(<span class="pl-s"><span class="pl-pds">'</span>memory_limit<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>600M<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/vendor/multi-array/MultiArray.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/vendor/multi-array/Factory/MultiArrayFactory.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/class/Jieba.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/class/Finalseg.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">"</span>/path/to/your/class/JiebaAnalyse.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\Jieba</span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\Finalseg</span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\JiebaAnalyse</span>;</span>
+<span class="pl-s1"><span class="pl-c1">Jieba</span><span class="pl-k">::</span>init(<span class="pl-c1">array</span>(<span class="pl-s"><span class="pl-pds">'</span>mode<span class="pl-pds">'</span></span><span class="pl-k">=&gt;</span><span class="pl-s"><span class="pl-pds">'</span>test<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>dict<span class="pl-pds">'</span></span><span class="pl-k">=&gt;</span><span class="pl-s"><span class="pl-pds">'</span>samll<span class="pl-pds">'</span></span>));</span>
+<span class="pl-s1"><span class="pl-c1">Finalseg</span><span class="pl-k">::</span>init();</span>
+<span class="pl-s1"><span class="pl-c1">JiebaAnalyse</span><span class="pl-k">::</span>init();</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$top_k</span> <span class="pl-k">=</span> <span class="pl-c1">10</span>;</span>
+<span class="pl-s1"><span class="pl-smi">$content</span> <span class="pl-k">=</span> <span class="pl-c1">file_get_contents</span>(<span class="pl-s"><span class="pl-pds">"</span>/path/to/your/dict/lyric.txt<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>r<span class="pl-pds">"</span></span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$tags</span> <span class="pl-k">=</span> <span class="pl-c1">JiebaAnalyse</span><span class="pl-k">::</span>extractTags(<span class="pl-smi">$content</span>, <span class="pl-smi">$top_k</span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$tags</span>);</span></pre></div>
+
+<p>Output:</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-c1">array</span>(<span class="pl-c1">10</span>) {</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>是否<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">1.2196321889395</span>)</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>一般<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">1.0032459890209</span>)</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>肌迫<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">0.64654314660465</span>)</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>怯懦<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">0.44762844339349</span>)</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>藉口<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">0.32327157330233</span>)</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>逼不得已<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">0.32327157330233</span>)</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>不安全感<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">0.26548304656279</span>)</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>同感<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">0.23929673812326</span>)</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>有把握<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">0.21043366018744</span>)</span>
+<span class="pl-s1">  [<span class="pl-s"><span class="pl-pds">"</span>空洞<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">float</span>(<span class="pl-c1">0.20598261709442</span>)</span>
+<span class="pl-s1">}</span>
+<span class="pl-s1"></span></pre></div>
+
+<h1>
+<a id="function-4-word-segmentation-and-tagging" class="anchor" href="#function-4-word-segmentation-and-tagging" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Function 4) Word Segmentation and Tagging</h1>
+
+<ul>
+<li>Word Tagging Meaning：<a href="https://gist.github.com/luw2007/6016931">https://gist.github.com/luw2007/6016931</a>
+</li>
+</ul>
+
+<p>Example (word tagging)</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-c1">ini_set</span>(<span class="pl-s"><span class="pl-pds">'</span>memory_limit<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>600M<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">dirname</span>(<span class="pl-c1">dirname</span>(<span class="pl-c1">__FILE__</span>))<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>/vendor/multi-array/MultiArray.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">dirname</span>(<span class="pl-c1">dirname</span>(<span class="pl-c1">__FILE__</span>))<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>/vendor/multi-array/Factory/MultiArrayFactory.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">dirname</span>(<span class="pl-c1">dirname</span>(<span class="pl-c1">__FILE__</span>))<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>/class/Jieba.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">dirname</span>(<span class="pl-c1">dirname</span>(<span class="pl-c1">__FILE__</span>))<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>/class/Finalseg.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">dirname</span>(<span class="pl-c1">dirname</span>(<span class="pl-c1">__FILE__</span>))<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>/class/Posseg.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\Jieba</span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\Finalseg</span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\Posseg</span>;</span>
+<span class="pl-s1"><span class="pl-c1">Jieba</span><span class="pl-k">::</span>init();</span>
+<span class="pl-s1"><span class="pl-c1">Finalseg</span><span class="pl-k">::</span>init();</span>
+<span class="pl-s1"><span class="pl-c1">Posseg</span><span class="pl-k">::</span>init();</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$seg_list</span> <span class="pl-k">=</span> <span class="pl-c1">Posseg</span><span class="pl-k">::</span>cut(<span class="pl-s"><span class="pl-pds">"</span>这是一个伸手不见五指的黑夜。我叫孙悟空，我爱北京，我爱Python和C++。<span class="pl-pds">"</span></span>);</span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$seg_list</span>);</span></pre></div>
+
+<p>Output:</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-c1">array</span>(<span class="pl-c1">21</span>) {</span>
+<span class="pl-s1">  [<span class="pl-c1">0</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>这<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>r<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">1</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>是<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>v<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">2</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>一个<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>m<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">3</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">18</span>) <span class="pl-s"><span class="pl-pds">"</span>伸手不见五指<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>i<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">4</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>的<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">2</span>) <span class="pl-s"><span class="pl-pds">"</span>uj<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">5</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>黑夜<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>n<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">6</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>。<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>w<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">7</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>我<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>r<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">8</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>叫<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>v<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">9</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">9</span>) <span class="pl-s"><span class="pl-pds">"</span>孙悟空<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">2</span>) <span class="pl-s"><span class="pl-pds">"</span>nr<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">10</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>，<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>w<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">11</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>我<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>r<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">12</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>爱<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>v<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">13</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>北京<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">2</span>) <span class="pl-s"><span class="pl-pds">"</span>ns<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">14</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>，<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>w<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">15</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>我<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>r<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">16</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>爱<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>v<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">17</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>Python<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>eng<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">18</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>和<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>c<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">19</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>C++<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>eng<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">  [<span class="pl-c1">20</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-c1">array</span>(<span class="pl-c1">2</span>) {</span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>word<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>。<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">    [<span class="pl-s"><span class="pl-pds">"</span>tag<span class="pl-pds">"</span></span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">    <span class="pl-k">string</span>(<span class="pl-c1">1</span>) <span class="pl-s"><span class="pl-pds">"</span>w<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  }</span>
+<span class="pl-s1">}</span></pre></div>
+
+<h1>
+<a id="function-5use-traditional-chinese" class="anchor" href="#function-5use-traditional-chinese" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Function 5)：Use Traditional Chinese</h1>
+
+<p>Example (Tutorial)</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-c1">ini_set</span>(<span class="pl-s"><span class="pl-pds">'</span>memory_limit<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>1024M<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">dirname</span>(<span class="pl-c1">dirname</span>(<span class="pl-c1">__FILE__</span>))<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>/vendor/multi-array/MultiArray.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">dirname</span>(<span class="pl-c1">dirname</span>(<span class="pl-c1">__FILE__</span>))<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>/vendor/multi-array/Factory/MultiArrayFactory.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">dirname</span>(<span class="pl-c1">dirname</span>(<span class="pl-c1">__FILE__</span>))<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>/class/Jieba.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">dirname</span>(<span class="pl-c1">dirname</span>(<span class="pl-c1">__FILE__</span>))<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>/class/Finalseg.php<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\Jieba</span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Fukuball\Jieba\Finalseg</span>;</span>
+<span class="pl-s1"><span class="pl-c1">Jieba</span><span class="pl-k">::</span>init(<span class="pl-c1">array</span>(<span class="pl-s"><span class="pl-pds">'</span>mode<span class="pl-pds">'</span></span><span class="pl-k">=&gt;</span><span class="pl-s"><span class="pl-pds">'</span>default<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>dict<span class="pl-pds">'</span></span><span class="pl-k">=&gt;</span><span class="pl-s"><span class="pl-pds">'</span>big<span class="pl-pds">'</span></span>));</span>
+<span class="pl-s1"><span class="pl-c1">Finalseg</span><span class="pl-k">::</span>init();</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$seg_list</span> <span class="pl-k">=</span> <span class="pl-c1">Jieba</span><span class="pl-k">::</span>cut(<span class="pl-s"><span class="pl-pds">"</span>怜香惜玉也得要看对象啊！<span class="pl-pds">"</span></span>);</span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$seg_list</span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$seg_list</span> <span class="pl-k">=</span> <span class="pl-c1">Jieba</span><span class="pl-k">::</span>cut(<span class="pl-s"><span class="pl-pds">"</span>憐香惜玉也得要看對象啊！<span class="pl-pds">"</span></span>);</span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$seg_list</span>);</span></pre></div>
+
+<p>Output:</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-c1">array</span>(<span class="pl-c1">7</span>) {</span>
+<span class="pl-s1">  [<span class="pl-c1">0</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">12</span>) <span class="pl-s"><span class="pl-pds">"</span>怜香惜玉<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">1</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>也<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">2</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>得<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">3</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>要<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">4</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>看<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">5</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>对象<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">6</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>啊<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">}</span>
+<span class="pl-s1"><span class="pl-c1">array</span>(<span class="pl-c1">7</span>) {</span>
+<span class="pl-s1">  [<span class="pl-c1">0</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">12</span>) <span class="pl-s"><span class="pl-pds">"</span>憐香惜玉<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">1</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>也<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">2</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>得<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">3</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>要<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">4</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>看<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">5</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">6</span>) <span class="pl-s"><span class="pl-pds">"</span>對象<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">  [<span class="pl-c1">6</span>]<span class="pl-k">=&gt;</span></span>
+<span class="pl-s1">  <span class="pl-k">string</span>(<span class="pl-c1">3</span>) <span class="pl-s"><span class="pl-pds">"</span>啊<span class="pl-pds">"</span></span></span>
+<span class="pl-s1">}</span></pre></div>
+
+<h1>
+<a id="詞性說明" class="anchor" href="#%E8%A9%9E%E6%80%A7%E8%AA%AA%E6%98%8E" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>詞性說明</h1>
+
+<pre><code>a 形容词 (取英语形容词 adjective 的第 1 个字母。)
+  ad 副形词 (直接作状语的形容词，形容词代码 a 和副词代码 d 并在一起。)
+  ag 形容词性语素 (形容词性语素，形容词代码为 a，语素代码 ｇ 前面置以 a。)
+  an 名形词 (具有名词功能的形容词，形容词代码 a 和名词代码 n 并在一起。)
+b 区别词 (取汉字「别」的声母。)
+c 连词 (取英语连词 conjunction 的第 1 个字母。)
+d 副词 (取 adverb 的第 2 个字母，因其第 1 个字母已用于形容词。)
+  df 副词*
+  dg 副语素 (副词性语素，副词代码为 d，语素代码 ｇ 前面置以 d。)
+e 叹词 (取英语叹词 exclamation 的第 1 个字母。)
+eng 外语
+f 方位词 (取汉字「方」的声母。)
+g 语素 (绝大多数语素都能作为合成词的「词根」，取汉字「根」的声母。)
+h 前接成分 (取英语 head 的第 1 个字母。)
+i 成语 (取英语成语 idiom 的第 1 个字母。)
+j 简称略语 (取汉字「简」的声母。)
+k 后接成分
+l 习用语 (习用语尚未成为成语，有点「临时性」，取「临」的声母。)
+m 数词 (取英语 numeral 的第 3 个字母，n，u 已有他用。)
+  mg 数语素
+  mq 数词*
+n 名词 (取英语名词 noun 的第 1 个字母。)
+  ng 名语素 (名词性语素，名词代码为 n，语素代码 ｇ 前面置以 n。)
+  nr 人名 (名词代码n和「人(ren)」的声母并在一起。)
+  nrfg 名词*
+  nrt 名词*
+  ns 地名 (名词代码 n 和处所词代码 s 并在一起。)
+  nt 机构团体 (「团」的声母为 t，名词代码 n 和 t 并在一起。)
+  nz 其他专名 (「专」的声母的第 1 个字母为 z，名词代码 n 和 z 并在一起。)
+o 拟声词 (取英语拟声词 onomatopoeia 的第 1 个字母。)
+p 介词 (取英语介词 prepositional 的第 1 个字母。)
+q 量词 (取英语 quantity 的第 1 个字母。)
+r 代词 (取英语代词 pronoun的 第 2 个字母，因 p 已用于介词。)
+  rg 代词语素
+  rr 代词*
+  rz 代词*
+s 处所词 (取英语 space 的第 1 个字母。)
+t 时间词 (取英语 time 的第 1 个字母。)
+  tg 时语素 (时间词性语素，时间词代码为 t，在语素的代码 g 前面置以 t。)
+u 助词 (取英语助词 auxiliary 的第 2 个字母，因 a 已用于形容词。)
+  ud 助词*
+  ug 助词*
+  uj 助词*
+  ul 助词*
+  uv 助词*
+  uz 助词*
+v 动词 (取英语动词 verb 的第一个字母。)
+  vd 副动词 (直接作状语的动词，动词和副词的代码并在一起。)
+  vg 动语素
+  vi 动词*
+  vn 名动词 (指具有名词功能的动词，动词和名词的代码并在一起。)
+  vq 动词*
+w 标点符号
+x 非语素字 (非语素字只是一个符号，字母 x 通常用于代表未知数、符号。)
+y 语气词 (取汉字「语」的声母。)
+z 状态词 (取汉字「状」的声母的前一个字母。)
+  zg 状态词*
+</code></pre>
+
+<h1>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h1>
+
+<p>The MIT License (MIT)</p>
+
+<p>Copyright (c) 2015 fukuball</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/fukuball/jieba-php">Jieba-php</a> is maintained by <a href="https://github.com/fukuball">fukuball</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
