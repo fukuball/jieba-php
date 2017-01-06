@@ -1106,6 +1106,12 @@ z 状态词 (取汉字「状」的声母的前一个字母。)
   zg 状态词*
 ```
 
+Donate
+=========
+If you find fuku-ml useful, please consider a donation. Thank you!
+
+<a href='https://pledgie.com/campaigns/33187'><img alt='Click here to lend your support to: jieba-php and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/33187.png?skin_name=chrome' border='0' ></a>
+
 License
 =========
 The MIT License (MIT)
