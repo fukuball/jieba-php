@@ -33,6 +33,7 @@ class Jieba
     public static $total = 0.0;
     public static $trie = array();
     public static $FREQ = array();
+    public static $original_freq = array();
     public static $min_freq = 0.0;
     public static $route = array();
     public static $dictname;
@@ -71,16 +72,28 @@ class Jieba
 
         $t1 = microtime(true);
         self::$trie = Jieba::genTrie(dirname(dirname(__FILE__))."/dict/".$f_name);
-        foreach (self::$FREQ as $key => $value) {
-            self::$FREQ[$key] = log($value / self::$total);
-        }
-        self::$min_freq = min(self::$FREQ);
+        self::__calcFreq();
 
         if ($options['mode']=='test') {
             echo "loading model cost ".(microtime(true) - $t1)." seconds.\n";
             echo "Trie has been built succesfully.\n";
         }
     }// end function init
+
+    /**
+     * Static method __calcFreq
+     *
+     * @param void
+     *
+     * @return void
+     */
+    public static function __calcFreq()
+    {
+        foreach (self::$original_freq as $key => $value) {
+            self::$FREQ[$key] = log($value / self::$total);
+        }
+        self::$min_freq = min(self::$FREQ);
+    }// end function __calcFreq
 
     /**
      * Static method calc
@@ -143,7 +156,10 @@ class Jieba
             $freq = $explode_line[1];
             $tag = $explode_line[2];
             $freq = (float) $freq;
-            self::$FREQ[$word] = $freq;
+            if ( ! isset(self::$original_freq[$word])) {
+                self::$original_freq[$word] = 0;
+            }
+            self::$original_freq[$word] += $freq;
             self::$total += $freq;
             //$l = mb_strlen($word, 'UTF-8');
             //$word_c = array();
@@ -178,7 +194,10 @@ class Jieba
             $tag = $explode_line[2];
             $freq = (float) $freq;
             self::$total += $freq;
-            self::$FREQ[$word] = log($freq / self::$total);
+            if ( ! isset(self::$original_freq[$word])) {
+                self::$original_freq[$word] = 0;
+            }
+            self::$original_freq[$word] += $freq;
             $l = mb_strlen($word, 'UTF-8');
             $word_c = array();
             for ($i=0; $i<$l; $i++) {
@@ -189,6 +208,7 @@ class Jieba
             self::$trie->set($word_c_key, array("end"=>""));
         }
         fclose($content);
+        self::__calcFreq();
 
         return self::$trie;
     }// end function loadUserDict
