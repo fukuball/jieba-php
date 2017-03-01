@@ -156,7 +156,7 @@ class Jieba
             $freq = $explode_line[1];
             $tag = $explode_line[2];
             $freq = (float) $freq;
-            if ( ! isset(self::$original_freq[$word])) {
+            if (!isset(self::$original_freq[$word])) {
                 self::$original_freq[$word] = 0;
             }
             self::$original_freq[$word] += $freq;
@@ -194,7 +194,7 @@ class Jieba
             $tag = $explode_line[2];
             $freq = (float) $freq;
             self::$total += $freq;
-            if ( ! isset(self::$original_freq[$word])) {
+            if (!isset(self::$original_freq[$word])) {
                 self::$original_freq[$word] = 0;
             }
             self::$original_freq[$word] += $freq;
