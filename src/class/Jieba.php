@@ -156,10 +156,10 @@ class Jieba
             $freq = $explode_line[1];
             $tag = $explode_line[2];
             $freq = (float) $freq;
-            if (!isset(self::$original_freq[$word])) {
-                self::$original_freq[$word] = 0;
+            if (isset(self::$original_freq[$word])) {
+                self::$total -= self::$original_freq[$word];
             }
-            self::$original_freq[$word] += $freq;
+            self::$original_freq[$word] = $freq;
             self::$total += $freq;
             //$l = mb_strlen($word, 'UTF-8');
             //$word_c = array();
@@ -193,11 +193,11 @@ class Jieba
             $freq = $explode_line[1];
             $tag = $explode_line[2];
             $freq = (float) $freq;
-            self::$total += $freq;
-            if (!isset(self::$original_freq[$word])) {
-                self::$original_freq[$word] = 0;
+            if (isset(self::$original_freq[$word])) {
+                self::$total -= self::$original_freq[$word];
             }
-            self::$original_freq[$word] += $freq;
+            self::$original_freq[$word] = $freq;
+            self::$total += $freq;
             $l = mb_strlen($word, 'UTF-8');
             $word_c = array();
             for ($i=0; $i<$l; $i++) {
