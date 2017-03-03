@@ -135,7 +135,9 @@ class Jieba
         $freqcachefile = 'freq.cache';
         $totalcachefile = 'total.cache';
         $minfreqcachefile = 'minfreq.cache';
-        $flag = file_exists($cachepath.$triecachefile) && file_exists($cachepath.$freqcachefile) && file_exists($cachepath.$totalcachefile) && file_exists($cachepath.$minfreqcachefile) ;
+        $flag1 = file_exists($cachepath.$triecachefile) && file_exists($cachepath.$freqcachefile);
+        $flag2 = file_exists($cachepath.$totalcachefile) && file_exists($cachepath.$minfreqcachefile);
+        $flag = $flag1 && $flag2;
         if ($flag) {
             // 读取缓存文件
             $triecache = fopen($cachepath.$triecachefile, 'r');
