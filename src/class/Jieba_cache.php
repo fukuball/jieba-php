@@ -128,7 +128,7 @@ class Jieba
 
         // 配置缓存文件
         $cachepath = dirname($f_name).'/cache/';
-        if (!file_exists($cachepath)){
+        if (!file_exists($cachepath)) {
             mkdir($cachepath);
         }
         $triecachefile = 'trie.cache';
@@ -138,16 +138,16 @@ class Jieba
         $flag = file_exists($cachepath.$triecachefile) && file_exists($cachepath.$freqcachefile) && file_exists($cachepath.$totalcachefile) && file_exists($cachepath.$minfreqcachefile) ;
         if ($flag) {
             // 读取缓存文件
-            $triecache = fopen($cachepath.$triecachefile,'r');
+            $triecache = fopen($cachepath.$triecachefile, 'r');
             $triesize = filesize($cachepath.$triecachefile);
             self::$trie = unserialize(fread($triecache, $triesize));
-            $freqcache = fopen($cachepath.$freqcachefile,'r');
+            $freqcache = fopen($cachepath.$freqcachefile, 'r');
             $freqsize = filesize($cachepath.$freqcachefile);
             self::$FREQ = unserialize(fread($freqcache, $freqsize));
-            $totalcache = fopen($cachepath.$totalcachefile,'r');
+            $totalcache = fopen($cachepath.$totalcachefile, 'r');
             $totalsize = filesize($cachepath.$totalcachefile);
             self::$total = unserialize(fread($totalcache, $totalsize));
-            $minfreqcache = fopen($cachepath.$minfreqcachefile,'r');
+            $minfreqcache = fopen($cachepath.$minfreqcachefile, 'r');
             $minfreqsize = filesize($cachepath.$minfreqcachefile);
             self::$min_freq = unserialize(fread($minfreqcache, $minfreqsize));
 
@@ -181,23 +181,23 @@ class Jieba
             fclose($content);
 
             foreach (self::$FREQ as $key => $value) {
-            self::$FREQ[$key] = log($value / self::$total);
+                self::$FREQ[$key] = log($value / self::$total);
             }
             self::$min_freq = min(self::$FREQ);
             // 缓存文件
-            $triecache = fopen($cachepath.$triecachefile,'w');
-            $triecontent = serialize(self::$trie); 
+            $triecache = fopen($cachepath.$triecachefile, 'w');
+            $triecontent = serialize(self::$trie);
             fwrite($triecache, $triecontent);
             fclose($triecache);
-            $freqcache = fopen($cachepath.$freqcachefile,'w');
-            $freqcontent = serialize(self::$FREQ); 
+            $freqcache = fopen($cachepath.$freqcachefile, 'w');
+            $freqcontent = serialize(self::$FREQ);
             fwrite($freqcache, $freqcontent);
             fclose($freqcache);
-            $totalcache = fopen($cachepath.$totalcachefile,'w');
+            $totalcache = fopen($cachepath.$totalcachefile, 'w');
             $totalcontent = serialize(self::$total);
             fwrite($totalcache, $totalcontent);
             fclose($totalcache);
-            $minfreqcache = fopen($cachepath.$minfreqcachefile,'w');
+            $minfreqcache = fopen($cachepath.$minfreqcachefile, 'w');
             $minfreqcontent = serialize(self::$min_freq);
             fwrite($minfreqcache, $minfreqcontent);
             fclose($minfreqcache);
