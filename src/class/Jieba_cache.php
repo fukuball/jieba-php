@@ -136,7 +136,7 @@ class Jieba
         $totalcachefile = 'total.cache';
         $minfreqcachefile = 'minfreq.cache';
         $flag = file_exists($cachepath.$triecachefile) && file_exists($cachepath.$freqcachefile) && file_exists($cachepath.$totalcachefile) && file_exists($cachepath.$minfreqcachefile) ;
-        if ($flag){
+        if ($flag) {
             // 读取缓存文件
             $triecache = fopen($cachepath.$triecachefile,'r');
             $triesize = filesize($cachepath.$triecachefile);
