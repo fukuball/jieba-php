@@ -128,7 +128,9 @@ class Jieba
 
         // 配置缓存文件
         $cachepath = dirname($f_name).'/cache/';
-        if(!file_exists($cachepath)){mkdir($cachepath);}
+        if(!file_exists($cachepath)){
+            mkdir($cachepath);
+        }
         $triecachefile = 'trie.cache';
         $freqcachefile = 'freq.cache';
         $totalcachefile = 'total.cache';
