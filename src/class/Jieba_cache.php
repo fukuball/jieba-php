@@ -14,8 +14,6 @@
 
 namespace Fukuball\Jieba;
 
-class redis extends \Redis {}
-
 use Fukuball\Tebru\MultiArray;
 
 define("MIN_FLOAT", -3.14e+100);
