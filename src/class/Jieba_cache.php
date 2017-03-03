@@ -114,7 +114,7 @@ class Jieba
 
     /**
      * Static method genTrie
-     *
+      *
      * @param string $f_name  # input f_name
      * @param array  $options # other options
      *
@@ -128,7 +128,7 @@ class Jieba
 
         // 配置缓存文件
         $cachepath = dirname($f_name).'/cache/';
-        if(!file_exists($cachepath)){
+        if (!file_exists($cachepath)){
             mkdir($cachepath);
         }
         $triecachefile = 'trie.cache';
@@ -136,7 +136,7 @@ class Jieba
         $totalcachefile = 'total.cache';
         $minfreqcachefile = 'minfreq.cache';
         $flag = file_exists($cachepath.$triecachefile) && file_exists($cachepath.$freqcachefile) && file_exists($cachepath.$totalcachefile) && file_exists($cachepath.$minfreqcachefile) ;
-        if($flag){
+        if ($flag){
             // 读取缓存文件
             $triecache = fopen($cachepath.$triecachefile,'r');
             $triesize = filesize($cachepath.$triecachefile);
@@ -152,7 +152,7 @@ class Jieba
             self::$min_freq = unserialize(fread($minfreqcache, $minfreqsize));
 
 
-        }else{
+        } else {
             // 建立树并缓存
             $options = array_merge($defaults, $options);
             self::$trie = new MultiArray(file_get_contents($f_name.'.json'));
