@@ -28,7 +28,7 @@ define("MIN_FLOAT", -3.14e+100);
  * @version  Release: <0.16>
  * @link     https://github.com/fukuball/jieba-php
  */
-class Jieba
+class JiebaCache
 {
     public static $total = 0.0;
     public static $trie = array();
@@ -508,4 +508,4 @@ class Jieba
 
         return $seg_list;
     }// end function cutForSearch
-}// end of class Jieba
+}// end of class JiebaCache
