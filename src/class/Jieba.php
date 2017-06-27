@@ -198,8 +198,8 @@ class Jieba
         while (($line = fgets($content)) !== false) {
             $explode_line = explode(" ", trim($line));
             $word = $explode_line[0];
-            $freq = $explode_line[1];
-            $tag = $explode_line[2];
+            $freq = isset($explode_line[1]) ? $explode_line[1] : 1;
+            $tag = isset($explode_line[2]) ? $explode_line[2] : null;
             $freq = (float) $freq;
             if (isset(self::$original_freq[$word])) {
                 self::$total -= self::$original_freq[$word];
