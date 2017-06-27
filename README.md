@@ -539,6 +539,216 @@ array(7) {
 }
 ```
 
+功能 5)：切換成繁體字典
+==============
+
+代碼示例 (Tutorial)
+
+```php
+ini_set('memory_limit', '1024M');
+
+require_once dirname(dirname(__FILE__))."/vendor/multi-array/MultiArray.php";
+require_once dirname(dirname(__FILE__))."/vendor/multi-array/Factory/MultiArrayFactory.php";
+require_once dirname(dirname(__FILE__))."/class/Jieba.php";
+require_once dirname(dirname(__FILE__))."/class/Finalseg.php";
+use Fukuball\Jieba\Jieba;
+use Fukuball\Jieba\Finalseg;
+Jieba::init(array('mode'=>'default','dict'=>'big'));
+Finalseg::init();
+
+$seg_list = Jieba::cut("怜香惜玉也得要看对象啊！");
+var_dump($seg_list);
+
+$seg_list = Jieba::cut("憐香惜玉也得要看對象啊！");
+var_dump($seg_list);
+```
+
+Output:
+
+```php
+array(7) {
+  [0]=>
+  string(12) "怜香惜玉"
+  [1]=>
+  string(3) "也"
+  [2]=>
+  string(3) "得"
+  [3]=>
+  string(3) "要"
+  [4]=>
+  string(3) "看"
+  [5]=>
+  string(6) "对象"
+  [6]=>
+  string(3) "啊"
+}
+array(7) {
+  [0]=>
+  string(12) "憐香惜玉"
+  [1]=>
+  string(3) "也"
+  [2]=>
+  string(3) "得"
+  [3]=>
+  string(3) "要"
+  [4]=>
+  string(3) "看"
+  [5]=>
+  string(6) "對象"
+  [6]=>
+  string(3) "啊"
+}
+```
+
+功能 6)：保留日语或者朝鲜语原文不进行过滤
+==============
+
+代碼示例 (Tutorial)
+
+```php
+ini_set('memory_limit', '1024M');
+
+require_once dirname(dirname(__FILE__))."/vendor/multi-array/MultiArray.php";
+require_once dirname(dirname(__FILE__))."/vendor/multi-array/Factory/MultiArrayFactory.php";
+require_once dirname(dirname(__FILE__))."/class/Jieba.php";
+require_once dirname(dirname(__FILE__))."/class/Finalseg.php";
+use Fukuball\Jieba\Jieba;
+use Fukuball\Jieba\Finalseg;
+Jieba::init(array('cjk'=>'all'));
+Finalseg::init();
+
+$seg_list = Jieba::cut("한국어 또는 조선말은 제주특별자치도를 제외한 한반도 및 그 부속 도서와 한민족 거주 지역에서 쓰이는 언어로");
+var_dump($seg_list);
+
+$seg_list = Jieba::cut("日本語は、主に日本国内や日本人同士の間で使われている言語である。");
+var_dump($seg_list);
+
+$seg_list = Jieba::cut("日本語は、主に日本国内や日本人同士の間で使われている言語である。");
+var_dump($seg_list);
+
+// 加载日语词库可以对日语进行简单的分词
+Jieba::loadUserDict("/path/to/your/japanese/dict.txt");
+$seg_list = Jieba::cut("日本語は、主に日本国内や日本人同士の間で使われている言語である。");
+var_dump($seg_list);
+```
+
+Output:
+
+```php
+array(15) {
+  [0]=>
+  string(9) "한국어"
+  [1]=>
+  string(6) "또는"
+  [2]=>
+  string(12) "조선말은"
+  [3]=>
+  string(24) "제주특별자치도를"
+  [4]=>
+  string(9) "제외한"
+  [5]=>
+  string(9) "한반도"
+  [6]=>
+  string(3) "및"
+  [7]=>
+  string(3) "그"
+  [8]=>
+  string(6) "부속"
+  [9]=>
+  string(9) "도서와"
+  [10]=>
+  string(9) "한민족"
+  [11]=>
+  string(6) "거주"
+  [12]=>
+  string(12) "지역에서"
+  [13]=>
+  string(9) "쓰이는"
+  [14]=>
+  string(9) "언어로"
+}
+array(21) {
+  [0]=>
+  string(6) "日本"
+  [1]=>
+  string(3) "語"
+  [2]=>
+  string(3) "は"
+  [3]=>
+  string(3) "主"
+  [4]=>
+  string(3) "に"
+  [5]=>
+  string(6) "日本"
+  [6]=>
+  string(6) "国内"
+  [7]=>
+  string(3) "や"
+  [8]=>
+  string(6) "日本"
+  [9]=>
+  string(3) "人"
+  [10]=>
+  string(6) "同士"
+  [11]=>
+  string(3) "の"
+  [12]=>
+  string(3) "間"
+  [13]=>
+  string(3) "で"
+  [14]=>
+  string(3) "使"
+  [15]=>
+  string(3) "わ"
+  [16]=>
+  string(6) "れて"
+  [17]=>
+  string(6) "いる"
+  [18]=>
+  string(6) "言語"
+  [19]=>
+  string(3) "で"
+  [20]=>
+  string(6) "ある"
+}
+array(17) {
+  [0]=>
+  string(9) "日本語"
+  [1]=>
+  string(3) "は"
+  [2]=>
+  string(6) "主に"
+  [3]=>
+  string(9) "日本国"
+  [4]=>
+  string(3) "内"
+  [5]=>
+  string(3) "や"
+  [6]=>
+  string(9) "日本人"
+  [7]=>
+  string(6) "同士"
+  [8]=>
+  string(3) "の"
+  [9]=>
+  string(3) "間"
+  [10]=>
+  string(3) "で"
+  [11]=>
+  string(3) "使"
+  [12]=>
+  string(3) "わ"
+  [13]=>
+  string(6) "れて"
+  [14]=>
+  string(6) "いる"
+  [15]=>
+  string(6) "言語"
+  [16]=>
+  string(9) "である"
+}
+```
+
 常見問題
 ========
 1) 模型的數據是如何生成的？ https://github.com/fxsjy/jieba/issues/7
@@ -1041,6 +1251,155 @@ array(7) {
   string(6) "對象"
   [6]=>
   string(3) "啊"
+}
+```
+
+Function 6)：Keeping Japanese or Korean original text
+==============
+
+Example (Tutorial)
+
+```php
+ini_set('memory_limit', '1024M');
+
+require_once dirname(dirname(__FILE__))."/vendor/multi-array/MultiArray.php";
+require_once dirname(dirname(__FILE__))."/vendor/multi-array/Factory/MultiArrayFactory.php";
+require_once dirname(dirname(__FILE__))."/class/Jieba.php";
+require_once dirname(dirname(__FILE__))."/class/Finalseg.php";
+use Fukuball\Jieba\Jieba;
+use Fukuball\Jieba\Finalseg;
+Jieba::init(array('cjk'=>'all'));
+Finalseg::init();
+
+$seg_list = Jieba::cut("한국어 또는 조선말은 제주특별자치도를 제외한 한반도 및 그 부속 도서와 한민족 거주 지역에서 쓰이는 언어로");
+var_dump($seg_list);
+
+$seg_list = Jieba::cut("日本語は、主に日本国内や日本人同士の間で使われている言語である。");
+var_dump($seg_list);
+
+$seg_list = Jieba::cut("日本語は、主に日本国内や日本人同士の間で使われている言語である。");
+var_dump($seg_list);
+
+// Loading custom Japanese dictionary can do a simple word segmentation
+Jieba::loadUserDict("/path/to/your/japanese/dict.txt");
+$seg_list = Jieba::cut("日本語は、主に日本国内や日本人同士の間で使われている言語である。");
+var_dump($seg_list);
+```
+
+Output:
+
+```php
+array(15) {
+  [0]=>
+  string(9) "한국어"
+  [1]=>
+  string(6) "또는"
+  [2]=>
+  string(12) "조선말은"
+  [3]=>
+  string(24) "제주특별자치도를"
+  [4]=>
+  string(9) "제외한"
+  [5]=>
+  string(9) "한반도"
+  [6]=>
+  string(3) "및"
+  [7]=>
+  string(3) "그"
+  [8]=>
+  string(6) "부속"
+  [9]=>
+  string(9) "도서와"
+  [10]=>
+  string(9) "한민족"
+  [11]=>
+  string(6) "거주"
+  [12]=>
+  string(12) "지역에서"
+  [13]=>
+  string(9) "쓰이는"
+  [14]=>
+  string(9) "언어로"
+}
+array(21) {
+  [0]=>
+  string(6) "日本"
+  [1]=>
+  string(3) "語"
+  [2]=>
+  string(3) "は"
+  [3]=>
+  string(3) "主"
+  [4]=>
+  string(3) "に"
+  [5]=>
+  string(6) "日本"
+  [6]=>
+  string(6) "国内"
+  [7]=>
+  string(3) "や"
+  [8]=>
+  string(6) "日本"
+  [9]=>
+  string(3) "人"
+  [10]=>
+  string(6) "同士"
+  [11]=>
+  string(3) "の"
+  [12]=>
+  string(3) "間"
+  [13]=>
+  string(3) "で"
+  [14]=>
+  string(3) "使"
+  [15]=>
+  string(3) "わ"
+  [16]=>
+  string(6) "れて"
+  [17]=>
+  string(6) "いる"
+  [18]=>
+  string(6) "言語"
+  [19]=>
+  string(3) "で"
+  [20]=>
+  string(6) "ある"
+}
+array(17) {
+  [0]=>
+  string(9) "日本語"
+  [1]=>
+  string(3) "は"
+  [2]=>
+  string(6) "主に"
+  [3]=>
+  string(9) "日本国"
+  [4]=>
+  string(3) "内"
+  [5]=>
+  string(3) "や"
+  [6]=>
+  string(9) "日本人"
+  [7]=>
+  string(6) "同士"
+  [8]=>
+  string(3) "の"
+  [9]=>
+  string(3) "間"
+  [10]=>
+  string(3) "で"
+  [11]=>
+  string(3) "使"
+  [12]=>
+  string(3) "わ"
+  [13]=>
+  string(6) "れて"
+  [14]=>
+  string(6) "いる"
+  [15]=>
+  string(6) "言語"
+  [16]=>
+  string(9) "である"
 }
 ```
 

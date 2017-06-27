@@ -233,10 +233,10 @@ class Finalseg
 
         $seg_list = array();
 
-        $re_han_pattern = '([\x{4E00}-\x{9FA5}]+)';
+        $re_cjk_pattern = '([\x{3040}-\x{309F}]+)|([\x{30A0}-\x{30FF}]+)|([\x{4E00}-\x{9FA5}]+)|([\x{AC00}-\x{D7AF}]+)';
         $re_skip_pattern = '([a-zA-Z0-9+#\r\n]+)';
         preg_match_all(
-            '/('.$re_han_pattern.'|'.$re_skip_pattern.')/u',
+            '/('.$re_cjk_pattern.'|'.$re_skip_pattern.')/u',
             $sentence,
             $matches,
             PREG_PATTERN_ORDER
@@ -245,7 +245,7 @@ class Finalseg
 
         foreach ($blocks as $blk) {
 
-            if (preg_match('/'.$re_han_pattern.'/u', $blk)) {
+            if (preg_match('/'.$re_cjk_pattern.'/u', $blk)) {
 
                 $words = self::__cut($blk);
 
