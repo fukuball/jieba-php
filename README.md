@@ -262,7 +262,7 @@ require_once "/path/to/your/class/JiebaAnalyse.php";
 use Fukuball\Jieba\Jieba;
 use Fukuball\Jieba\Finalseg;
 use Fukuball\Jieba\JiebaAnalyse;
-Jieba::init(array('mode'=>'test','dict'=>'samll'));
+Jieba::init(array('mode'=>'test','dict'=>'small'));
 Finalseg::init();
 JiebaAnalyse::init();
 
@@ -623,9 +623,6 @@ var_dump($seg_list);
 $seg_list = Jieba::cut("日本語は、主に日本国内や日本人同士の間で使われている言語である。");
 var_dump($seg_list);
 
-$seg_list = Jieba::cut("日本語は、主に日本国内や日本人同士の間で使われている言語である。");
-var_dump($seg_list);
-
 // 加载日语词库可以对日语进行简单的分词
 Jieba::loadUserDict("/path/to/your/japanese/dict.txt");
 $seg_list = Jieba::cut("日本語は、主に日本国内や日本人同士の間で使われている言語である。");
@@ -977,7 +974,7 @@ require_once "/path/to/your/class/JiebaAnalyse.php";
 use Fukuball\Jieba\Jieba;
 use Fukuball\Jieba\Finalseg;
 use Fukuball\Jieba\JiebaAnalyse;
-Jieba::init(array('mode'=>'test','dict'=>'samll'));
+Jieba::init(array('mode'=>'test','dict'=>'small'));
 Finalseg::init();
 JiebaAnalyse::init();
 
@@ -1272,9 +1269,6 @@ Jieba::init(array('cjk'=>'all'));
 Finalseg::init();
 
 $seg_list = Jieba::cut("한국어 또는 조선말은 제주특별자치도를 제외한 한반도 및 그 부속 도서와 한민족 거주 지역에서 쓰이는 언어로");
-var_dump($seg_list);
-
-$seg_list = Jieba::cut("日本語は、主に日本国内や日本人同士の間で使われている言語である。");
 var_dump($seg_list);
 
 $seg_list = Jieba::cut("日本語は、主に日本国内や日本人同士の間で使われている言語である。");
