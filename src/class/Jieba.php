@@ -415,12 +415,13 @@ class Jieba
         $re_hangul_pattern = '([\x{AC00}-\x{D7AF}]+)';
         $re_ascii_pattern = '([a-zA-Z0-9+#\r\n]+)';
 
-        if (self::$cjk_all)
+        if (self::$cjk_all) {
             $filter_pattern = $re_kanjikana_pattern.
                             '|'.$re_katakana_pattern.
                             '|'.$re_hangul_pattern;
-        else
+        } else {
             $filter_pattern = $re_han_pattern;
+        }
 
         preg_match_all(
             '/('.$filter_pattern.'|'.$re_ascii_pattern.')/u',
@@ -431,10 +432,12 @@ class Jieba
         $blocks = $matches[0];
 
         foreach ($blocks as $blk) {
-            if (self::$cjk_all) // skip korean
+            if (self::$cjk_all) {
+                // skip korean
                 $filter_pattern = $re_kanjikana_pattern.'|'.$re_katakana_pattern;
-            else
+            } else {
                 $filter_pattern = $re_han_pattern;
+            }
 
             if (preg_match('/'.$filter_pattern.'/u', $blk)) {
                 if ($cut_all) {
