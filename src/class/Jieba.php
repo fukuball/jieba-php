@@ -37,7 +37,8 @@ class Jieba
     public static $min_freq = 0.0;
     public static $route = array();
     public static $dictname;
-    public static $user_dictname=array();
+    public static $user_dictname = array();
+    public static $cjk_all = false;
 
     /**
      * Static method init
@@ -50,7 +51,8 @@ class Jieba
     {
         $defaults = array(
             'mode'=>'default',
-            'dict'=>'normal'
+            'dict'=>'normal',
+            'cjk'=>'chinese'
         );
 
         $options = array_merge($defaults, $options);
@@ -68,6 +70,12 @@ class Jieba
         } else {
             $f_name = "dict.txt";
             self::$dictname="dict.txt";
+        }
+
+        if ($options['cjk']=='all') {
+            self::$cjk_all = true;
+        } else {
+            self::$cjk_all = false;
         }
 
         $t1 = microtime(true);
@@ -190,8 +198,8 @@ class Jieba
         while (($line = fgets($content)) !== false) {
             $explode_line = explode(" ", trim($line));
             $word = $explode_line[0];
-            $freq = $explode_line[1];
-            $tag = $explode_line[2];
+            $freq = isset($explode_line[1]) ? $explode_line[1] : 1;
+            $tag = isset($explode_line[2]) ? $explode_line[2] : null;
             $freq = (float) $freq;
             if (isset(self::$original_freq[$word])) {
                 self::$total -= self::$original_freq[$word];
@@ -402,9 +410,20 @@ class Jieba
         $seg_list = array();
 
         $re_han_pattern = '([\x{4E00}-\x{9FA5}]+)';
-        $re_skip_pattern = '([a-zA-Z0-9+#\r\n]+)';
+        $re_kanjikana_pattern = '([\x{3040}-\x{309F}\x{4E00}-\x{9FA5}]+)';
+        $re_katakana_pattern = '([\x{30A0}-\x{30FF}]+)';
+        $re_hangul_pattern = '([\x{AC00}-\x{D7AF}]+)';
+        $re_ascii_pattern = '([a-zA-Z0-9+#\r\n]+)';
+
+        if (self::$cjk_all)
+            $filter_pattern = $re_kanjikana_pattern.
+                            '|'.$re_katakana_pattern.
+                            '|'.$re_hangul_pattern;
+        else
+            $filter_pattern = $re_han_pattern;
+
         preg_match_all(
-            '/('.$re_han_pattern.'|'.$re_skip_pattern.')/u',
+            '/('.$filter_pattern.'|'.$re_ascii_pattern.')/u',
             $sentence,
             $matches,
             PREG_PATTERN_ORDER
@@ -412,7 +431,12 @@ class Jieba
         $blocks = $matches[0];
 
         foreach ($blocks as $blk) {
-            if (preg_match('/'.$re_han_pattern.'/u', $blk)) {
+            if (self::$cjk_all) // skip korean
+                $filter_pattern = $re_kanjikana_pattern.'|'.$re_katakana_pattern;
+            else
+                $filter_pattern = $re_han_pattern;
+
+            if (preg_match('/'.$filter_pattern.'/u', $blk)) {
                 if ($cut_all) {
                     $words = Jieba::__cutAll($blk);
                 } else {
