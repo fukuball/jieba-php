@@ -80,6 +80,7 @@ class Jieba
         }
 
         $t1 = microtime(true);
+        self::$dag_cache = array();
         self::$trie = Jieba::genTrie(dirname(dirname(__FILE__))."/dict/".$f_name);
         self::__calcFreq();
 
@@ -218,6 +219,7 @@ class Jieba
         }
         fclose($content);
         self::__calcFreq();
+        self::$dag_cache = array();
 
         return self::$trie;
     }// end function loadUserDict
@@ -434,7 +436,6 @@ class Jieba
 
         $options = array_merge($defaults, $options);
 
-        self::$dag_cache = array();
         $seg_list = array();
 
         $re_han_pattern = '([\x{4E00}-\x{9FA5}]+)';
