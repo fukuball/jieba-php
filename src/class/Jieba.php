@@ -39,6 +39,7 @@ class Jieba
     public static $dictname;
     public static $user_dictname = array();
     public static $cjk_all = false;
+    public static $dag_cache = array();
 
     /**
      * Static method init
@@ -291,13 +292,38 @@ class Jieba
                 $next_word_key = implode('.', $word_c).'.'.$c;
             }
 
+            if (isset(self::$dag_cache[$next_word_key])) {
+                if (self::$dag_cache[$next_word_key]['exist']) {
+                    array_push($word_c, $c);
+                    if (self::$dag_cache[$next_word_key]['end']) {
+                        if (!isset($DAG[$i])) {
+                            $DAG[$i] = array();
+                        }
+                        array_push($DAG[$i], $j);
+                    }
+                    $j += 1;
+                    if ($j >= $N) {
+                        $word_c = array();
+                        $i += 1;
+                        $j = $i;
+                    }
+                } else {
+                    $word_c = array();
+                    $i += 1;
+                    $j = $i;
+                }
+                continue;
+            }
+
             if (self::$trie->exists($next_word_key)) {
+                self::$dag_cache[$next_word_key] = array('exist' => true, 'end' => false);
                 array_push($word_c, $c);
                 $next_word_key_value = self::$trie->get($next_word_key);
                 if ($next_word_key_value == array("end"=>"")
                  || isset($next_word_key_value["end"])
                  || isset($next_word_key_value[0]["end"])
                 ) {
+                    self::$dag_cache[$next_word_key]['end'] = true;
                     if (!isset($DAG[$i])) {
                         $DAG[$i] = array();
                     }
@@ -313,6 +339,7 @@ class Jieba
                 $word_c = array();
                 $i += 1;
                 $j = $i;
+                self::$dag_cache[$next_word_key] = array('exist' => false);
             }
         }
 
@@ -407,6 +434,7 @@ class Jieba
 
         $options = array_merge($defaults, $options);
 
+        self::$dag_cache = array();
         $seg_list = array();
 
         $re_han_pattern = '([\x{4E00}-\x{9FA5}]+)';
