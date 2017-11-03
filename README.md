@@ -746,6 +746,14 @@ array(17) {
 }
 ```
 
+其他詞典
+========
+1) 佔用內容較小的詞典
+https://github.com/fukuball/jieba-php/blob/master/src/dict/dict.small.txt
+
+2) 支持繁體斷詞的詞典
+https://github.com/fukuball/jieba-php/blob/master/src/dict/dict.big.txt
+
 常見問題
 ========
 1) 模型的數據是如何生成的？ https://github.com/fxsjy/jieba/issues/7
