@@ -30,4 +30,10 @@ Jieba::loadUserDict(dirname(dirname(__FILE__)).'/dict/user_dict.txt');
 
 $seg_list = Jieba::cut("李小福是创新办主任也是云计算方面的专家");
 var_dump($seg_list);
+
+$seg_list = Jieba::cut("easy_install is great");
+var_dump($seg_list);
+
+$seg_list = Jieba::cut("python 的正则表达式是好用的");
+var_dump($seg_list);
 ?>

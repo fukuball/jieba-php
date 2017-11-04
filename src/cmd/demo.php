@@ -29,7 +29,7 @@ var_dump($seg_list);
 $seg_list = Jieba::cut("张晓梅去人民医院做了个B超然后去买了件T恤");
 var_dump($seg_list);
 
-$seg_list = Jieba::cut("C++和c#是什么关系？11+122=133，是吗？");
+$seg_list = Jieba::cut("C++和c#是什么关系？11+122=133，是吗？PI=3.14159");
 var_dump($seg_list);
 
 $seg_list = Jieba::cut("应一些使用者的建议，也为了便于利用NiuTrans用于SMT研究");

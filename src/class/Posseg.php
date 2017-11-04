@@ -359,12 +359,12 @@ class Posseg
         $words = array();
 
         $re_han_pattern = '([\x{4E00}-\x{9FA5}]+)';
-        $re_skip_pattern = '([a-zA-Z0-9+#\r\n]+)';
+        $re_skip_pattern = '([a-zA-Z0-9+#&=\._\r\n]+)';
         $re_punctuation_pattern = '([\x{ff5e}\x{ff01}\x{ff08}\x{ff09}\x{300e}'.
                                     '\x{300c}\x{300d}\x{300f}\x{3001}\x{ff1a}\x{ff1b}'.
                                     '\x{ff0c}\x{ff1f}\x{3002}]+)';
-        $re_eng_pattern = '[a-zA-Z+#]+';
-        $re_num_pattern = '[0-9]+';
+        $re_eng_pattern = '[a-zA-Z0-9]+';
+        $re_num_pattern = '[\.0-9]+';
 
         preg_match_all(
             '/('.$re_han_pattern.'|'.$re_skip_pattern.'|'.$re_punctuation_pattern.')/u',
