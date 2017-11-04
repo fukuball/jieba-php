@@ -23,10 +23,25 @@ use Fukuball\Jieba\Finalseg;
 Jieba::init(array('mode'=>'test','dict'=>'big'));
 Finalseg::init();
 
+$seg_list = Jieba::cut("AT&T是一件不错的公司，给你发offer了吗");
+var_dump($seg_list);
+
+$seg_list = Jieba::cut("张晓梅去人民医院做了个B超然后去买了件T恤");
+var_dump($seg_list);
+
+$seg_list = Jieba::cut("C++和c#是什么关系？11+122=133，是吗？");
+var_dump($seg_list);
+
+$seg_list = Jieba::cut("应一些使用者的建议，也为了便于利用NiuTrans用于SMT研究");
+var_dump($seg_list);
+
 $seg_list = Jieba::cut("怜香惜玉也得要看对象啊！");
 var_dump($seg_list);
 
 $seg_list = Jieba::cut("憐香惜玉也得要看對象啊！");
+var_dump($seg_list);
+
+$seg_list = Jieba::cut("How are you? 我是 ABC!");
 var_dump($seg_list);
 
 echo "Full Mode: \n";

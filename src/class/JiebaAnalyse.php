@@ -29,6 +29,14 @@ class JiebaAnalyse
 
     public static $idf_freq = array();
     public static $max_idf = 0;
+    public static $median_idf = 0;
+    public static $stop_words= [
+        "the", "of", "is", "and", "to", "in", "that", "we",
+        "for", "an", "are", "by", "be", "as", "on", "with",
+        "can", "if", "from", "which", "you", "it", "this",
+        "then", "at", "have", "all", "not", "one", "has",
+        "or", "that"
+    ];
 
     /**
      * Static method init
@@ -57,8 +65,11 @@ class JiebaAnalyse
         }
         fclose($content);
 
+        asort(self::$idf_freq);
+        $keys = array_keys(self::$idf_freq);
+        $middle_key = $keys[count(self::$idf_freq)/2];
         self::$max_idf = max(self::$idf_freq);
-
+        self::$median_idf = self::$idf_freq[$middle_key];
     }// end function init
 
     /**
@@ -91,6 +102,10 @@ class JiebaAnalyse
             if (mb_strlen($w, 'UTF-8')<2) {
                 continue;
             }
+
+            if (in_array(strtolower($w), self::$stop_words)) {
+                continue;
+            }
             if (isset($freq[$w])) {
                 $freq[$w] = $freq[$w] + 1.0;
             } else {
@@ -109,7 +124,7 @@ class JiebaAnalyse
             if (isset(self::$idf_freq[$k])) {
                 $idf_freq = self::$idf_freq[$k];
             } else {
-                $idf_freq = self::$max_idf;
+                $idf_freq = self::$median_idf;
             }
             $tf_idf_list[$k] = $v * $idf_freq;
         }

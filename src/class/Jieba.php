@@ -439,17 +439,19 @@ class Jieba
         $seg_list = array();
 
         $re_han_pattern = '([\x{4E00}-\x{9FA5}]+)';
+        $re_han_with_ascii_pattern = '([\x{4E00}-\x{9FA5}a-zA-Z0-9+#&=]+)';
         $re_kanjikana_pattern = '([\x{3040}-\x{309F}\x{4E00}-\x{9FA5}]+)';
         $re_katakana_pattern = '([\x{30A0}-\x{30FF}]+)';
         $re_hangul_pattern = '([\x{AC00}-\x{D7AF}]+)';
-        $re_ascii_pattern = '([a-zA-Z0-9+#\r\n]+)';
+        $re_ascii_pattern = '([a-zA-Z0-9+#&=\r\n]+)';
+        $re_skip_pattern = '(\s+)';
 
         if (self::$cjk_all) {
             $filter_pattern = $re_kanjikana_pattern.
                             '|'.$re_katakana_pattern.
                             '|'.$re_hangul_pattern;
         } else {
-            $filter_pattern = $re_han_pattern;
+            $filter_pattern = $re_han_with_ascii_pattern;
         }
 
         preg_match_all(
@@ -465,7 +467,7 @@ class Jieba
                 // skip korean
                 $filter_pattern = $re_kanjikana_pattern.'|'.$re_katakana_pattern;
             } else {
-                $filter_pattern = $re_han_pattern;
+                $filter_pattern = $re_han_with_ascii_pattern;
             }
 
             if (preg_match('/'.$filter_pattern.'/u', $blk)) {
