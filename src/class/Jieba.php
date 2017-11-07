@@ -118,7 +118,7 @@ class Jieba
     {
         $N = mb_strlen($sentence, 'UTF-8');
         self::$route = array();
-        self::$route[$N] = array($N => 1.0);
+        self::$route[$N] = array($N => 0.0);
         for ($i=($N-1); $i>=0; $i--) {
             $candidates = array();
             foreach ($DAG[$i] as $x) {
