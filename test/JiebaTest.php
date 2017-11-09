@@ -149,11 +149,10 @@ class JiebaTest extends PHPUnit_Framework_TestCase
             "雖然"=>0.33675401416619716,
             "退縮"=>0.33675401416619716,
             "矯作"=>0.33675401416619716,
-            "怯懦"=>0.27109891642140843,
-            "滿肚"=>0.16837700708309858
+            "怯懦"=>0.27109891642140843
         );
 
-        $top_k = 10;
+        $top_k = 9;
         $content = file_get_contents(dirname(dirname(__FILE__))."/src/dict/lyric.txt", "r");
 
         $tags = JiebaAnalyse::extractTags($content, $top_k);
