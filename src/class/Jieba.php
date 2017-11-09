@@ -459,7 +459,7 @@ class Jieba
         $re_hangul_pattern = '([\x{AC00}-\x{D7AF}]+)';
         $re_ascii_pattern = '([a-zA-Z0-9+#&=\._\r\n]+)';
         $re_skip_pattern = '(\s+)';
-        if (cut_all) {
+        if ($cut_all) {
             $re_skip_pattern = '([a-zA-Z0-9+#&=\._\r\n]+)';
         }
 
@@ -511,7 +511,7 @@ class Jieba
                             array_push($seg_list, $x);
                         }
                     } else {
-                        if (!cut_all) {
+                        if (!$cut_all) {
                             $xx_array = preg_split('//u', $x, -1, PREG_SPLIT_NO_EMPTY);
                             foreach ($xx_array as $xx) {
                                 array_push($seg_list, $xx);
