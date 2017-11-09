@@ -441,9 +441,24 @@ class Posseg
                         );
                         $buf = '';
                     } else {
-                        $regognized = self::__cutDetail($buf);
-                        foreach ($regognized as $key => $word) {
-                            array_push($words, $word);
+                        if (! isset(Jieba::$FREQ[$buf])) {
+                            $regognized = self::__cutDetail($buf);
+                            foreach ($regognized as $key => $word) {
+                                array_push($words, $word);
+                            }
+                        } else {
+                            $elem_array = preg_split('//u', $buf, -1, PREG_SPLIT_NO_EMPTY);
+                            foreach ($elem_array as $word) {
+                                if (isset(self::$word_tag[$word])) {
+                                    $buf_tag = self::$word_tag[$word];
+                                } else {
+                                    $buf_tag = "x";
+                                }
+                                array_push(
+                                    $words,
+                                    array("word"=>$word, "tag"=>$buf_tag)
+                                );
+                            }
                         }
                         $buf = '';
                     }
@@ -474,9 +489,24 @@ class Posseg
                     array("word"=>$buf, "tag"=>$buf_tag)
                 );
             } else {
-                $regognized = self::__cutDetail($buf);
-                foreach ($regognized as $key => $word) {
-                    array_push($words, $word);
+                if (! isset(Jieba::$FREQ[$buf])) {
+                    $regognized = self::__cutDetail($buf);
+                    foreach ($regognized as $key => $word) {
+                        array_push($words, $word);
+                    }
+                } else {
+                    $elem_array = preg_split('//u', $buf, -1, PREG_SPLIT_NO_EMPTY);
+                    foreach ($elem_array as $word) {
+                        if (isset(self::$word_tag[$word])) {
+                            $buf_tag = self::$word_tag[$word];
+                        } else {
+                            $buf_tag = "x";
+                        }
+                        array_push(
+                            $words,
+                            array("word"=>$word, "tag"=>$buf_tag)
+                        );
+                    }
                 }
             }
         }

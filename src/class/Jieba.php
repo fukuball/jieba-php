@@ -393,9 +393,16 @@ class Jieba
                         array_push($words, $buf);
                         $buf = '';
                     } else {
-                        $regognized = Finalseg::cut($buf);
-                        foreach ($regognized as $key => $word) {
-                            array_push($words, $word);
+                        if (! isset(self::$FREQ[$buf])) {
+                            $regognized = Finalseg::cut($buf);
+                            foreach ($regognized as $key => $word) {
+                                array_push($words, $word);
+                            }
+                        } else {
+                            $elem_array = preg_split('//u', $buf, -1, PREG_SPLIT_NO_EMPTY);
+                            foreach ($elem_array as $word) {
+                                array_push($words, $word);
+                            }
                         }
                         $buf = '';
                     }
@@ -409,9 +416,16 @@ class Jieba
             if (mb_strlen($buf, 'UTF-8')==1) {
                 array_push($words, $buf);
             } else {
-                $regognized = Finalseg::cut($buf);
-                foreach ($regognized as $key => $word) {
-                    array_push($words, $word);
+                if (! isset(self::$FREQ[$buf])) {
+                    $regognized = Finalseg::cut($buf);
+                    foreach ($regognized as $key => $word) {
+                        array_push($words, $word);
+                    }
+                } else {
+                    $elem_array = preg_split('//u', $buf, -1, PREG_SPLIT_NO_EMPTY);
+                    foreach ($elem_array as $word) {
+                        array_push($words, $word);
+                    }
                 }
             }
         }
@@ -445,6 +459,9 @@ class Jieba
         $re_hangul_pattern = '([\x{AC00}-\x{D7AF}]+)';
         $re_ascii_pattern = '([a-zA-Z0-9+#&=\._\r\n]+)';
         $re_skip_pattern = '(\s+)';
+        if (cut_all) {
+            $re_skip_pattern = '([a-zA-Z0-9+#&=\._\r\n]+)';
+        }
 
         if (self::$cjk_all) {
             $filter_pattern = $re_kanjikana_pattern.
@@ -481,7 +498,29 @@ class Jieba
                     array_push($seg_list, $word);
                 }
             } else {
-                array_push($seg_list, $blk);
+                preg_match_all(
+                    '/('.$re_skip_pattern.')/u',
+                    $blk,
+                    $tmp,
+                    PREG_PATTERN_ORDER
+                );
+                $tmp = $tmp[0];
+                foreach ($tmp as $x) {
+                    if (preg_match('/'.$re_skip_pattern.'/u', $x)) {
+                        if (str_replace(' ', '', $x) != '') {
+                            array_push($seg_list, $x);
+                        }
+                    } else {
+                        if (!cut_all) {
+                            $xx_array = preg_split('//u', $x, -1, PREG_SPLIT_NO_EMPTY);
+                            foreach ($xx_array as $xx) {
+                                array_push($seg_list, $xx);
+                            }
+                        } else {
+                            array_push($seg_list, $x);
+                        }
+                    }
+                }
             }// end else (preg_match('/'.$re_han_pattern.'/u', $blk))
         }// end foreach ($blocks as $blk)
 
