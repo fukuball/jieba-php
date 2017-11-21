@@ -233,7 +233,7 @@ class Jieba
      *
      * @return array self::$trie
      */
-    public static function addWord($word, $freq, $tag='', $options = array())
+    public static function addWord($word, $freq, $tag = '', $options = array())
     {
         if (isset(self::$original_freq[$word])) {
             self::$total -= self::$original_freq[$word];
