@@ -71,4 +71,7 @@ var_dump($seg_list);
 
 $seg_list = Jieba::cutForSearch("小明碩士畢業于中國科學院計算所，後在日本京都大學深造");
 var_dump($seg_list);
+
+$seg_list = Jieba::tokenize("永和服装饰品有限公司");
+var_dump($seg_list);
 ?>

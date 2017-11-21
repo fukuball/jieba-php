@@ -225,6 +225,61 @@ class Jieba
     }// end function loadUserDict
 
     /**
+     * Static method addWord
+     *
+     * @param string $word
+     * @param float  $freq
+     * @param string $tag
+     *
+     * @return array self::$trie
+     */
+    public static function addWord($word, $freq, $tag='', $options = array())
+    {
+        if (isset(self::$original_freq[$word])) {
+            self::$total -= self::$original_freq[$word];
+        }
+        self::$original_freq[$word] = $freq;
+        self::$total += $freq;
+        $l = mb_strlen($word, 'UTF-8');
+        $word_c = array();
+        for ($i=0; $i<$l; $i++) {
+            $c = mb_substr($word, $i, 1, 'UTF-8');
+            array_push($word_c, $c);
+        }
+        $word_c_key = implode('.', $word_c);
+        self::$trie->set($word_c_key, array("end"=>""));
+        self::__calcFreq();
+        self::$dag_cache = array();
+        return self::$trie;
+    }
+
+    /**
+     * Static method tokenize
+     *
+     * @param string $sentence
+     *
+     * @return array
+     */
+    public static function tokenize($sentence, $options = array())
+    {
+        $seg_list = self::cut($sentence);
+        $tokenize_list = [];
+        $start = 0;
+        $end = 0;
+        foreach ($seg_list as $seg) {
+            $end = $start+mb_strlen($seg, 'UTF-8');
+            $tokenize = [
+                'word' => $seg,
+                'start' => $start,
+                'end' => $end
+            ];
+            $start = $end;
+            array_push($tokenize_list, $tokenize);
+        }
+        return $tokenize_list;
+    }
+
+    /**
      * Static method __cutAll
      *
      * @param string $sentence # input sentence
@@ -462,6 +517,9 @@ class Jieba
         if ($cut_all) {
             $re_skip_pattern = '([a-zA-Z0-9+#&=\._\r\n]+)';
         }
+        $re_punctuation_pattern = '([\x{ff5e}\x{ff01}\x{ff08}\x{ff09}\x{300e}'.
+                                    '\x{300c}\x{300d}\x{300f}\x{3001}\x{ff1a}\x{ff1b}'.
+                                    '\x{ff0c}\x{ff1f}\x{3002}]+)';
 
         if (self::$cjk_all) {
             $filter_pattern = $re_kanjikana_pattern.
@@ -472,7 +530,7 @@ class Jieba
         }
 
         preg_match_all(
-            '/('.$filter_pattern.'|'.$re_ascii_pattern.')/u',
+            '/('.$filter_pattern.'|'.$re_ascii_pattern.'|'.$re_punctuation_pattern.')/u',
             $sentence,
             $matches,
             PREG_PATTERN_ORDER
@@ -497,7 +555,7 @@ class Jieba
                 foreach ($words as $word) {
                     array_push($seg_list, $word);
                 }
-            } else {
+            } elseif (preg_match('/'.$re_skip_pattern.'/u', $blk)) {
                 preg_match_all(
                     '/('.$re_skip_pattern.')/u',
                     $blk,
@@ -521,6 +579,8 @@ class Jieba
                         }
                     }
                 }
+            } elseif (preg_match('/'.$re_punctuation_pattern.'/u', $blk)) {
+                array_push($seg_list, $blk);
             }// end else (preg_match('/'.$re_han_pattern.'/u', $blk))
         }// end foreach ($blocks as $blk)
 

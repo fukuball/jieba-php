@@ -44,7 +44,8 @@ class JiebaTest extends PHPUnit_Framework_TestCase
             "要",
             "看",
             "对象",
-            "啊"
+            "啊",
+            "！"
         );
 
         $seg_list = Jieba::cut("怜香惜玉也得要看对象啊！");
@@ -107,6 +108,7 @@ class JiebaTest extends PHPUnit_Framework_TestCase
             "中国科学院",
             "计算",
             "计算所",
+            "，",
             "后",
             "在",
             "日本",

@@ -751,6 +751,70 @@ array(17) {
 }
 ```
 
+功能 7)：返回詞語在原文的起止位置
+==============
+
+代碼示例 (Tutorial)
+
+```php
+ini_set('memory_limit', '1024M');
+
+require_once dirname(dirname(__FILE__))."/vendor/multi-array/MultiArray.php";
+require_once dirname(dirname(__FILE__))."/vendor/multi-array/Factory/MultiArrayFactory.php";
+require_once dirname(dirname(__FILE__))."/class/Jieba.php";
+require_once dirname(dirname(__FILE__))."/class/Finalseg.php";
+use Fukuball\Jieba\Jieba;
+use Fukuball\Jieba\Finalseg;
+Jieba::init(array('mode'=>'test','dict'=>'big'));
+Finalseg::init();
+
+$seg_list = Jieba::tokenize("永和服装饰品有限公司");
+var_dump($seg_list);
+```
+
+Output:
+
+```php
+array(4) {
+  [0] =>
+  array(3) {
+    'word' =>
+    string(6) "永和"
+    'start' =>
+    int(0)
+    'end' =>
+    int(2)
+  }
+  [1] =>
+  array(3) {
+    'word' =>
+    string(6) "服装"
+    'start' =>
+    int(2)
+    'end' =>
+    int(4)
+  }
+  [2] =>
+  array(3) {
+    'word' =>
+    string(6) "饰品"
+    'start' =>
+    int(4)
+    'end' =>
+    int(6)
+  }
+  [3] =>
+  array(3) {
+    'word' =>
+    string(12) "有限公司"
+    'start' =>
+    int(6)
+    'end' =>
+    int(10)
+  }
+}
+```
+
 其他詞典
 ========
 1) 佔用內容較小的詞典
