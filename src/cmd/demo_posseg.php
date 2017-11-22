@@ -37,4 +37,10 @@ var_dump($seg_list);
 
 $seg_list = Posseg::posTagReadable($seg_list);
 var_dump($seg_list);
+
+$seg_list = Posseg::cut("林志傑來到了網易杭研大廈", ['HMM' => false]);
+var_dump($seg_list);
+
+$seg_list = Posseg::posTagReadable($seg_list);
+var_dump($seg_list);
 ?>

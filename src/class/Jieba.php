@@ -260,9 +260,9 @@ class Jieba
      *
      * @return array
      */
-    public static function tokenize($sentence, $options = array())
+    public static function tokenize($sentence, $options = array("HMM" => true))
     {
-        $seg_list = self::cut($sentence);
+        $seg_list = self::cut($sentence, false, array("HMM" => $options["HMM"]));
         $tokenize_list = [];
         $start = 0;
         $end = 0;
@@ -489,6 +489,60 @@ class Jieba
     }// end function __cutDAG
 
     /**
+     * Static method __cutDAGNoHMM
+     *
+     * @param string $sentence # input sentence
+     * @param array  $options  # other options
+     *
+     * @return array $words
+     */
+    public static function __cutDAGNoHMM($sentence, $options = array())
+    {
+        $defaults = array(
+            'mode'=>'default'
+        );
+
+        $options = array_merge($defaults, $options);
+
+        $words = array();
+
+        $N = mb_strlen($sentence, 'UTF-8');
+        $DAG = self::getDAG($sentence);
+
+        self::calc($sentence, $DAG);
+
+        $x = 0;
+        $buf = '';
+
+        $re_eng_pattern = '[a-zA-Z+#]+';
+
+        while ($x < $N) {
+            $current_route_keys = array_keys(self::$route[$x]);
+            $y = $current_route_keys[0]+1;
+            $l_word = mb_substr($sentence, $x, ($y-$x), 'UTF-8');
+
+            if (preg_match('/'.$re_eng_pattern.'/u', $l_word)) {
+                $buf = $buf.$l_word;
+                $x = $y;
+            } else {
+                if (mb_strlen($buf, 'UTF-8')>0) {
+                    array_push($words, $buf);
+                    $buf = '';
+                }
+                array_push($words, $l_word);
+                $x = $y;
+            }
+        }
+
+        if (mb_strlen($buf, 'UTF-8')>0) {
+            array_push($words, $buf);
+            $buf = '';
+        }
+
+        return $words;
+    }// end function __cutDAGNoHMM
+
+    /**
      * Static method cut
      *
      * @param string  $sentence # input sentence
@@ -497,7 +551,7 @@ class Jieba
      *
      * @return array $seg_list
      */
-    public static function cut($sentence, $cut_all = false, $options = array())
+    public static function cut($sentence, $cut_all = false, $options = array("HMM" => true))
     {
         $defaults = array(
             'mode'=>'default'
@@ -538,6 +592,9 @@ class Jieba
         $blocks = $matches[0];
 
         foreach ($blocks as $blk) {
+            if (mb_strlen($blk, 'UTF-8')==0) {
+                continue;
+            }
             if (self::$cjk_all) {
                 // skip korean
                 $filter_pattern = $re_kanjikana_pattern.'|'.$re_katakana_pattern;
@@ -549,7 +606,11 @@ class Jieba
                 if ($cut_all) {
                     $words = Jieba::__cutAll($blk);
                 } else {
-                    $words = Jieba::__cutDAG($blk);
+                    if ($options['HMM']) {
+                        $words = Jieba::__cutDAG($blk);
+                    } else {
+                        $words = Jieba::__cutDAGNoHMM($blk);
+                    }
                 }
 
                 foreach ($words as $word) {
@@ -595,7 +656,7 @@ class Jieba
      *
      * @return array $seg_list
      */
-    public static function cutForSearch($sentence, $options = array())
+    public static function cutForSearch($sentence, $options = array("HMM" => true))
     {
         $defaults = array(
             'mode'=>'default'
@@ -605,7 +666,7 @@ class Jieba
 
         $seg_list = array();
 
-        $cut_seg_list = Jieba::cut($sentence);
+        $cut_seg_list = Jieba::cut($sentence, false, array("HMM" => $options["HMM"]));
 
         foreach ($cut_seg_list as $w) {
             $len = mb_strlen($w, 'UTF-8');

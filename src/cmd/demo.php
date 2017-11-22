@@ -63,7 +63,13 @@ var_dump($seg_list);
 $seg_list = Jieba::cut("他来到了网易杭研大厦");
 var_dump($seg_list);
 
-$seg_list = Jieba::cut("他來到了網易杭研大廈");
+$seg_list = Jieba::cut("他来到了网易杭研大厦", false, ['HMM' => false]);
+var_dump($seg_list);
+
+$seg_list = Jieba::cut("林志傑來到了網易杭研大廈");
+var_dump($seg_list);
+
+$seg_list = Jieba::cut("林志傑來到了網易杭研大廈", false, ['HMM' => false]);
 var_dump($seg_list);
 
 $seg_list = Jieba::cutForSearch("小明硕士毕业于中国科学院计算所，后在日本京都大学深造");

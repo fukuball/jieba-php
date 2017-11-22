@@ -280,7 +280,7 @@ class Posseg
      *
      * @return array $words
      */
-    public static function __cut($sentence, $options = array())
+    public static function __cut($sentence, $options = array("HMM" => true))
     {
         $defaults = array(
             'mode'=>'default'
@@ -515,6 +515,83 @@ class Posseg
     }// end function __cutDAG
 
     /**
+     * Static method __cutDAGNoHMM
+     *
+     * @param string $sentence # input sentence
+     * @param array  $options  # other options
+     *
+     * @return array $words
+     */
+    public static function __cutDAGNoHMM($sentence, $options = array())
+    {
+        $defaults = array(
+            'mode'=>'default'
+        );
+
+        $options = array_merge($defaults, $options);
+
+        $words = array();
+
+        $N = mb_strlen($sentence, 'UTF-8');
+        $DAG = Jieba::getDAG($sentence);
+
+        Jieba::calc($sentence, $DAG);
+
+        $x = 0;
+        $buf = '';
+
+        $re_eng_pattern = '[a-zA-Z+#]+';
+
+        while ($x < $N) {
+            $current_route_keys = array_keys(Jieba::$route[$x]);
+            $y = $current_route_keys[0]+1;
+            $l_word = mb_substr($sentence, $x, ($y-$x), 'UTF-8');
+
+            if (preg_match('/'.$re_eng_pattern.'/u', $l_word)) {
+                $buf = $buf.$l_word;
+                $x = $y;
+            } else {
+                if (mb_strlen($buf, 'UTF-8')>0) {
+                    if (isset(self::$word_tag[$buf])) {
+                        $buf_tag = self::$word_tag[$buf];
+                    } else {
+                        $buf_tag = "x";
+                    }
+                    array_push(
+                        $words,
+                        array("word"=>$buf, "tag"=>$buf_tag)
+                    );
+                    $buf = '';
+                }
+                if (isset(self::$word_tag[$l_word])) {
+                    $buf_tag = self::$word_tag[$l_word];
+                } else {
+                    $buf_tag = "x";
+                }
+                array_push(
+                    $words,
+                    array("word"=>$l_word, "tag"=>$buf_tag)
+                );
+                $x = $y;
+            }
+        }
+
+        if (mb_strlen($buf, 'UTF-8')>0) {
+            if (isset(self::$word_tag[$buf])) {
+                $buf_tag = self::$word_tag[$buf];
+            } else {
+                $buf_tag = "x";
+            }
+            array_push(
+                $words,
+                array("word"=>$buf, "tag"=>$buf_tag)
+            );
+        }
+
+        return $words;
+    }// end function __cutDAGNoHMM
+
+    /**
      * Static method cut
      *
      * @param string  $sentence # input sentence
@@ -522,7 +599,7 @@ class Posseg
      *
      * @return array $seg_list
      */
-    public static function cut($sentence, $options = array())
+    public static function cut($sentence, $options = array("HMM" => true))
     {
         $defaults = array(
             'mode'=>'default'
@@ -550,7 +627,11 @@ class Posseg
 
         foreach ($blocks as $blk) {
             if (preg_match('/'.$re_han_pattern.'/u', $blk)) {
-                $words = Posseg::__cutDAG($blk);
+                if ($options['HMM']) {
+                    $words = Posseg::__cutDAG($blk);
+                } else {
+                    $words = Posseg::__cutDAGNoHMM($blk);
+                }
 
                 foreach ($words as $word) {
                     array_push($seg_list, $word);
