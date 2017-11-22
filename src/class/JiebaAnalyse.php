@@ -49,11 +49,17 @@ class JiebaAnalyse
     {
 
         $defaults = array(
-            'mode'=>'default'
+            'mode'=>'default',
+            'dict'=>'normal'
         );
 
         $options = array_merge($defaults, $options);
 
+        if ($options['dict']=='big') {
+            $f_name = "idf.big.txt";
+        } else {
+            $f_name = "idf.txt";
+        }
         $content = fopen(dirname(dirname(__FILE__))."/dict/idf.txt", "r");
 
         while (($line = fgets($content)) !== false) {
@@ -71,6 +77,27 @@ class JiebaAnalyse
         self::$max_idf = max(self::$idf_freq);
         self::$median_idf = self::$idf_freq[$middle_key];
     }// end function init
+
+    /**
+     * Static method setStopWords
+     *
+     * @param string  $stop_words_path
+     * @param array   $options
+     *
+     * @return array $tags
+     */
+    public static function setStopWords($stop_words_path, $options = array())
+    {
+        $content = fopen($stop_words_path, "r");
+
+        while (($line = fgets($content)) !== false) {
+            $stop_word = strtolower(trim($line));
+            if (! in_array($stop_word, self::$stop_words)) {
+                array_push(self::$stop_words, $stop_word);
+            }
+        }
+        fclose($content);
+    }
 
     /**
      * Static method extractTags

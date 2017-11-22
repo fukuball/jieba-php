@@ -24,12 +24,16 @@ use Fukuball\Jieba\Finalseg;
 use Fukuball\Jieba\JiebaAnalyse;
 Jieba::init(array('mode'=>'test','dict'=>'big'));
 Finalseg::init();
-JiebaAnalyse::init();
+JiebaAnalyse::init(array('dict'=>'big'));
 
 $top_k = 10;
 $content = file_get_contents(dirname(dirname(__FILE__))."/dict/lyric.txt", "r");
 
 $tags = JiebaAnalyse::extractTags($content, $top_k);
+var_dump($tags);
 
+JiebaAnalyse::setStopWords(dirname(dirname(__FILE__)).'/dict/stop_words.txt');
+
+$tags = JiebaAnalyse::extractTags($content, $top_k);
 var_dump($tags);
 ?>

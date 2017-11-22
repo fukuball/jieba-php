@@ -253,6 +253,7 @@ array(18) {
 * JiebaAnalyse::extractTags($content, $top_k)
 * content 為待提取的文本
 * top_k 為返回幾個 TF/IDF 權重最大的關鍵詞，默認值為 20
+* 可使用 setStopWords 增加自定義 stop words
 
 代碼示例 (關鍵詞提取)
 
@@ -277,31 +278,59 @@ $content = file_get_contents("/path/to/your/dict/lyric.txt", "r");
 $tags = JiebaAnalyse::extractTags($content, $top_k);
 
 var_dump($tags);
+
+JiebaAnalyse::setStopWords('/path/to/your/dict/stop_words.txt');
+
+$tags = JiebaAnalyse::extractTags($content, $top_k);
+
+var_dump($tags);
 ```
 
 Output:
 ```php
 array(10) {
-  ["是否"]=>
-  float(1.2196321889395)
-  ["一般"]=>
-  float(1.0032459890209)
-  ["肌迫"]=>
-  float(0.64654314660465)
-  ["怯懦"]=>
-  float(0.44762844339349)
-  ["藉口"]=>
-  float(0.32327157330233)
-  ["逼不得已"]=>
-  float(0.32327157330233)
-  ["不安全感"]=>
-  float(0.26548304656279)
-  ["同感"]=>
-  float(0.23929673812326)
-  ["有把握"]=>
-  float(0.21043366018744)
-  ["空洞"]=>
-  float(0.20598261709442)
+  '沒有' =>
+  double(1.0592831964595)
+  '所謂' =>
+  double(0.90795702553671)
+  '是否' =>
+  double(0.66385043195443)
+  '一般' =>
+  double(0.54607060161899)
+  '雖然' =>
+  double(0.30265234184557)
+  '來說' =>
+  double(0.30265234184557)
+  '肌迫' =>
+  double(0.30265234184557)
+  '退縮' =>
+  double(0.30265234184557)
+  '矯作' =>
+  double(0.30265234184557)
+  '怯懦' =>
+  double(0.24364586159392)
+}
+array(10) {
+  '所謂' =>
+  double(1.1569129841516)
+  '一般' =>
+  double(0.69579963754677)
+  '矯作' =>
+  double(0.38563766138387)
+  '來說' =>
+  double(0.38563766138387)
+  '退縮' =>
+  double(0.38563766138387)
+  '雖然' =>
+  double(0.38563766138387)
+  '肌迫' =>
+  double(0.38563766138387)
+  '怯懦' =>
+  double(0.31045198493419)
+  '隨便說說' =>
+  double(0.19281883069194)
+  '一場' =>
+  double(0.19281883069194)
 }
 ```
 
