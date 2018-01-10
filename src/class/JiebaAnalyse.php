@@ -119,7 +119,17 @@ class JiebaAnalyse
 
         $tags = array();
 
-        $words = Jieba::cut($content);
+        if (isset($options['allowPOS'])) {
+            $wordsPos = Posseg::cut($content);
+
+            foreach ($wordsPos as $key => $word) {
+                if (in_array($word['tag'], $options['allowPOS'])) {
+                    $words[] = $word['word'];
+                }
+            }
+        } else {
+            $words = Jieba::cut($content);
+        }
 
         $freq = array();
         $total = 0.0;
