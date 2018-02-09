@@ -4,9 +4,6 @@ language: php
 # list any PHP version you want to test against
 php:
   # using major version aliases
-  # aliased to a recent 7.0.x version
-  - 7.0
-  # aliased to a recent 7.1.x version
   - 7.1
   - 7.2
 
@@ -18,7 +15,7 @@ env:
 before_script:
   #- if [[ "$DB" == "mysql" ]]; then mysql -e "create database IF NOT EXISTS hello_world_test;" -uroot; fi
   - composer self-update
-  - composer install --dev --prefer-source
+  - composer install
   - mkdir -p build/logs
 
 # omitting "script:" will default to phpunit
