@@ -1,0 +1,24 @@
+machine:
+  hosts:
+    localhost: 127.0.0.1
+  php:
+    version: 7.1.9
+  node:
+    version: 6.9.1
+  npm:
+    version: 3.10.8
+  yarn:
+    version: 0.21.3
+dependencies:
+  pre:
+    - sudo composer self-update
+    - sudo composer install --dev --prefer-source
+    - mkdir -p build/logs
+    - pip install --user codecov
+  post:
+    - sudo ln -s /opt/circleci/.phpenv/shims/php /usr/local/bin/php
+    - sudo cp /opt/circleci/.phpenv/shims/php /usr/bin/php
+test:
+  override:
+    - vendor/bin/phpunit --configuration phpunit.xml --colors --coverage-text --coverage-clover build/logs/clover.xml
+    - vendor/bin/phpcs --standard=PSR2  --extensions=php --ignore=*/test/* ./src/class
