@@ -11,8 +11,8 @@ machine:
     version: 0.21.3
 dependencies:
   pre:
-    - sudo composer self-update
-    - sudo composer install --dev --prefer-source
+    - composer self-update
+    - composer install --dev --prefer-source
     - mkdir -p build/logs
     - pip install --user codecov
   post:
