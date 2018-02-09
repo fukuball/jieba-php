@@ -3,8 +3,9 @@ use Fukuball\Jieba\Jieba;
 use Fukuball\Jieba\Finalseg;
 use Fukuball\Jieba\JiebaAnalyse;
 use Fukuball\Jieba\Posseg;
+use PHPUnit\Framework\TestCase;
 
-class JiebaTest extends PHPUnit_Framework_TestCase
+class JiebaTest extends TestCase
 {
 
     public function testJiebaInit()
