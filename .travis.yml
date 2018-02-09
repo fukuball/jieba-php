@@ -8,6 +8,7 @@ php:
   - 7.0
   # aliased to a recent 7.1.x version
   - 7.1
+  - 7.2
 
 # optionally specify a list of environments, for example to test different RDBMS
 env:
