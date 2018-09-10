@@ -157,7 +157,7 @@ class Jieba
         $options = array_merge($defaults, $options);
 
         self::$trie = new MultiArray(file_get_contents($f_name.'.json'));
-        self::$trie->cache = new MultiArray(file_get_contents($f_name.'.cache.json'));
+        //self::$trie->cache = new MultiArray(file_get_contents($f_name.'.cache.json'));
 
         $content = fopen($f_name, "r");
         while (($line = fgets($content)) !== false) {

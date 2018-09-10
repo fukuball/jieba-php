@@ -80,4 +80,18 @@ var_dump($seg_list);
 
 $seg_list = Jieba::tokenize("永和服装饰品有限公司");
 var_dump($seg_list);
+
+function memory_usage() {
+    $mem_usage = memory_get_usage(true);
+    if ($mem_usage < 1024) {
+        $mem_usage .= ' bytes';
+    } elseif ($mem_usage < 1048576) {
+        $mem_usage = round($mem_usage/1024,2) . ' kilobytes';
+    } else {
+        $mem_usage = round($mem_usage/1048576,2) . ' megabytes';
+    }
+    return $mem_usage;
+}
+
+echo memory_usage();
 ?>
