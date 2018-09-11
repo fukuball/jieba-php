@@ -1569,7 +1569,8 @@ Donate
 =========
 If you find fuku-ml useful, please consider a donation. Thank you!
 
-<a href='https://pledgie.com/campaigns/33187'><img alt='Click here to lend your support to: jieba-php and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/33187.png?skin_name=chrome' border='0' ></a>
+bitcoin: 1BbihQU3CzSdyLSP9bvQq7Pi1z1jTdAaq9
+eth: 0x92DA3F837bf2F79D422bb8CEAC632208F94cdE33
 
 License
 =========
