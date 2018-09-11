@@ -1569,8 +1569,8 @@ Donate
 =========
 If you find fuku-ml useful, please consider a donation. Thank you!
 
-bitcoin: 1BbihQU3CzSdyLSP9bvQq7Pi1z1jTdAaq9
-eth: 0x92DA3F837bf2F79D422bb8CEAC632208F94cdE33
+- bitcoin: 1BbihQU3CzSdyLSP9bvQq7Pi1z1jTdAaq9
+- eth: 0x92DA3F837bf2F79D422bb8CEAC632208F94cdE33
 
 License
 =========
