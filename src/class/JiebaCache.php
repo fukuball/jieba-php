@@ -173,7 +173,7 @@ class JiebaCache
                 //$word_c = array();
                 //for ($i=0; $i<$l; $i++) {
                 //    $c = mb_substr($word, $i, 1, 'UTF-8');
-                //    array_push($word_c, $c);
+                //    $word_c[] = $c;
                 //}
                 //$word_c_key = implode('.', $word_c);
                 //self::$trie->set($word_c_key, array("end"=>""));
@@ -219,7 +219,7 @@ class JiebaCache
      */
     public static function loadUserDict($f_name, $options = array())
     {
-        array_push(self::$user_dictname, $f_name);
+        self::$user_dictname[] = $f_name;
         $content = fopen($f_name, "r");
         while (($line = fgets($content)) !== false) {
             $explode_line = explode(" ", trim($line));
@@ -233,7 +233,7 @@ class JiebaCache
             $word_c = array();
             for ($i=0; $i<$l; $i++) {
                 $c = mb_substr($word, $i, 1, 'UTF-8');
-                array_push($word_c, $c);
+                $word_c[] = $c;
             }
             $word_c_key = implode('.', $word_c);
             self::$trie->set($word_c_key, array("end"=>""));
@@ -267,13 +267,13 @@ class JiebaCache
         foreach ($DAG as $k => $L) {
             if (count($L) == 1 && $k > $old_j) {
                 $word = mb_substr($sentence, $k, (($L[0]-$k)+1), 'UTF-8');
-                array_push($words, $word);
+                $words[] = $word;
                 $old_j = $L[0];
             } else {
                 foreach ($L as $j) {
                     if ($j > $k) {
                         $word = mb_substr($sentence, $k, ($j-$k)+1, 'UTF-8');
-                        array_push($words, $word);
+                        $words[] = $word;
                         $old_j = $j;
                     }
                 }
@@ -314,7 +314,7 @@ class JiebaCache
             }
 
             if (self::$trie->exists($next_word_key)) {
-                array_push($word_c, $c);
+                $word_c[] = $c;
                 $next_word_key_value = self::$trie->get($next_word_key);
                 if ($next_word_key_value == array("end"=>"")
                  || isset($next_word_key_value["end"])
@@ -323,7 +323,7 @@ class JiebaCache
                     if (!isset($DAG[$i])) {
                         $DAG[$i] = array();
                     }
-                    array_push($DAG[$i], $j);
+                    $DAG[$i][] = $j;
                 }
                 $j += 1;
                 if ($j >= $N) {
@@ -383,28 +383,28 @@ class JiebaCache
             } else {
                 if (mb_strlen($buf, 'UTF-8')>0) {
                     if (mb_strlen($buf, 'UTF-8')==1) {
-                        array_push($words, $buf);
+                        $words[] = $buf;
                         $buf = '';
                     } else {
                         $regognized = Finalseg::cut($buf);
                         foreach ($regognized as $key => $word) {
-                            array_push($words, $word);
+                            $words[] = $word;
                         }
                         $buf = '';
                     }
                 }
-                array_push($words, $l_word);
+                $words[] = $l_word;
             }
             $x = $y;
         }
 
         if (mb_strlen($buf, 'UTF-8')>0) {
             if (mb_strlen($buf, 'UTF-8')==1) {
-                array_push($words, $buf);
+                $words[] = $buf;
             } else {
                 $regognized = Finalseg::cut($buf);
                 foreach ($regognized as $key => $word) {
-                    array_push($words, $word);
+                    $words[] = $word;
                 }
             }
         }
@@ -450,10 +450,10 @@ class JiebaCache
                 }
 
                 foreach ($words as $word) {
-                    array_push($seg_list, $word);
+                    $seg_list[] = $word;
                 }
             } else {
-                array_push($seg_list, $blk);
+                $seg_list[] = $blk;
             }// end else (preg_match('/'.$re_han_pattern.'/u', $blk))
         }// end foreach ($blocks as $blk)
 
@@ -488,7 +488,7 @@ class JiebaCache
                     $gram2 = mb_substr($w, $i, 2, 'UTF-8');
 
                     if (isset(self::$FREQ[$gram2])) {
-                        array_push($seg_list, $gram2);
+                        $seg_list[] = $gram2;
                     }
                 }
             }
@@ -498,12 +498,12 @@ class JiebaCache
                     $gram3 = mb_substr($w, $i, 3, 'UTF-8');
 
                     if (isset(self::$FREQ[$gram3])) {
-                        array_push($seg_list, $gram3);
+                        $seg_list[] = $gram3;
                     }
                 }
             }
 
-            array_push($seg_list, $w);
+            $seg_list[] = $w;
         }
 
         return $seg_list;
