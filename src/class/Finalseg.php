@@ -139,9 +139,9 @@ class Finalseg
                 if (is_array($path[$max_key])) {
                     $newpath[$y] = array();
                     foreach ($path[$max_key] as $key => $path_value) {
-                        array_push($newpath[$y], $path_value);
+                        $newpath[$y][] = $path_value;
                     }
-                    array_push($newpath[$y], $y);
+                    $newpath[$y][] = $y;
                 } else {
                     $newpath[$y] = array($path[$max_key], $y);
                 }
@@ -197,16 +197,16 @@ class Finalseg
             if ($pos=='B') {
                 $begin = $i;
             } elseif ($pos=='E') {
-                array_push($words, mb_substr($sentence, $begin, (($i+1)-$begin), 'UTF-8'));
+                $words[] = mb_substr($sentence, $begin, (($i+1)-$begin), 'UTF-8');
                 $next = $i+1;
             } elseif ($pos=='S') {
-                array_push($words, $char);
+                $words[] = $char;
                 $next = $i+1;
             }
         }
 
         if ($next<$len) {
-            array_push($words, mb_substr($sentence, $next, null, 'UTF-8'));
+            $words[] = mb_substr($sentence, $next, null, 'UTF-8');
         }
 
         return $words;
@@ -250,12 +250,12 @@ class Finalseg
                 $words = self::__cut($blk);
 
                 foreach ($words as $word) {
-                    array_push($seg_list, $word);
+                    $seg_list[] = $word;
                 }
 
             } else {
 
-                array_push($seg_list, $blk);
+                $seg_list[] = $blk;
 
             }// end else (preg_match('/'.$re_han_pattern.'/u', $blk))
 
