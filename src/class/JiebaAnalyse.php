@@ -93,7 +93,7 @@ class JiebaAnalyse
         while (($line = fgets($content)) !== false) {
             $stop_word = strtolower(trim($line));
             if (! in_array($stop_word, self::$stop_words)) {
-                array_push(self::$stop_words, $stop_word);
+                self::$stop_words[] = $stop_word;
             }
         }
         fclose($content);
