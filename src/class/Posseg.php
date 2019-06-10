@@ -53,10 +53,10 @@ class Posseg
         self::$prob_emit = self::loadModel(dirname(dirname(__FILE__)).'/model/pos/prob_emit.json');
         self::$char_state = self::loadModel(dirname(dirname(__FILE__)).'/model/pos/char_state.json');
 
-        if (Jieba::$dictname!="") {
-            $content = fopen(dirname(dirname(__FILE__))."/dict/".Jieba::$dictname, "r");
+        if (Jieba::$dictname!='') {
+            $content = fopen(dirname(dirname(__FILE__)).'/dict/'.Jieba::$dictname, 'r');
             while (($line = fgets($content)) !== false) {
-                $explode_line = explode(" ", trim($line));
+                $explode_line = explode(' ', trim($line));
                 $word = $explode_line[0];
                 $freq = $explode_line[1];
                 $tag = $explode_line[2];
@@ -68,9 +68,9 @@ class Posseg
 
         if (sizeof(Jieba::$user_dictname)!=0) {
             for ($i = 0; $i<sizeof(Jieba::$user_dictname); $i++) {
-                $content = fopen(Jieba::$user_dictname[$i], "r");
+                $content = fopen(Jieba::$user_dictname[$i], 'r');
                 while (($line = fgets($content)) !== false) {
-                    $explode_line = explode(" ", trim($line));
+                    $explode_line = explode(' ', trim($line));
                     $word = $explode_line[0];
                     $freq = $explode_line[1];
                     $tag = $explode_line[2];
@@ -80,10 +80,10 @@ class Posseg
             }
         }
 
-        $content = fopen(dirname(dirname(__FILE__))."/dict/pos_tag_readable.txt", "r");
+        $content = fopen(dirname(dirname(__FILE__)).'/dict/pos_tag_readable.txt', 'r');
 
         while (($line = fgets($content)) !== false) {
-            $explode_line = explode(" ", trim($line));
+            $explode_line = explode(' ', trim($line));
             $tag = $explode_line[0];
             $meaning = $explode_line[1];
             self::$pos_tag_readable[$tag] = $meaning;
@@ -186,7 +186,7 @@ class Posseg
 
             foreach ($prev_mem_path as $mem_path_state) {
                 if (count(self::$prob_trans[$mem_path_state])>0) {
-                    array_push($prev_states, $mem_path_state);
+                    $prev_states[] = $mem_path_state;
                 }
             }
 
@@ -258,7 +258,7 @@ class Posseg
 
         $route = array();
         for ($t=0; $t<$obs_length; $t++) {
-            array_push($route, 'None');
+            $route[] = 'None';
         }
 
         $i = $obs_length-1;
@@ -269,7 +269,7 @@ class Posseg
             $i-=1;
         }
 
-        return array("prob"=>$return_prob, "pos_list"=>$route);
+        return array('prob'=>$return_prob, 'pos_list'=>$route);
     }// end function viterbi
 
     /**
@@ -280,7 +280,7 @@ class Posseg
      *
      * @return array $words
      */
-    public static function __cut($sentence, $options = array("HMM" => true))
+    public static function __cut($sentence, $options = array('HMM' => true))
     {
         $defaults = array(
             'mode'=>'default'
@@ -310,19 +310,19 @@ class Posseg
                 eval('$this_pos_array = array'.$pos_list[$i].';');
                 $this_pos = $this_pos_array[1];
                 $this_word_pair = array(
-                    "word"=>mb_substr($sentence, $begin, (($i+1)-$begin), 'UTF-8'),
-                    "tag"=>$this_pos
+                    'word'=>mb_substr($sentence, $begin, (($i+1)-$begin), 'UTF-8'),
+                    'tag'=>$this_pos
                 );
-                array_push($words, $this_word_pair);
+                $words[] = $this_word_pair;
                 $next = $i+1;
             } elseif ($pos=='S') {
                 eval('$this_pos_array = array'.$pos_list[$i].';');
                 $this_pos = $this_pos_array[1];
                 $this_word_pair = array(
-                    "word"=>$char,
-                    "tag"=>$this_pos
+                    'word'=>$char,
+                    'tag'=>$this_pos
                 );
-                array_push($words, $this_word_pair);
+                $words[] = $this_word_pair;
                 $next = $i+1;
             }
         }
@@ -331,10 +331,10 @@ class Posseg
             eval('$this_pos_array = array'.$pos_list[$next].';');
             $this_pos = $this_pos_array[1];
             $this_word_pair = array(
-                "word"=>mb_substr($sentence, $next, null, 'UTF-8'),
-                "tag"=>$this_pos
+                'word'=>mb_substr($sentence, $next, null, 'UTF-8'),
+                'tag'=>$this_pos
             );
-            array_push($words, $this_word_pair);
+            $words[] = $this_word_pair;
         }
 
         return $words;
@@ -378,16 +378,16 @@ class Posseg
             if (preg_match('/'.$re_han_pattern.'/u', $blk)) {
                 $blk_words = self::__cut($blk);
                 foreach ($blk_words as $blk_word) {
-                    array_push($words, $blk_word);
+                    $words[] = $blk_word;
                 }
             } elseif (preg_match('/'.$re_skip_pattern.'/u', $blk)) {
                 if (preg_match('/'.$re_num_pattern.'/u', $blk)) {
-                    array_push($words, array("word"=>$blk, "tag"=>"m"));
+                    $words[] = array('word' => $blk, 'tag' => 'm');
                 } elseif (preg_match('/'.$re_eng_pattern.'/u', $blk)) {
-                    array_push($words, array("word"=>$blk, "tag"=>"eng"));
+                    $words[] = array('word' => $blk, 'tag' => 'eng');
                 }
             } elseif (preg_match('/'.$re_punctuation_pattern.'/u', $blk)) {
-                array_push($words, array("word"=>$blk, "tag"=>"w"));
+                $words[] = array('word' => $blk, 'tag' => 'w');
             }
         }
 
@@ -433,18 +433,15 @@ class Posseg
                         if (isset(self::$word_tag[$buf])) {
                             $buf_tag = self::$word_tag[$buf];
                         } else {
-                            $buf_tag = "x";
+                            $buf_tag = 'x';
                         }
-                        array_push(
-                            $words,
-                            array("word"=>$buf, "tag"=>$buf_tag)
-                        );
+                        $words[] = array('word' => $buf, 'tag' => $buf_tag);
                         $buf = '';
                     } else {
                         if (! isset(Jieba::$FREQ[$buf])) {
                             $regognized = self::__cutDetail($buf);
                             foreach ($regognized as $key => $word) {
-                                array_push($words, $word);
+                                $words[] = $word;
                             }
                         } else {
                             $elem_array = preg_split('//u', $buf, -1, PREG_SPLIT_NO_EMPTY);
@@ -452,12 +449,9 @@ class Posseg
                                 if (isset(self::$word_tag[$word])) {
                                     $buf_tag = self::$word_tag[$word];
                                 } else {
-                                    $buf_tag = "x";
+                                    $buf_tag = 'x';
                                 }
-                                array_push(
-                                    $words,
-                                    array("word"=>$word, "tag"=>$buf_tag)
-                                );
+                                $words[] = array('word' => $word, 'tag' => $buf_tag);
                             }
                         }
                         $buf = '';
@@ -467,12 +461,9 @@ class Posseg
                 if (isset(self::$word_tag[$l_word])) {
                     $buf_tag = self::$word_tag[$l_word];
                 } else {
-                    $buf_tag = "x";
+                    $buf_tag = 'x';
                 }
-                array_push(
-                    $words,
-                    array("word"=>$l_word, "tag"=>$buf_tag)
-                );
+                $words[] = array('word' => $l_word, 'tag' => $buf_tag);
             }
             $x = $y;
         }
@@ -482,17 +473,14 @@ class Posseg
                 if (isset(self::$word_tag[$buf])) {
                     $buf_tag = self::$word_tag[$buf];
                 } else {
-                    $buf_tag = "x";
+                    $buf_tag = 'x';
                 }
-                array_push(
-                    $words,
-                    array("word"=>$buf, "tag"=>$buf_tag)
-                );
+                $words[] = array('word'=>$buf, 'tag'=>$buf_tag);
             } else {
                 if (! isset(Jieba::$FREQ[$buf])) {
                     $regognized = self::__cutDetail($buf);
                     foreach ($regognized as $key => $word) {
-                        array_push($words, $word);
+                        $words[] = $word;
                     }
                 } else {
                     $elem_array = preg_split('//u', $buf, -1, PREG_SPLIT_NO_EMPTY);
@@ -500,12 +488,9 @@ class Posseg
                         if (isset(self::$word_tag[$word])) {
                             $buf_tag = self::$word_tag[$word];
                         } else {
-                            $buf_tag = "x";
+                            $buf_tag = 'x';
                         }
-                        array_push(
-                            $words,
-                            array("word"=>$word, "tag"=>$buf_tag)
-                        );
+                        $words[] = array('word'=>$word, 'tag'=>$buf_tag);
                     }
                 }
             }
@@ -555,23 +540,17 @@ class Posseg
                     if (isset(self::$word_tag[$buf])) {
                         $buf_tag = self::$word_tag[$buf];
                     } else {
-                        $buf_tag = "x";
+                        $buf_tag = 'x';
                     }
-                    array_push(
-                        $words,
-                        array("word"=>$buf, "tag"=>$buf_tag)
-                    );
+                    $words[] = array('word' => $buf, 'tag' => $buf_tag);
                     $buf = '';
                 }
                 if (isset(self::$word_tag[$l_word])) {
                     $buf_tag = self::$word_tag[$l_word];
                 } else {
-                    $buf_tag = "x";
+                    $buf_tag = 'x';
                 }
-                array_push(
-                    $words,
-                    array("word"=>$l_word, "tag"=>$buf_tag)
-                );
+                $words[] = array('word' => $l_word, 'tag' => $buf_tag);
                 $x = $y;
             }
         }
@@ -580,12 +559,9 @@ class Posseg
             if (isset(self::$word_tag[$buf])) {
                 $buf_tag = self::$word_tag[$buf];
             } else {
-                $buf_tag = "x";
+                $buf_tag = 'x';
             }
-            array_push(
-                $words,
-                array("word"=>$buf, "tag"=>$buf_tag)
-            );
+            $words[] = array('word' => $buf, 'tag' => $buf_tag);
         }
 
         return $words;
@@ -599,7 +575,7 @@ class Posseg
      *
      * @return array $seg_list
      */
-    public static function cut($sentence, $options = array("HMM" => true))
+    public static function cut($sentence, $options = array('HMM' => true))
     {
         $defaults = array(
             'mode'=>'default'
@@ -634,16 +610,16 @@ class Posseg
                 }
 
                 foreach ($words as $word) {
-                    array_push($seg_list, $word);
+                    $seg_list[] = $word;
                 }
             } elseif (preg_match('/'.$re_skip_pattern.'/u', $blk)) {
                 if (preg_match('/'.$re_num_pattern.'/u', $blk)) {
-                    array_push($seg_list, array("word"=>$blk, "tag"=>"m"));
+                    $seg_list[] = array('word' => $blk, 'tag' => 'm');
                 } elseif (preg_match('/'.$re_eng_pattern.'/u', $blk)) {
-                    array_push($seg_list, array("word"=>$blk, "tag"=>"eng"));
+                    $seg_list[] = array('word' => $blk, 'tag' => 'eng');
                 }
             } elseif (preg_match('/'.$re_punctuation_pattern.'/u', $blk)) {
-                array_push($seg_list, array("word"=>$blk, "tag"=>"w"));
+                $seg_list[] = array('word' => $blk, 'tag' => 'w');
             }
         }
 
@@ -670,7 +646,7 @@ class Posseg
 
         foreach ($seg_list as $seg) {
             $seg['tag_readable'] = self::$pos_tag_readable[$seg['tag']];
-            array_push($new_seg_list, $seg);
+            $new_seg_list[] = $seg;
         }
 
         return $new_seg_list;
