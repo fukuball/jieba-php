@@ -122,6 +122,7 @@ class JiebaAnalyse
         if (isset($options['allowPOS'])) {
             $wordsPos = Posseg::cut($content);
 
+            $words = array();
             foreach ($wordsPos as $key => $word) {
                 if (in_array($word['tag'], $options['allowPOS'])) {
                     $words[] = $word['word'];
