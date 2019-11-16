@@ -119,7 +119,7 @@ class JiebaAnalyse
 
         $tags = array();
 
-        if (isset($options['allowPOS'])) {
+        if (isset($options['allowPOS']) && is_array($options['allowPOS']) && !empty($options['allowPOS'])) {
             $wordsPos = Posseg::cut($content);
 
             $words = array();
