@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c62340bdb0e349112704beffe004fa28",
+    "content-hash": "d9f585da0955c1c7b87190b73f25521f",
     "packages": [],
     "packages-dev": [
         {
@@ -2863,22 +2863,23 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "6.0.x-dev",
+            "version": "5.4.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "a2fc78f7eaec8a394acc2d6183a2595c54443d38"
+                "reference": "2a7311756f4ffa7ea39a4c31422c9d08013099d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/a2fc78f7eaec8a394acc2d6183a2595c54443d38",
-                "reference": "a2fc78f7eaec8a394acc2d6183a2595c54443d38",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/2a7311756f4ffa7ea39a4c31422c9d08013099d0",
+                "reference": "2a7311756f4ffa7ea39a4c31422c9d08013099d0",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0.2",
+                "php": ">=7.2.5",
                 "symfony/polyfill-ctype": "~1.8"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -2905,7 +2906,7 @@
             "description": "Provides basic utilities for the filesystem",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/filesystem/tree/6.0"
+                "source": "https://github.com/symfony/filesystem/tree/v5.3.0-RC1"
             },
             "funding": [
                 {
@@ -2921,7 +2922,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-05-23T09:41:13+00:00"
+            "time": "2021-04-01T10:43:52+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -3640,31 +3641,33 @@
         },
         {
             "name": "symfony/string",
-            "version": "6.0.x-dev",
+            "version": "5.4.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/string.git",
-                "reference": "01b55370912438ed958c994ad11c10cc8aa6c6a1"
+                "reference": "b7ac9d8b32bc518330adb6c197556e842f254eab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/string/zipball/01b55370912438ed958c994ad11c10cc8aa6c6a1",
-                "reference": "01b55370912438ed958c994ad11c10cc8aa6c6a1",
+                "url": "https://api.github.com/repos/symfony/string/zipball/b7ac9d8b32bc518330adb6c197556e842f254eab",
+                "reference": "b7ac9d8b32bc518330adb6c197556e842f254eab",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0.2",
+                "php": ">=7.2.5",
                 "symfony/polyfill-ctype": "~1.8",
                 "symfony/polyfill-intl-grapheme": "~1.0",
                 "symfony/polyfill-intl-normalizer": "~1.0",
-                "symfony/polyfill-mbstring": "~1.0"
+                "symfony/polyfill-mbstring": "~1.0",
+                "symfony/polyfill-php80": "~1.15"
             },
             "require-dev": {
-                "symfony/error-handler": "^5.4|^6.0",
-                "symfony/http-client": "^5.4|^6.0",
+                "symfony/error-handler": "^4.4|^5.0|^6.0",
+                "symfony/http-client": "^4.4|^5.0|^6.0",
                 "symfony/translation-contracts": "^1.1|^2",
-                "symfony/var-exporter": "^5.4|^6.0"
+                "symfony/var-exporter": "^4.4|^5.0|^6.0"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -3702,7 +3705,7 @@
                 "utf8"
             ],
             "support": {
-                "source": "https://github.com/symfony/string/tree/6.0"
+                "source": "https://github.com/symfony/string/tree/5.4"
             },
             "funding": [
                 {
@@ -3718,7 +3721,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-05-23T09:41:19+00:00"
+            "time": "2021-05-21T14:04:35+00:00"
         },
         {
             "name": "symfony/yaml",
@@ -3909,8 +3912,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "php-coveralls/php-coveralls": 20,
-        "squizlabs/php_codesniffer": 20
+        "squizlabs/php_codesniffer": 20,
+        "php-coveralls/php-coveralls": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

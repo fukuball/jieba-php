@@ -17,8 +17,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "~9.0",
-        "php-coveralls/php-coveralls": "dev-master",
-        "squizlabs/php_codesniffer": "4.0.x-dev"
+        "squizlabs/php_codesniffer": "4.0.x-dev",
+        "php-coveralls/php-coveralls": "dev-master"
     },
     "autoload": {
         "psr-4": {
