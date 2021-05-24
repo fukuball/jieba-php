@@ -4,7 +4,7 @@
     "description": "結巴中文分詞（PHP 版本）：做最好的 PHP 中文分詞、中文斷詞組件",
     "keywords": ["Jieba", "PHP"],
     "license": "MIT",
-    "version": "0.33",
+    "version": "0.34",
     "authors": [
         {
             "name": "fukuball",
@@ -16,16 +16,15 @@
         "php": ">= 5.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "~5.7|~6.0",
+        "phpunit/phpunit": "~9.0",
         "satooshi/php-coveralls": "dev-master",
         "squizlabs/php_codesniffer": "1.5.6"
     },
     "autoload": {
+        "psr-4": {
+            "Fukuball\\Jieba\\": "src/class/",
+        },
         "files": [
-            "src/class/Jieba.php",
-            "src/class/JiebaAnalyse.php",
-            "src/class/Finalseg.php",
-            "src/class/Posseg.php",
             "src/vendor/multi-array/MultiArray.php",
             "src/vendor/multi-array/Factory/MultiArrayFactory.php"
         ]
