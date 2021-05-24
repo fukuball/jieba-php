@@ -4,8 +4,9 @@ language: php
 # list any PHP version you want to test against
 php:
   # using major version aliases
-  - 7.1
-  - 7.2
+  - 7.3
+  - 7.4
+  - 8.0
 
 # optionally specify a list of environments, for example to test different RDBMS
 env:
