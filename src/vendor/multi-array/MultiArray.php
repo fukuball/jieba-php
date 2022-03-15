@@ -292,7 +292,7 @@ class MultiArray implements IteratorAggregate, JsonSerializable, ArrayAccess
      * @return Traversable An instance of an object implementing <b>Iterator</b> or
      * <b>Traversable</b>
      */
-    public function getIterator()
+    public function getIterator() : Traversable
     {
         return new ArrayIterator($this->storage);
     }
@@ -321,7 +321,7 @@ class MultiArray implements IteratorAggregate, JsonSerializable, ArrayAccess
      * <p>
      * The return value will be casted to boolean if non-boolean was returned.
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset) : bool
     {
         return $this->exists($offset);
     }
@@ -335,7 +335,7 @@ class MultiArray implements IteratorAggregate, JsonSerializable, ArrayAccess
      * </p>
      * @return mixed Can return all value types.
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset) : mixed
     {
         return $this->get($offset);
     }
@@ -352,7 +352,7 @@ class MultiArray implements IteratorAggregate, JsonSerializable, ArrayAccess
      * </p>
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value) : void
     {
         $this->set($offset, $value);
     }
@@ -366,7 +366,7 @@ class MultiArray implements IteratorAggregate, JsonSerializable, ArrayAccess
      * </p>
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset) : void
     {
         $this->remove($offset);
     }
