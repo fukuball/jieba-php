@@ -8,7 +8,6 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
-         syntaxCheck="false"
          bootstrap="test/bootstrap.php">
     <!--<php>
         <var name="db_dsn" value="mysql:dbname=hello_world_test;host=localhost"/>
@@ -22,23 +21,26 @@
         </testsuite>
     </testsuites>
 
-    <filter>
-        <whitelist>
+    <coverage>
+        <include>
             <directory>./src/class</directory>
-            <exclude>
-                <directory>./build</directory>
-                <directory>./codesniffer</directory>
-                <directory>./composer</directory>
-                <directory>./test</directory>
-                <directory>./travis</directory>
-                <directory>./vendor</directory>
-                <file>./src/jieba.php</file>
-            </exclude>
-        </whitelist>
-    </filter>
+        </include>
+        <exclude>
+            <directory>./build</directory>
+            <directory>./codesniffer</directory>
+            <directory>./composer</directory>
+            <directory>./test</directory>
+            <directory>./travis</directory>
+            <directory>./vendor</directory>
+            <file>./src/jieba.php</file>
+        </exclude>
+
+        <report>
+            <clover outputFile="build/logs/clover.xml"/>
+        </report>
+    </coverage>
 
     <logging>
-        <log type="coverage-clover" target="build/logs/clover.xml"/>
-        <log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false"/>
+        <junit outputFile="build/logs/junit.xml" />
     </logging>
 </phpunit>
