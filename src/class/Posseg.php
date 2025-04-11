@@ -301,13 +301,19 @@ class Posseg
 
         for ($i=0; $i<$len; $i++) {
             $char = mb_substr($sentence, $i, 1, 'UTF-8');
-            eval('$pos_array = array'.$pos_list[$i].';');
+            $pos_array = json_decode('[' . $pos_list[$i] . ']', true);
+            if ($pos_array === null) {
+                $pos_array = ['B'];
+            }
             $pos = $pos_array[0];
 
             if ($pos=='B') {
                 $begin = $i;
             } elseif ($pos=='E') {
-                eval('$this_pos_array = array'.$pos_list[$i].';');
+                $this_pos_array = json_decode('[' . $pos_list[$i] . ']', true);
+                if ($this_pos_array === null) {
+                    $this_pos_array = ['E', 'x'];
+                }
                 $this_pos = $this_pos_array[1];
                 $this_word_pair = array(
                     'word'=>mb_substr($sentence, $begin, (($i+1)-$begin), 'UTF-8'),
@@ -316,7 +322,10 @@ class Posseg
                 $words[] = $this_word_pair;
                 $next = $i+1;
             } elseif ($pos=='S') {
-                eval('$this_pos_array = array'.$pos_list[$i].';');
+                $this_pos_array = json_decode('[' . $pos_list[$i] . ']', true);
+                if ($this_pos_array === null) {
+                    $this_pos_array = ['S', 'x'];
+                }
                 $this_pos = $this_pos_array[1];
                 $this_word_pair = array(
                     'word'=>$char,
@@ -328,7 +337,10 @@ class Posseg
         }
 
         if ($next<$len) {
-            eval('$this_pos_array = array'.$pos_list[$next].';');
+            $this_pos_array = json_decode('[' . $pos_list[$next] . ']', true);
+            if ($this_pos_array === null) {
+                $this_pos_array = ['S', 'x'];
+            }
             $this_pos = $this_pos_array[1];
             $this_word_pair = array(
                 'word'=>mb_substr($sentence, $next, null, 'UTF-8'),
