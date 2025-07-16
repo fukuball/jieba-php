@@ -1,38 +1,39 @@
-[jieba-php](http://www.fukuball.com/jieba-php/)
-=========
+# [jieba-php](http://www.fukuball.com/jieba-php/)
+
 [![Made with Love](https://img.shields.io/badge/made%20with-%e2%9d%a4-ff69b4.svg)](http://www.fukuball.com)
 
-"結巴"中文分詞：做最好的 PHP 中文分詞、中文斷詞組件，目前翻譯版本為 jieba-0.33 版本，未來再慢慢往上升級，效能也需要再改善，請有興趣的開發者一起加入開發！若想使用 Python 版本請前往 [fxsjy/jieba](https://github.com/fxsjy/jieba)
+"結巴"中文分詞：做最好的 PHP 中文分詞、中文斷詞組件，原始版本翻譯自[fxsjy/jieba](https://github.com/fxsjy/jieba)，目前已經為一個獨立分支，請有興趣的開發者一起加入開發！若想使用 Python 版本請前往 [fxsjy/jieba](https://github.com/fxsjy/jieba)
 
 現在已經可以支援繁體中文！只要將字典切換為 big 模式即可！
+
+中文斷詞目前使用 LLM 大語言模型會得到更好的斷詞結果，但如果要快速、便宜，這個套件仍然有其用處。
 
 "Jieba" (Chinese for "to stutter") Chinese text segmentation: built to be the best PHP Chinese word segmentation module.
 
 _Scroll down for English documentation._
 
-線上展示
-========
-* 網站網址：[http://jieba-php.fukuball.com](http://jieba-php.fukuball.com)
-* 網站原始碼：[https://github.com/fukuball/jieba-php.fukuball.com](https://github.com/fukuball/jieba-php.fukuball.com)
+# 線上展示
 
-Feature
-========
-* 支持三種分詞模式：
-* 1）默認精確模式，試圖將句子最精確地切開，適合文本分析；
-* 2）全模式，把句子中所有的可以成詞的詞語都掃描出來，但是不能解決歧義。（需要充足的字典）
-* 3) 搜尋引擎模式，在精確模式的基礎上，對長詞再次切分，提高召回率，適合用於搜尋引擎分詞。
+- 網站原始碼：[https://github.com/fukuball/jieba-php.fukuball.com](https://github.com/fukuball/jieba-php.fukuball.com)
 
-* 支持繁體斷詞
-* 支持自定義詞典
+# Feature
 
-Usage
-========
-* 自動安裝：使用 composer 安裝後，透過 autoload 引用
+- 支持三種分詞模式：
+- 1）默認精確模式，試圖將句子最精確地切開，適合文本分析；
+- 2）全模式，把句子中所有的可以成詞的詞語都掃描出來，但是不能解決歧義。（需要充足的字典）
+- 3. 搜尋引擎模式，在精確模式的基礎上，對長詞再次切分，提高召回率，適合用於搜尋引擎分詞。
+
+- 支持繁體斷詞
+- 支持自定義詞典
+
+# Usage
+
+- 自動安裝：使用 composer 安裝後，透過 autoload 引用
 
 代碼示例
 
 ```php
-composer require fukuball/jieba-php:dev-master
+composer require fukuball/jieba-php
 ```
 
 代碼示例
@@ -41,7 +42,7 @@ composer require fukuball/jieba-php:dev-master
 require_once "/path/to/your/vendor/autoload.php";
 ```
 
-* 手動安裝：將 jieba-php 放置適當目錄後，透過 require_once 引用
+- 手動安裝：將 jieba-php 放置適當目錄後，透過 require_once 引用
 
 代碼示例
 
@@ -52,26 +53,26 @@ require_once "/path/to/your/class/Jieba.php";
 require_once "/path/to/your/class/Finalseg.php";
 ```
 
-Algorithm
-========
-* 基於 Trie 樹結構實現高效的詞圖掃描，生成句子中漢字所有可能成詞情況所構成的有向無環圖（DAG)
-* 採用了動態規劃查找最大概率路徑, 找出基於詞頻的最大切分組合
-* 對於未登錄詞，採用了基於漢字成詞能力的 HMM 模型，使用了 Viterbi 算法
-* BEMS 的解釋 [https://github.com/fxsjy/jieba/issues/7](https://github.com/fxsjy/jieba/issues/7)
+# Algorithm
 
-Interface
-========
-* 組件只提供 jieba.cut 方法用於分詞
-* cut 方法接受兩個輸入參數: 1) 第一個參數為需要分詞的字符串 2）cut_all 參數用來控制分詞模式
-* 待分詞的字符串可以是 utf-8 字符串
-* jieba.cut 返回的結構是一個可迭代的 array
+- 基於 Trie 樹結構實現高效的詞圖掃描，生成句子中漢字所有可能成詞情況所構成的有向無環圖（DAG)
+- 採用了動態規劃查找最大概率路徑, 找出基於詞頻的最大切分組合
+- 對於未登錄詞，採用了基於漢字成詞能力的 HMM 模型，使用了 Viterbi 算法
+- BEMS 的解釋 [https://github.com/fxsjy/jieba/issues/7](https://github.com/fxsjy/jieba/issues/7)
 
-功能 1)：分词
-============
-* `cut` 方法接受想個輸入參數： 1) 第一個參數為需要分詞的字符串 2）cut_all 參數用來控制分詞模式
-* `cutForSearch` 方法接受一個參數：需要分詞的字符串，該方法適合用於搜索引擎構建倒排索引的分詞，粒度比較細
-* 注意：待分詞的字符串是 utf-8 字符串
-* `cut` 以及 `cutForSearch` 返回的結構是一個可迭代的 array
+# Interface
+
+- 組件只提供 jieba.cut 方法用於分詞
+- cut 方法接受兩個輸入參數: 1) 第一個參數為需要分詞的字符串 2）cut_all 參數用來控制分詞模式
+- 待分詞的字符串可以是 utf-8 字符串
+- jieba.cut 返回的結構是一個可迭代的 array
+
+# 功能 1)：分词
+
+- `cut` 方法接受想個輸入參數： 1) 第一個參數為需要分詞的字符串 2）cut_all 參數用來控制分詞模式
+- `cutForSearch` 方法接受一個參數：需要分詞的字符串，該方法適合用於搜索引擎構建倒排索引的分詞，粒度比較細
+- 注意：待分詞的字符串是 utf-8 字符串
+- `cut` 以及 `cutForSearch` 返回的結構是一個可迭代的 array
 
 代碼示例 (Tutorial)
 
@@ -225,13 +226,12 @@ array(18) {
 }
 ```
 
-功能 2)：添加自定義詞典
-====================
+# 功能 2)：添加自定義詞典
 
-* 開發者可以指定自己自定義的詞典，以便包含 jieba 詞庫裡沒有的詞。雖然 jieba 有新詞識別能力，但是自行添加新詞可以保證更高的正確率
-* 用法： Jieba::loadUserDict(file_name) # file_name 為自定義詞典的絕對路徑
-* 詞典格式和 dict.txt 一樣，一個詞佔一行；每一行分為三部分，一部分為詞語，一部分為詞頻，一部分為詞性，用空格隔開
-* 範例：
+- 開發者可以指定自己自定義的詞典，以便包含 jieba 詞庫裡沒有的詞。雖然 jieba 有新詞識別能力，但是自行添加新詞可以保證更高的正確率
+- 用法： Jieba::loadUserDict(file_name) # file_name 為自定義詞典的絕對路徑
+- 詞典格式和 dict.txt 一樣，一個詞佔一行；每一行分為三部分，一部分為詞語，一部分為詞頻，一部分為詞性，用空格隔開
+- 範例：
 
   云计算 5 n
   李小福 2 n
@@ -242,14 +242,14 @@ array(18) {
 
 說明："通过用户自定义词典来增强歧义纠错能力" --- https://github.com/fxsjy/jieba/issues/14
 
-* 自定義詞典：https://github.com/fukuball/jieba-php/blob/master/src/dict/user_dict.txt
+- 自定義詞典：https://github.com/fukuball/jieba-php/blob/master/src/dict/user_dict.txt
 
-功能 3)：關鍵詞提取
-==============
-* JiebaAnalyse::extractTags($content, $top_k)
-* content 為待提取的文本
-* top_k 為返回幾個 TF/IDF 權重最大的關鍵詞，默認值為 20
-* 可使用 setStopWords 增加自定義 stop words
+# 功能 3)：關鍵詞提取
+
+- JiebaAnalyse::extractTags($content, $top_k)
+- content 為待提取的文本
+- top_k 為返回幾個 TF/IDF 權重最大的關鍵詞，默認值為 20
+- 可使用 setStopWords 增加自定義 stop words
 
 代碼示例 (關鍵詞提取)
 
@@ -283,6 +283,7 @@ var_dump($tags);
 ```
 
 Output:
+
 ```php
 array(10) {
   '沒有' =>
@@ -330,9 +331,9 @@ array(10) {
 }
 ```
 
-功能 4)：詞性分詞
-==============
-* 詞性說明：[https://gist.github.com/luw2007/6016931](https://gist.github.com/luw2007/6016931)
+# 功能 4)：詞性分詞
+
+- 詞性說明：[https://gist.github.com/luw2007/6016931](https://gist.github.com/luw2007/6016931)
 
 代碼示例 (Tutorial)
 
@@ -356,6 +357,7 @@ var_dump($seg_list);
 ```
 
 Output:
+
 ```php
 array(21) {
   [0]=>
@@ -508,8 +510,7 @@ array(21) {
 }
 ```
 
-功能 5)：切換成繁體字典
-==============
+# 功能 5)：切換成繁體字典
 
 代碼示例 (Tutorial)
 
@@ -569,8 +570,7 @@ array(7) {
 }
 ```
 
-功能 5)：切換成繁體字典
-==============
+# 功能 5)：切換成繁體字典
 
 代碼示例 (Tutorial)
 
@@ -630,8 +630,7 @@ array(7) {
 }
 ```
 
-功能 6)：保留日语或者朝鲜语原文不进行过滤
-==============
+# 功能 6)：保留日语或者朝鲜语原文不进行过滤
 
 代碼示例 (Tutorial)
 
@@ -776,8 +775,7 @@ array(17) {
 }
 ```
 
-功能 7)：返回詞語在原文的起止位置
-==============
+# 功能 7)：返回詞語在原文的起止位置
 
 代碼示例 (Tutorial)
 
@@ -840,55 +838,51 @@ array(4) {
 }
 ```
 
-其他詞典
-========
-1) 佔用內容較小的詞典
-https://github.com/fukuball/jieba-php/blob/master/src/dict/dict.small.txt
+# 其他詞典
 
-2) 支持繁體斷詞的詞典
-https://github.com/fukuball/jieba-php/blob/master/src/dict/dict.big.txt
+1. 佔用內容較小的詞典
+   https://github.com/fukuball/jieba-php/blob/master/src/dict/dict.small.txt
 
-常見問題
-========
-1) 模型的數據是如何生成的？ https://github.com/fxsjy/jieba/issues/7
-2) 這個庫的授權是？ https://github.com/fxsjy/jieba/issues/2
+2. 支持繁體斷詞的詞典
+   https://github.com/fukuball/jieba-php/blob/master/src/dict/dict.big.txt
 
+# 常見問題
 
-jieba-php English Document
-=========
+1. 模型的數據是如何生成的？ https://github.com/fxsjy/jieba/issues/7
+2. 這個庫的授權是？ https://github.com/fxsjy/jieba/issues/2
 
-Online Demo
-========
-* Demo Site Url：[http://jieba-php.fukuball.com](http://jieba-php.fukuball.com)
-* Demo Site Repo：[https://github.com/fukuball/jieba-php.fukuball.com](https://github.com/fukuball/jieba-php.fukuball.com)
+# jieba-php English Document
 
-Feature
-========
-* Support three types of segmentation mode:
-* 1) Accurate Mode, attempt to cut the sentence into the most accurate segmentation, which is suitable for text analysis;
-* 2) Full Mode, break the words of the sentence into words scanned
-* 3) Search Engine Mode, based on the Accurate Mode, with an attempt to cut the long words into several short words, which can enhance the recall rate
+# Online Demo
 
-Usage
-========
-* Installation: Use composer to install jieba-php, then require the autoload file to use jieba-php.
+- Demo Site Repo：[https://github.com/fukuball/jieba-php.fukuball.com](https://github.com/fukuball/jieba-php.fukuball.com)
 
-Algorithm
-========
-* Based on the Trie tree structure to achieve efficient word graph scanning; sentences using Chinese characters constitute a directed acyclic graph (DAG).
-* Employs memory search to calculate the maximum probability path, in order to identify the maximum tangential points based on word frequency combination.
-* For unknown words, the character position HMM-based model is used, using the Viterbi algorithm.
-* The meaning of BEMS [https://github.com/fxsjy/jieba/issues/7](https://github.com/fxsjy/jieba/issues/7).
+# Feature
 
-Interface
-========
-* The `cut` method accepts two parameters: 1) first parameter is the string to segmentation 2）the second parameter `cut_all` to control segmentation mode.
-* The string to segmentation may use utf-8 string.
-* `cutForSearch` accpets only on parameter: the string that requires segmentation, and it will cut the sentence into short words
-* `cut` and `cutForSearch` return an segmented array.
+- Support three types of segmentation mode:
+- 1. Accurate Mode, attempt to cut the sentence into the most accurate segmentation, which is suitable for text analysis;
+- 2. Full Mode, break the words of the sentence into words scanned
+- 3. Search Engine Mode, based on the Accurate Mode, with an attempt to cut the long words into several short words, which can enhance the recall rate
 
-Function 1) Segmentation
-============
+# Usage
+
+- Installation: Use composer to install jieba-php, then require the autoload file to use jieba-php.
+
+# Algorithm
+
+- Based on the Trie tree structure to achieve efficient word graph scanning; sentences using Chinese characters constitute a directed acyclic graph (DAG).
+- Employs memory search to calculate the maximum probability path, in order to identify the maximum tangential points based on word frequency combination.
+- For unknown words, the character position HMM-based model is used, using the Viterbi algorithm.
+- The meaning of BEMS [https://github.com/fxsjy/jieba/issues/7](https://github.com/fxsjy/jieba/issues/7).
+
+# Interface
+
+- The `cut` method accepts two parameters: 1) first parameter is the string to segmentation 2）the second parameter `cut_all` to control segmentation mode.
+- The string to segmentation may use utf-8 string.
+- `cutForSearch` accpets only on parameter: the string that requires segmentation, and it will cut the sentence into short words
+- `cut` and `cutForSearch` return an segmented array.
+
+# Function 1) Segmentation
 
 Example (Tutorial)
 
@@ -1042,13 +1036,12 @@ array(18) {
 }
 ```
 
-Function 2) Add a custom dictionary
-====================
+# Function 2) Add a custom dictionary
 
-* Developers can specify their own custom dictionary to include in the jieba thesaurus. jieba has the ability to identify new words, but adding your own new words can ensure a higher rate of correct segmentation.
-* Usage: `Jieba::loadUserDict(file_name)` # file_name is a custom dictionary path.
-* The dictionary format is the same as that of `dict.txt`: one word per line; each line is divided into two parts, the first is the word itself, the other is the word frequency, separated by a space.
-* Example:
+- Developers can specify their own custom dictionary to include in the jieba thesaurus. jieba has the ability to identify new words, but adding your own new words can ensure a higher rate of correct segmentation.
+- Usage: `Jieba::loadUserDict(file_name)` # file_name is a custom dictionary path.
+- The dictionary format is the same as that of `dict.txt`: one word per line; each line is divided into two parts, the first is the word itself, the other is the word frequency, separated by a space.
+- Example:
 
   云计算 5
   李小福 2
@@ -1057,11 +1050,11 @@ Function 2) Add a custom dictionary
   之前： 李小福 / 是 / 创新 / 办 / 主任 / 也 / 是 / 云 / 计算 / 方面 / 的 / 专家 /
   加載自定義詞庫後：　李小福 / 是 / 创新办 / 主任 / 也 / 是 / 云计算 / 方面 / 的 / 专家 /
 
-Function 3) Keyword Extraction
-==============
-* JiebaAnalyse::extractTags($content, $top_k)
-* content: the text to be extracted
-* top_k: to return several TF/IDF weights for the biggest keywords, the default value is 20
+# Function 3) Keyword Extraction
+
+- JiebaAnalyse::extractTags($content, $top_k)
+- content: the text to be extracted
+- top_k: to return several TF/IDF weights for the biggest keywords, the default value is 20
 
 Example (keyword extraction)
 
@@ -1089,6 +1082,7 @@ var_dump($tags);
 ```
 
 Output:
+
 ```php
 array(10) {
   ["是否"]=>
@@ -1114,9 +1108,10 @@ array(10) {
 }
 
 ```
-Function 4) Word Segmentation and Tagging
-==============
-* Word Tagging Meaning：[https://gist.github.com/luw2007/6016931](https://gist.github.com/luw2007/6016931)
+
+# Function 4) Word Segmentation and Tagging
+
+- Word Tagging Meaning：[https://gist.github.com/luw2007/6016931](https://gist.github.com/luw2007/6016931)
 
 Example (word tagging)
 
@@ -1140,6 +1135,7 @@ var_dump($seg_list);
 ```
 
 Output:
+
 ```php
 array(21) {
   [0]=>
@@ -1292,8 +1288,7 @@ array(21) {
 }
 ```
 
-Function 5)：Use Traditional Chinese
-==============
+# Function 5)：Use Traditional Chinese
 
 Example (Tutorial)
 
@@ -1353,8 +1348,7 @@ array(7) {
 }
 ```
 
-Function 6)：Keeping Japanese or Korean original text
-==============
+# Function 6)：Keeping Japanese or Korean original text
 
 Example (Tutorial)
 
@@ -1499,8 +1493,8 @@ array(17) {
 }
 ```
 
-詞性說明
-==============
+# 詞性說明
+
 ```
 a 形容词 (取英语形容词 adjective 的第 1 个字母。)
   ad 副形词 (直接作状语的形容词，形容词代码 a 和副词代码 d 并在一起。)
@@ -1561,15 +1555,15 @@ z 状态词 (取汉字「状」的声母的前一个字母。)
   zg 状态词*
 ```
 
-Donate
-=========
+# Donate
+
 If you find fuku-ml useful, please consider a donation. Thank you!
 
 - bitcoin: 1BbihQU3CzSdyLSP9bvQq7Pi1z1jTdAaq9
 - eth: 0x92DA3F837bf2F79D422bb8CEAC632208F94cdE33
 
-License
-=========
+# License
+
 The MIT License (MIT)
 
 Copyright (c) 2015 fukuball

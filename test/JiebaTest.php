@@ -117,7 +117,7 @@ class JiebaTest extends TestCase
             "深造"
         );
 
-        $seg_list = Jieba::cutForSEarch("小明硕士毕业于中国科学院计算所，后在日本京都大学深造");
+        $seg_list = Jieba::cutForSearch("小明硕士毕业于中国科学院计算所，后在日本京都大学深造");
         $this->assertEquals($case_array, $seg_list);
     }
 
