@@ -159,28 +159,40 @@ class Jieba
         self::$trie = new MultiArray(file_get_contents($f_name.'.json'));
         //self::$trie->cache = new MultiArray(file_get_contents($f_name.'.cache.json'));
 
-        // Check if cache file exists for performance optimization
+        // Check if cache file exists and is valid for performance optimization
         $cache_file = $f_name . '.cache';
         if (file_exists($cache_file)) {
-            // Load cached frequency data to avoid re-processing dictionary
-            try {
-                $cache_content = file_get_contents($cache_file);
-                $cache_data = json_decode($cache_content, true);
-                
-                // Verify cache data integrity
-                if ($cache_data !== null &&
-                    isset($cache_data['original_freq']) &&
-                    isset($cache_data['total']) &&
-                    is_array($cache_data['original_freq']) &&
-                    is_numeric($cache_data['total'])) {
-                    self::$original_freq = $cache_data['original_freq'];
-                    self::$total = (float) $cache_data['total'];
+            // Check if cache is newer than dictionary file
+            $dict_mtime = filemtime($f_name);
+            $cache_mtime = filemtime($cache_file);
+            
+            if ($cache_mtime >= $dict_mtime) {
+                // Load cached frequency data to avoid re-processing dictionary
+                try {
+                    $cache_content = file_get_contents($cache_file);
+                    $cache_data = json_decode($cache_content, true);
                     
-                    return self::$trie;
+                    // Verify cache data integrity
+                    if ($cache_data !== null &&
+                        isset($cache_data['original_freq']) &&
+                        isset($cache_data['total']) &&
+                        is_array($cache_data['original_freq']) &&
+                        is_numeric($cache_data['total'])) {
+                        self::$original_freq = $cache_data['original_freq'];
+                        self::$total = (float) $cache_data['total'];
+                        
+                        return self::$trie;
+                    }
+                } catch (JsonException $e) {
+                    // JSON decode/encode failures
+                    error_log("Cache file JSON parsing failed, falling back to normal processing: " . $e->getMessage());
+                } catch (Exception $e) {
+                    // Other unexpected errors
+                    error_log("Cache file reading failed, falling back to normal processing: " . $e->getMessage());
                 }
-            } catch (Exception $e) {
-                // If cache reading fails, fall back to normal processing
-                error_log("Cache file reading failed, falling back to normal processing: " . $e->getMessage());
+            } else {
+                // Cache is outdated, remove it to force regeneration
+                @unlink($cache_file);
             }
         }
 
@@ -219,8 +231,11 @@ class Jieba
                 'total' => self::$total
             );
             file_put_contents($cache_file, json_encode($cache_data));
+        } catch (JsonException $e) {
+            // JSON encode failures
+            error_log("Cache file JSON encoding failed: " . $e->getMessage());
         } catch (Exception $e) {
-            // Cache creation failure should not stop normal operation
+            // Other cache creation failures should not stop normal operation
             error_log("Cache file creation failed: " . $e->getMessage());
         }
 
