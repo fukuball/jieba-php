@@ -172,6 +172,5 @@ class JiebaAnalyse
         $tags = array_slice($tf_idf_list, 0, $top_k, true);
 
         return $tags;
-
     }// end function extractTags
 }// end of class JiebaAnalyse

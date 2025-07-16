@@ -49,7 +49,6 @@ class Finalseg
         self::$prob_start = self::loadModel(dirname(dirname(__FILE__)).'/model/prob_start.json');
         self::$prob_trans = self::loadModel(dirname(dirname(__FILE__)).'/model/prob_trans.json');
         self::$prob_emit = self::loadModel(dirname(dirname(__FILE__)).'/model/prob_emit.json');
-
     }// end function init
 
     /**
@@ -70,7 +69,6 @@ class Finalseg
         $options = array_merge($defaults, $options);
 
         return json_decode(file_get_contents($f_name), true);
-
     }// end function loadModel
 
     /**
@@ -161,7 +159,6 @@ class Finalseg
         $state = key($temp_prob_array);
 
         return array("prob"=>$prob, "pos_list"=>$path[$state]);
-
     }// end function viterbi
 
     /**
@@ -210,7 +207,6 @@ class Finalseg
         }
 
         return $words;
-
     }// end function __cut
 
 
@@ -244,25 +240,17 @@ class Finalseg
         $blocks = $matches[0];
 
         foreach ($blocks as $blk) {
-
             if (preg_match('/'.$re_cjk_pattern.'/u', $blk)) {
-
                 $words = self::__cut($blk);
 
                 foreach ($words as $word) {
                     $seg_list[] = $word;
                 }
-
             } else {
-
                 $seg_list[] = $blk;
-
             }// end else (preg_match('/'.$re_han_pattern.'/u', $blk))
-
-
         }// end foreach ($blocks as $blk)
 
         return $seg_list;
-
     }// end function cut
 }
