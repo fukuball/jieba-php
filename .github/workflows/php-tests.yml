@@ -41,8 +41,21 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
-      - name: Run test suite
-        run: vendor/bin/phpunit --configuration phpunit.xml --colors --coverage-text
+      - name: Create build directory
+        run: mkdir -p build/logs
+
+      - name: Run test suite with coverage
+        run: vendor/bin/phpunit --configuration phpunit.xml --colors --coverage-text --coverage-clover=build/logs/clover.xml
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./build/logs/clover.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Run code style check
         run: vendor/bin/phpcs --standard=PSR2 --extensions=php --ignore="*/test/*" ./src/class
