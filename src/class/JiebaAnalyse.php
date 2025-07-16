@@ -120,6 +120,11 @@ class JiebaAnalyse
         $tags = array();
 
         if (isset($options['allowPOS']) && is_array($options['allowPOS']) && !empty($options['allowPOS'])) {
+            // Initialize Posseg if not already initialized
+            if (empty(Posseg::$prob_start)) {
+                Posseg::init();
+            }
+            
             $wordsPos = Posseg::cut($content);
 
             $words = array();
