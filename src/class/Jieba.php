@@ -168,12 +168,11 @@ class Jieba
                 $cache_data = json_decode($cache_content, true);
                 
                 // Verify cache data integrity
-                if ($cache_data !== null && 
-                    isset($cache_data['original_freq']) && 
+                if ($cache_data !== null &&
+                    isset($cache_data['original_freq']) &&
                     isset($cache_data['total']) &&
                     is_array($cache_data['original_freq']) &&
                     is_numeric($cache_data['total'])) {
-                    
                     self::$original_freq = $cache_data['original_freq'];
                     self::$total = (float) $cache_data['total'];
                     
