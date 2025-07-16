@@ -159,28 +159,71 @@ class Jieba
         self::$trie = new MultiArray(file_get_contents($f_name.'.json'));
         //self::$trie->cache = new MultiArray(file_get_contents($f_name.'.cache.json'));
 
+        // Check if cache file exists for performance optimization
+        $cache_file = $f_name . '.cache';
+        if (file_exists($cache_file)) {
+            // Load cached frequency data to avoid re-processing dictionary
+            try {
+                $cache_content = file_get_contents($cache_file);
+                $cache_data = json_decode($cache_content, true);
+                
+                // Verify cache data integrity
+                if ($cache_data !== null && 
+                    isset($cache_data['original_freq']) && 
+                    isset($cache_data['total']) &&
+                    is_array($cache_data['original_freq']) &&
+                    is_numeric($cache_data['total'])) {
+                    
+                    self::$original_freq = $cache_data['original_freq'];
+                    self::$total = (float) $cache_data['total'];
+                    
+                    return self::$trie;
+                }
+            } catch (Exception $e) {
+                // If cache reading fails, fall back to normal processing
+                error_log("Cache file reading failed, falling back to normal processing: " . $e->getMessage());
+            }
+        }
+
+        // Process dictionary file normally if no cache or cache is invalid
         $content = fopen($f_name, "r");
+        if ($content === false) {
+            throw new Exception("Unable to open dictionary file: " . $f_name);
+        }
+
         while (($line = fgets($content)) !== false) {
             $explode_line = explode(" ", trim($line));
+            
+            // Skip malformed lines
+            if (count($explode_line) < 2) {
+                continue;
+            }
+            
             $word = $explode_line[0];
             $freq = $explode_line[1];
-            $tag = $explode_line[2];
+            $tag = isset($explode_line[2]) ? $explode_line[2] : '';
             $freq = (float) $freq;
+            
+            // Update frequency data
             if (isset(self::$original_freq[$word])) {
                 self::$total -= self::$original_freq[$word];
             }
             self::$original_freq[$word] = $freq;
             self::$total += $freq;
-            //$l = mb_strlen($word, 'UTF-8');
-            //$word_c = array();
-            //for ($i=0; $i<$l; $i++) {
-            //    $c = mb_substr($word, $i, 1, 'UTF-8');
-            //    array_push($word_c, $c);
-            //}
-            //$word_c_key = implode('.', $word_c);
-            //self::$trie->set($word_c_key, array("end"=>""));
         }
         fclose($content);
+
+        // Create cache file to improve future loading performance
+        try {
+            $cache_data = array(
+                'original_freq' => self::$original_freq,
+                'total' => self::$total
+            );
+            file_put_contents($cache_file, json_encode($cache_data));
+        } catch (Exception $e) {
+            // Cache creation failure should not stop normal operation
+            error_log("Cache file creation failed: " . $e->getMessage());
+        }
 
         return self::$trie;
     }// end function genTrie
