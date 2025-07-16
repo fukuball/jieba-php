@@ -45,7 +45,7 @@ jobs:
         run: mkdir -p build/logs
 
       - name: Run test suite with coverage
-        run: vendor/bin/phpunit --configuration phpunit.xml --colors --coverage-text --coverage-clover=build/logs/clover.xml
+        run: vendor/bin/phpunit --configuration phpunit.xml --colors --coverage-text
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4
