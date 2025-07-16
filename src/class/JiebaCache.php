@@ -152,8 +152,6 @@ class JiebaCache
             $minfreqcache = fopen($cachepath.$minfreqcachefile, 'r');
             $minfreqsize = filesize($cachepath.$minfreqcachefile);
             self::$min_freq = unserialize(fread($minfreqcache, $minfreqsize));
-
-
         } else {
             // 建立树并缓存
             $options = array_merge($defaults, $options);
@@ -177,8 +175,6 @@ class JiebaCache
                 //}
                 //$word_c_key = implode('.', $word_c);
                 //self::$trie->set($word_c_key, array("end"=>""));
-
-
             }
             fclose($content);
 
@@ -203,7 +199,6 @@ class JiebaCache
             $minfreqcontent = serialize(self::$min_freq);
             fwrite($minfreqcache, $minfreqcontent);
             fclose($minfreqcache);
-
         }
 
         return self::$trie;
