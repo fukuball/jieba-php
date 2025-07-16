@@ -322,16 +322,24 @@ class Jieba
             if ($cache_mtime >= $dict_mtime) {
                 // Load cached frequency data to avoid re-processing dictionary
                 try {
-                    $cache_content = file_get_contents($cache_file);
+                    // Check cache file size before loading to prevent memory issues
+                    $cache_size = filesize($cache_file);
+                    if ($cache_size === false) {
+                        throw new Exception("Unable to get cache file size");
+                    }
                     
-                    // Check cache file size to prevent memory issues
-                    if (strlen($cache_content) > self::MAX_CACHE_SIZE) {
+                    if ($cache_size > self::MAX_CACHE_SIZE) {
                         self::logError(
-                            "Cache file too large (" . strlen($cache_content) . " bytes), regenerating"
+                            "Cache file too large ($cache_size bytes), regenerating"
                         );
                         @unlink($cache_file);
                         // Fall back to normal processing
                         return self::processNormalDictionary($f_name);
+                    }
+                    
+                    $cache_content = file_get_contents($cache_file);
+                    if ($cache_content === false) {
+                        throw new Exception("Unable to read cache file content");
                     }
                     
                     $cache_data = json_decode($cache_content, true);
