@@ -1,4 +1,5 @@
 <?php
+
 use Fukuball\Jieba\Jieba;
 use Fukuball\Jieba\Finalseg;
 use Fukuball\Jieba\JiebaAnalyse;
@@ -26,7 +27,6 @@ class JiebaTest extends TestCase
         Jieba::init();
         JiebaAnalyse::init();
         $this->assertGreaterThan(0, JiebaAnalyse::$max_idf);
-
     }
 
     public function testPossegInit()
@@ -73,7 +73,6 @@ class JiebaTest extends TestCase
 
         $seg_list = Jieba::cut("他来到了网易杭研大厦");
         $this->assertEquals($case_array, $seg_list);
-
     }
 
     public function testJiebaCutAll()
@@ -91,7 +90,6 @@ class JiebaTest extends TestCase
 
         $seg_list = Jieba::cut("我来到北京清华大学", true);
         $this->assertEquals($case_array, $seg_list);
-
     }
 
     public function testJiebaCutForSearch()
@@ -121,7 +119,6 @@ class JiebaTest extends TestCase
 
         $seg_list = Jieba::cutForSEarch("小明硕士毕业于中国科学院计算所，后在日本京都大学深造");
         $this->assertEquals($case_array, $seg_list);
-
     }
 
     public function testFinalsegCut()
@@ -144,19 +141,19 @@ class JiebaTest extends TestCase
     public function testExtractTags()
     {
         $case_array = array(
-            "所謂"=>1.0102620424985915,
-            "是否"=>0.7386504806253521,
-            "一般"=>0.60759968349154936,
-            "沒有"=>0.33675401416619716,
-            "肌迫"=>0.33675401416619716,
-            "雖然"=>0.33675401416619716,
-            "退縮"=>0.33675401416619716,
-            "矯作"=>0.33675401416619716,
-            "怯懦"=>0.27109891642140843
+            "所謂" => 1.0102620424985915,
+            "是否" => 0.7386504806253521,
+            "一般" => 0.60759968349154936,
+            "沒有" => 0.33675401416619716,
+            "肌迫" => 0.33675401416619716,
+            "雖然" => 0.33675401416619716,
+            "退縮" => 0.33675401416619716,
+            "矯作" => 0.33675401416619716,
+            "怯懦" => 0.27109891642140843
         );
 
         $top_k = 9;
-        $content = file_get_contents(dirname(dirname(__FILE__))."/src/dict/lyric.txt", "r");
+        $content = file_get_contents(dirname(dirname(__FILE__)) . "/src/dict/lyric.txt", "r");
 
         $tags = JiebaAnalyse::extractTags($content, $top_k);
         $this->assertEquals($case_array, $tags);
@@ -178,20 +175,24 @@ class JiebaTest extends TestCase
             "专家"
         );
 
-        Jieba::loadUserDict(dirname(dirname(__FILE__)).'/src/dict/user_dict.txt');
+        Jieba::loadUserDict(dirname(dirname(__FILE__)) . '/src/dict/user_dict.txt');
 
         $seg_list = Jieba::cut("李小福是创新办主任也是云计算方面的专家");
         $this->assertEquals($case_array, $seg_list);
-
     }
 
     public function testPossegCut()
     {
-        // Updated test case to reflect current segmentation behavior
+
+
         $case_array = array(
             array(
-                "word" => "这是",
-                "tag" => "x"
+                "word" => "这",
+                "tag" => "r"
+            ),
+            array(
+                "word" => "是",
+                "tag" => "v"
             ),
             array(
                 "word" => "一个",
@@ -214,8 +215,12 @@ class JiebaTest extends TestCase
                 "tag" => "w"
             ),
             array(
-                "word" => "我叫",
-                "tag" => "x"
+                "word" => "我",
+                "tag" => "r"
+            ),
+            array(
+                "word" => "叫",
+                "tag" => "v"
             ),
             array(
                 "word" => "孙悟空",
@@ -226,8 +231,12 @@ class JiebaTest extends TestCase
                 "tag" => "w"
             ),
             array(
-                "word" => "我爱",
-                "tag" => "x"
+                "word" => "我",
+                "tag" => "r"
+            ),
+            array(
+                "word" => "爱",
+                "tag" => "v"
             ),
             array(
                 "word" => "北京",
@@ -238,8 +247,12 @@ class JiebaTest extends TestCase
                 "tag" => "w"
             ),
             array(
-                "word" => "我爱",
-                "tag" => "x"
+                "word" => "我",
+                "tag" => "r"
+            ),
+            array(
+                "word" => "爱",
+                "tag" => "v"
             ),
             array(
                 "word" => "Python",
@@ -262,7 +275,5 @@ class JiebaTest extends TestCase
         $seg_list = Posseg::cut("这是一个伸手不见五指的黑夜。我叫孙悟空，我爱北京，我爱Python和C++。");
 
         $this->assertEquals($case_array, $seg_list);
-
     }
-
 }

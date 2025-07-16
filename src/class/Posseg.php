@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Posseg.php
  *
@@ -43,18 +44,18 @@ class Posseg
     public static function init($options = array())
     {
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
 
-        self::$prob_start = self::loadModel(dirname(dirname(__FILE__)).'/model/pos/prob_start.json');
-        self::$prob_trans = self::loadModel(dirname(dirname(__FILE__)).'/model/pos/prob_trans.json');
-        self::$prob_emit = self::loadModel(dirname(dirname(__FILE__)).'/model/pos/prob_emit.json');
-        self::$char_state = self::loadModel(dirname(dirname(__FILE__)).'/model/pos/char_state.json');
+        self::$prob_start = self::loadModel(dirname(dirname(__FILE__)) . '/model/pos/prob_start.json');
+        self::$prob_trans = self::loadModel(dirname(dirname(__FILE__)) . '/model/pos/prob_trans.json');
+        self::$prob_emit = self::loadModel(dirname(dirname(__FILE__)) . '/model/pos/prob_emit.json');
+        self::$char_state = self::loadModel(dirname(dirname(__FILE__)) . '/model/pos/char_state.json');
 
-        if (Jieba::$dictname!='') {
-            $content = fopen(dirname(dirname(__FILE__)).'/dict/'.Jieba::$dictname, 'r');
+        if (Jieba::$dictname != '') {
+            $content = fopen(dirname(dirname(__FILE__)) . '/dict/' . Jieba::$dictname, 'r');
             while (($line = fgets($content)) !== false) {
                 $explode_line = explode(' ', trim($line));
                 $word = $explode_line[0];
@@ -66,8 +67,8 @@ class Posseg
         }
 
 
-        if (sizeof(Jieba::$user_dictname)!=0) {
-            for ($i = 0; $i<sizeof(Jieba::$user_dictname); $i++) {
+        if (sizeof(Jieba::$user_dictname) != 0) {
+            for ($i = 0; $i < sizeof(Jieba::$user_dictname); $i++) {
                 $content = fopen(Jieba::$user_dictname[$i], 'r');
                 while (($line = fgets($content)) !== false) {
                     $explode_line = explode(' ', trim($line));
@@ -80,7 +81,7 @@ class Posseg
             }
         }
 
-        $content = fopen(dirname(dirname(__FILE__)).'/dict/pos_tag_readable.txt', 'r');
+        $content = fopen(dirname(dirname(__FILE__)) . '/dict/pos_tag_readable.txt', 'r');
 
         while (($line = fgets($content)) !== false) {
             $explode_line = explode(' ', trim($line));
@@ -89,7 +90,7 @@ class Posseg
             self::$pos_tag_readable[$tag] = $meaning;
         }
         fclose($content);
-    }// end function init
+    } // end function init
 
     /**
      * Static method loadModel
@@ -102,13 +103,13 @@ class Posseg
     public static function loadModel($f_name, $options = array())
     {
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
 
         return json_decode(file_get_contents($f_name), true);
-    }// end function loadModel
+    } // end function loadModel
 
     /**
      * Static method getTopStates
@@ -126,7 +127,7 @@ class Posseg
         $top_states = array_slice($t_state_v, 0, $top_k);
 
         return $top_states;
-    }// end function getTopStates
+    } // end function getTopStates
 
     /**
      * Static method viterbi
@@ -139,7 +140,7 @@ class Posseg
     public static function viterbi($sentence, $options = array())
     {
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
@@ -173,19 +174,19 @@ class Posseg
             $mem_path[0][$y] = '';
         }
 
-        for ($t=1; $t<mb_strlen($obs, 'UTF-8'); $t++) {
+        for ($t = 1; $t < mb_strlen($obs, 'UTF-8'); $t++) {
             $c = mb_substr($obs, $t, 1, 'UTF-8');
             $V[$t] = array();
             $mem_path[$t] = array();
 
-            $prev_states = array_keys(self::getTopStates($V[$t-1]));
+            $prev_states = array_keys(self::getTopStates($V[$t - 1]));
 
-            $prev_mem_path = array_keys($mem_path[$t-1]);
+            $prev_mem_path = array_keys($mem_path[$t - 1]);
 
             $prev_states = array();
 
             foreach ($prev_mem_path as $mem_path_state) {
-                if (count(self::$prob_trans[$mem_path_state])>0) {
+                if (count(self::$prob_trans[$mem_path_state]) > 0) {
                     $prev_states[] = $mem_path_state;
                 }
             }
@@ -212,7 +213,7 @@ class Posseg
 
             $obs_states = array_intersect($obs_states, $prev_states_expect_next);
 
-            if (count($obs_states)==0) {
+            if (count($obs_states) == 0) {
                 $obs_states = $all_states;
             }
 
@@ -232,7 +233,7 @@ class Posseg
                     } else {
                         $prob_emit = MIN_FLOAT;
                     }
-                    $temp_prob_array[$y0] = $V[$t-1][$y0] + $prob_trans + $prob_emit;
+                    $temp_prob_array[$y0] = $V[$t - 1][$y0] + $prob_trans + $prob_emit;
                 }
                 arsort($temp_prob_array);
                 $max_prob = reset($temp_prob_array);
@@ -257,20 +258,20 @@ class Posseg
         $obs_length = mb_strlen($obs, 'UTF-8');
 
         $route = array();
-        for ($t=0; $t<$obs_length; $t++) {
+        for ($t = 0; $t < $obs_length; $t++) {
             $route[] = 'None';
         }
 
-        $i = $obs_length-1;
+        $i = $obs_length - 1;
 
         while ($i >= 0) {
             $route[$i] = $return_prob_key;
             $return_prob_key = $mem_path[$i][$return_prob_key];
-            $i-=1;
+            $i -= 1;
         }
 
-        return array('prob'=>$return_prob, 'pos_list'=>$route);
-    }// end function viterbi
+        return array('prob' => $return_prob, 'pos_list' => $route);
+    } // end function viterbi
 
     /**
      * Static method __cut
@@ -283,7 +284,7 @@ class Posseg
     public static function __cut($sentence, $options = array('HMM' => true))
     {
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
@@ -299,58 +300,57 @@ class Posseg
         $next = 0;
         $len = mb_strlen($sentence, 'UTF-8');
 
-        for ($i=0; $i<$len; $i++) {
+        for ($i = 0; $i < $len; $i++) {
             $char = mb_substr($sentence, $i, 1, 'UTF-8');
-            $pos_array = json_decode('[' . $pos_list[$i] . ']', true);
-            if ($pos_array === null) {
-                $pos_array = ['B'];
-            }
-            $pos = $pos_array[0];
 
-            if ($pos=='B') {
+            // 安全地解析狀態字串，格式應該是 "('B', 'n')" 或類似
+            $pos_state = $pos_list[$i];
+            if (preg_match("/\('([BEMS])',\s*'([^']+)'\)/", $pos_state, $matches)) {
+                $pos = $matches[1];  // B, M, E, S
+                $tag = $matches[2];  // 詞性標籤
+            } else {
+                // 如果解析失敗，使用預設值
+                $pos = 'S';
+                $tag = 'x';
+            }
+
+            if ($pos == 'B') {
                 $begin = $i;
-            } elseif ($pos=='E') {
-                $this_pos_array = json_decode('[' . $pos_list[$i] . ']', true);
-                if ($this_pos_array === null) {
-                    $this_pos_array = ['E', 'x'];
-                }
-                $this_pos = $this_pos_array[1];
+            } elseif ($pos == 'E') {
                 $this_word_pair = array(
-                    'word'=>mb_substr($sentence, $begin, (($i+1)-$begin), 'UTF-8'),
-                    'tag'=>$this_pos
+                    'word' => mb_substr($sentence, $begin, (($i + 1) - $begin), 'UTF-8'),
+                    'tag' => $tag
                 );
                 $words[] = $this_word_pair;
-                $next = $i+1;
-            } elseif ($pos=='S') {
-                $this_pos_array = json_decode('[' . $pos_list[$i] . ']', true);
-                if ($this_pos_array === null) {
-                    $this_pos_array = ['S', 'x'];
-                }
-                $this_pos = $this_pos_array[1];
+                $next = $i + 1;
+            } elseif ($pos == 'S') {
                 $this_word_pair = array(
-                    'word'=>$char,
-                    'tag'=>$this_pos
+                    'word' => $char,
+                    'tag' => $tag
                 );
                 $words[] = $this_word_pair;
-                $next = $i+1;
+                $next = $i + 1;
             }
         }
 
-        if ($next<$len) {
-            $this_pos_array = json_decode('[' . $pos_list[$next] . ']', true);
-            if ($this_pos_array === null) {
-                $this_pos_array = ['S', 'x'];
+        if ($next < $len) {
+            // 解析最後一個狀態
+            $pos_state = $pos_list[$next];
+            if (preg_match("/\('([BEMS])',\s*'([^']+)'\)/", $pos_state, $matches)) {
+                $tag = $matches[2];
+            } else {
+                $tag = 'x';
             }
-            $this_pos = $this_pos_array[1];
+
             $this_word_pair = array(
-                'word'=>mb_substr($sentence, $next, null, 'UTF-8'),
-                'tag'=>$this_pos
+                'word' => mb_substr($sentence, $next, null, 'UTF-8'),
+                'tag' => $tag
             );
             $words[] = $this_word_pair;
         }
 
         return $words;
-    }// end function __cut
+    } // end function __cut
 
     /**
      * Static method __cutDetail
@@ -363,7 +363,7 @@ class Posseg
     public static function __cutDetail($sentence, $options = array())
     {
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
@@ -372,14 +372,14 @@ class Posseg
 
         $re_han_pattern = '([\x{4E00}-\x{9FA5}]+)';
         $re_skip_pattern = '([a-zA-Z0-9+#&=\._\r\n]+)';
-        $re_punctuation_pattern = '([\x{ff5e}\x{ff01}\x{ff08}\x{ff09}\x{300e}'.
-                                    '\x{300c}\x{300d}\x{300f}\x{3001}\x{ff1a}\x{ff1b}'.
-                                    '\x{ff0c}\x{ff1f}\x{3002}]+)';
+        $re_punctuation_pattern = '([\x{ff5e}\x{ff01}\x{ff08}\x{ff09}\x{300e}' .
+            '\x{300c}\x{300d}\x{300f}\x{3001}\x{ff1a}\x{ff1b}' .
+            '\x{ff0c}\x{ff1f}\x{3002}]+)';
         $re_eng_pattern = '[a-zA-Z0-9]+';
         $re_num_pattern = '[\.0-9]+';
 
         preg_match_all(
-            '/('.$re_han_pattern.'|'.$re_skip_pattern.'|'.$re_punctuation_pattern.')/u',
+            '/(' . $re_han_pattern . '|' . $re_skip_pattern . '|' . $re_punctuation_pattern . ')/u',
             $sentence,
             $matches,
             PREG_PATTERN_ORDER
@@ -387,24 +387,24 @@ class Posseg
         $blocks = $matches[0];
 
         foreach ($blocks as $blk) {
-            if (preg_match('/'.$re_han_pattern.'/u', $blk)) {
+            if (preg_match('/' . $re_han_pattern . '/u', $blk)) {
                 $blk_words = self::__cut($blk);
                 foreach ($blk_words as $blk_word) {
                     $words[] = $blk_word;
                 }
-            } elseif (preg_match('/'.$re_skip_pattern.'/u', $blk)) {
-                if (preg_match('/'.$re_num_pattern.'/u', $blk)) {
+            } elseif (preg_match('/' . $re_skip_pattern . '/u', $blk)) {
+                if (preg_match('/' . $re_num_pattern . '/u', $blk)) {
                     $words[] = array('word' => $blk, 'tag' => 'm');
-                } elseif (preg_match('/'.$re_eng_pattern.'/u', $blk)) {
+                } elseif (preg_match('/' . $re_eng_pattern . '/u', $blk)) {
                     $words[] = array('word' => $blk, 'tag' => 'eng');
                 }
-            } elseif (preg_match('/'.$re_punctuation_pattern.'/u', $blk)) {
+            } elseif (preg_match('/' . $re_punctuation_pattern . '/u', $blk)) {
                 $words[] = array('word' => $blk, 'tag' => 'w');
             }
         }
 
         return $words;
-    }// end function __cutDetail
+    } // end function __cutDetail
 
     /**
      * Static method __cutDAG
@@ -417,7 +417,7 @@ class Posseg
     public static function __cutDAG($sentence, $options = array())
     {
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
@@ -434,14 +434,14 @@ class Posseg
 
         while ($x < $N) {
             $current_route_keys = array_keys(Jieba::$route[$x]);
-            $y = $current_route_keys[0]+1;
-            $l_word = mb_substr($sentence, $x, ($y-$x), 'UTF-8');
+            $y = $current_route_keys[0] + 1;
+            $l_word = mb_substr($sentence, $x, ($y - $x), 'UTF-8');
 
-            if (($y-$x)==1) {
-                $buf = $buf.$l_word;
+            if (($y - $x) == 1) {
+                $buf = $buf . $l_word;
             } else {
-                if (mb_strlen($buf, 'UTF-8')>0) {
-                    if (mb_strlen($buf, 'UTF-8')==1) {
+                if (mb_strlen($buf, 'UTF-8') > 0) {
+                    if (mb_strlen($buf, 'UTF-8') == 1) {
                         if (isset(self::$word_tag[$buf])) {
                             $buf_tag = self::$word_tag[$buf];
                         } else {
@@ -480,14 +480,14 @@ class Posseg
             $x = $y;
         }
 
-        if (mb_strlen($buf, 'UTF-8')>0) {
-            if (mb_strlen($buf, 'UTF-8')==1) {
+        if (mb_strlen($buf, 'UTF-8') > 0) {
+            if (mb_strlen($buf, 'UTF-8') == 1) {
                 if (isset(self::$word_tag[$buf])) {
                     $buf_tag = self::$word_tag[$buf];
                 } else {
                     $buf_tag = 'x';
                 }
-                $words[] = array('word'=>$buf, 'tag'=>$buf_tag);
+                $words[] = array('word' => $buf, 'tag' => $buf_tag);
             } else {
                 if (! isset(Jieba::$FREQ[$buf])) {
                     $regognized = self::__cutDetail($buf);
@@ -502,14 +502,14 @@ class Posseg
                         } else {
                             $buf_tag = 'x';
                         }
-                        $words[] = array('word'=>$word, 'tag'=>$buf_tag);
+                        $words[] = array('word' => $word, 'tag' => $buf_tag);
                     }
                 }
             }
         }
 
         return $words;
-    }// end function __cutDAG
+    } // end function __cutDAG
 
     /**
      * Static method __cutDAGNoHMM
@@ -522,7 +522,7 @@ class Posseg
     public static function __cutDAGNoHMM($sentence, $options = array())
     {
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
@@ -541,14 +541,14 @@ class Posseg
 
         while ($x < $N) {
             $current_route_keys = array_keys(Jieba::$route[$x]);
-            $y = $current_route_keys[0]+1;
-            $l_word = mb_substr($sentence, $x, ($y-$x), 'UTF-8');
+            $y = $current_route_keys[0] + 1;
+            $l_word = mb_substr($sentence, $x, ($y - $x), 'UTF-8');
 
-            if (preg_match('/'.$re_eng_pattern.'/u', $l_word)) {
-                $buf = $buf.$l_word;
+            if (preg_match('/' . $re_eng_pattern . '/u', $l_word)) {
+                $buf = $buf . $l_word;
                 $x = $y;
             } else {
-                if (mb_strlen($buf, 'UTF-8')>0) {
+                if (mb_strlen($buf, 'UTF-8') > 0) {
                     if (isset(self::$word_tag[$buf])) {
                         $buf_tag = self::$word_tag[$buf];
                     } else {
@@ -567,7 +567,7 @@ class Posseg
             }
         }
 
-        if (mb_strlen($buf, 'UTF-8')>0) {
+        if (mb_strlen($buf, 'UTF-8') > 0) {
             if (isset(self::$word_tag[$buf])) {
                 $buf_tag = self::$word_tag[$buf];
             } else {
@@ -577,7 +577,7 @@ class Posseg
         }
 
         return $words;
-    }// end function __cutDAGNoHMM
+    } // end function __cutDAGNoHMM
 
     /**
      * Static method cut
@@ -590,7 +590,7 @@ class Posseg
     public static function cut($sentence, $options = array('HMM' => true))
     {
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         @$options = array_merge($defaults, $options);
@@ -599,14 +599,14 @@ class Posseg
 
         $re_han_pattern = '([\x{4E00}-\x{9FA5}]+)';
         $re_skip_pattern = '([a-zA-Z0-9+#\r\n]+)';
-        $re_punctuation_pattern = '([\x{ff5e}\x{ff01}\x{ff08}\x{ff09}\x{300e}'.
-                                    '\x{300c}\x{300d}\x{300f}\x{3001}\x{ff1a}\x{ff1b}'.
-                                    '\x{ff0c}\x{ff1f}\x{3002}]+)';
+        $re_punctuation_pattern = '([\x{ff5e}\x{ff01}\x{ff08}\x{ff09}\x{300e}' .
+            '\x{300c}\x{300d}\x{300f}\x{3001}\x{ff1a}\x{ff1b}' .
+            '\x{ff0c}\x{ff1f}\x{3002}]+)';
         $re_eng_pattern = '[a-zA-Z+#]+';
         $re_num_pattern = '[0-9]+';
 
         preg_match_all(
-            '/('.$re_han_pattern.'|'.$re_skip_pattern.'|'.$re_punctuation_pattern.')/u',
+            '/(' . $re_han_pattern . '|' . $re_skip_pattern . '|' . $re_punctuation_pattern . ')/u',
             $sentence,
             $matches,
             PREG_PATTERN_ORDER
@@ -614,7 +614,7 @@ class Posseg
         $blocks = $matches[0];
 
         foreach ($blocks as $blk) {
-            if (preg_match('/'.$re_han_pattern.'/u', $blk)) {
+            if (preg_match('/' . $re_han_pattern . '/u', $blk)) {
                 if ($options['HMM']) {
                     $words = Posseg::__cutDAG($blk);
                 } else {
@@ -624,19 +624,19 @@ class Posseg
                 foreach ($words as $word) {
                     $seg_list[] = $word;
                 }
-            } elseif (preg_match('/'.$re_skip_pattern.'/u', $blk)) {
-                if (preg_match('/'.$re_num_pattern.'/u', $blk)) {
+            } elseif (preg_match('/' . $re_skip_pattern . '/u', $blk)) {
+                if (preg_match('/' . $re_num_pattern . '/u', $blk)) {
                     $seg_list[] = array('word' => $blk, 'tag' => 'm');
-                } elseif (preg_match('/'.$re_eng_pattern.'/u', $blk)) {
+                } elseif (preg_match('/' . $re_eng_pattern . '/u', $blk)) {
                     $seg_list[] = array('word' => $blk, 'tag' => 'eng');
                 }
-            } elseif (preg_match('/'.$re_punctuation_pattern.'/u', $blk)) {
+            } elseif (preg_match('/' . $re_punctuation_pattern . '/u', $blk)) {
                 $seg_list[] = array('word' => $blk, 'tag' => 'w');
             }
         }
 
         return $seg_list;
-    }// end function cut
+    } // end function cut
 
     /**
      * Static method posTagReadable
@@ -649,7 +649,7 @@ class Posseg
     public static function posTagReadable($seg_list, $options = array())
     {
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
@@ -662,5 +662,5 @@ class Posseg
         }
 
         return $new_seg_list;
-    }// end function posTagReadable
+    } // end function posTagReadable
 }
