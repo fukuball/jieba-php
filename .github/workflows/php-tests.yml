@@ -26,20 +26,20 @@ jobs:
         extensions: mbstring, json
         coverage: xdebug
     
-    - name: Validate composer.json and composer.lock
-      run: composer validate --strict
+    - name: Validate composer.json
+      run: composer validate --strict --no-check-lock
     
     - name: Cache Composer packages
       id: composer-cache
       uses: actions/cache@v3
       with:
         path: vendor
-        key: ${{ runner.os }}-php-${{ matrix.php-version }}-${{ hashFiles('**/composer.lock') }}
+        key: ${{ runner.os }}-php-${{ matrix.php-version }}-${{ hashFiles('**/composer.json') }}
         restore-keys: |
           ${{ runner.os }}-php-${{ matrix.php-version }}-
     
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
+      run: composer install --prefer-dist --no-progress --no-suggest
     
     - name: Run test suite
       run: vendor/bin/phpunit --configuration phpunit.xml --colors --coverage-text
