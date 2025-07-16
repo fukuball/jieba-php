@@ -53,7 +53,7 @@ class JiebaAnalyse
             'dict'=>'normal'
         );
 
-        $options = array_merge($defaults, $options);
+        $options = array_merge($defaults, (array)$options);
 
         if ($options['dict']=='big') {
             $f_name = "idf.big.txt";
@@ -115,7 +115,7 @@ class JiebaAnalyse
             'mode'=>'default'
         );
 
-        $options = array_merge($defaults, $options);
+        $options = array_merge($defaults, (array)$options);
 
         $tags = array();
 
