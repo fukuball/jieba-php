@@ -40,6 +40,8 @@ class Jieba
     public static $user_dictname = array();
     public static $cjk_all = false;
     public static $dag_cache = array();
+    public static $enable_logging = true;
+    const MAX_CACHE_SIZE = 52428800; // 50MB in bytes
 
     /**
      * Static method init
@@ -89,6 +91,153 @@ class Jieba
             echo "Trie has been built succesfully.\n";
         }
     }// end function init
+
+    /**
+     * Static method logError - configurable logging mechanism
+     *
+     * @param string $message # error message to log
+     *
+     * @return void
+     */
+    private static function logError($message)
+    {
+        if (self::$enable_logging) {
+            error_log($message);
+        }
+    }// end function logError
+
+    /**
+     * Static method setLogging - enable or disable logging
+     *
+     * @param boolean $enabled # enable logging or not
+     *
+     * @return void
+     */
+    public static function setLogging($enabled)
+    {
+        self::$enable_logging = (bool) $enabled;
+    }// end function setLogging
+
+    /**
+     * Static method validateCachePath - validate cache file path against directory traversal
+     *
+     * @param string $f_name     # dictionary file name
+     * @param string $cache_file # cache file path
+     *
+     * @return void
+     * @throws Exception if path is invalid
+     */
+    private static function validateCachePath($f_name, $cache_file)
+    {
+        // Get real paths to prevent directory traversal attacks
+        $dict_dir = dirname($f_name);
+        $cache_dir = dirname($cache_file);
+        
+        // Get real paths, handling non-existent directories
+        $real_dict_path = is_dir($dict_dir) ? realpath($dict_dir) : false;
+        $real_cache_path = is_dir($cache_dir) ? realpath($cache_dir) : false;
+        
+        // If directories don't exist, compare the normalized paths
+        if ($real_dict_path === false || $real_cache_path === false) {
+            $normalized_dict_path = rtrim(str_replace('\\', '/', $dict_dir), '/');
+            $normalized_cache_path = rtrim(str_replace('\\', '/', $cache_dir), '/');
+            
+            if ($normalized_dict_path !== $normalized_cache_path) {
+                throw new Exception("Invalid cache file path: directory mismatch");
+            }
+        } else {
+            // Compare real paths if directories exist
+            if ($real_dict_path !== $real_cache_path) {
+                throw new Exception("Invalid cache file path: directory traversal detected");
+            }
+        }
+        
+        // Additional check: ensure cache filename is just dictionary filename + .cache
+        $expected_cache_name = basename($f_name) . '.cache';
+        $actual_cache_name = basename($cache_file);
+        
+        if ($expected_cache_name !== $actual_cache_name) {
+            throw new Exception("Invalid cache file name");
+        }
+    }// end function validateCachePath
+
+    /**
+     * Static method processNormalDictionary - extract normal dictionary processing
+     *
+     * @param string $f_name # dictionary file name
+     *
+     * @return MultiArray self::$trie
+     */
+    private static function processNormalDictionary($f_name)
+    {
+        // Process dictionary file normally if no cache or cache is invalid
+        $content = fopen($f_name, "r");
+        if ($content === false) {
+            throw new Exception("Unable to open dictionary file: " . $f_name);
+        }
+
+        while (($line = fgets($content)) !== false) {
+            $explode_line = explode(" ", trim($line));
+            
+            // Skip malformed lines
+            if (count($explode_line) < 2) {
+                continue;
+            }
+            
+            $word = $explode_line[0];
+            $freq = $explode_line[1];
+            $tag = isset($explode_line[2]) ? $explode_line[2] : '';
+            $freq = (float) $freq;
+            
+            // Update frequency data
+            if (isset(self::$original_freq[$word])) {
+                self::$total -= self::$original_freq[$word];
+            }
+            self::$original_freq[$word] = $freq;
+            self::$total += $freq;
+        }
+        fclose($content);
+
+        // Create cache file to improve future loading performance
+        $cache_file = $f_name . '.cache';
+        
+        // Validate cache file path against directory traversal attacks
+        self::validateCachePath($f_name, $cache_file);
+        
+        try {
+            // Validate cache directory permissions
+            $cache_dir = dirname($cache_file);
+            if (!is_dir($cache_dir) || !is_writable($cache_dir)) {
+                throw new Exception("Cache directory not writable: " . $cache_dir);
+            }
+            
+            $cache_data = array(
+                'original_freq' => self::$original_freq,
+                'total' => self::$total
+            );
+            
+            $json_data = json_encode($cache_data);
+            if ($json_data === false) {
+                throw new JsonException("Failed to encode cache data to JSON");
+            }
+            
+            // Write with explicit permissions and file locking
+            if (file_put_contents($cache_file, $json_data, LOCK_EX) === false) {
+                throw new Exception("Failed to write cache file");
+            }
+            
+            // Set explicit file permissions (readable by owner and group)
+            chmod($cache_file, 0644);
+        } catch (JsonException $e) {
+            // JSON encode failures
+            self::logError("Cache file JSON encoding failed: " . $e->getMessage());
+        } catch (Exception $e) {
+            // Other cache creation failures should not stop normal operation
+            self::logError("Cache file creation failed: " . $e->getMessage());
+        }
+
+        return self::$trie;
+    }// end function processNormalDictionary
 
     /**
      * Static method __calcFreq
@@ -159,30 +308,72 @@ class Jieba
         self::$trie = new MultiArray(file_get_contents($f_name.'.json'));
         //self::$trie->cache = new MultiArray(file_get_contents($f_name.'.cache.json'));
 
-        $content = fopen($f_name, "r");
-        while (($line = fgets($content)) !== false) {
-            $explode_line = explode(" ", trim($line));
-            $word = $explode_line[0];
-            $freq = $explode_line[1];
-            $tag = $explode_line[2];
-            $freq = (float) $freq;
-            if (isset(self::$original_freq[$word])) {
-                self::$total -= self::$original_freq[$word];
+        // Check if cache file exists and is valid for performance optimization
+        $cache_file = $f_name . '.cache';
+        
+        // Validate cache file path against directory traversal attacks
+        self::validateCachePath($f_name, $cache_file);
+        
+        if (file_exists($cache_file)) {
+            // Check if cache is newer than dictionary file
+            $dict_mtime = filemtime($f_name);
+            $cache_mtime = filemtime($cache_file);
+            
+            if ($cache_mtime >= $dict_mtime) {
+                // Load cached frequency data to avoid re-processing dictionary
+                try {
+                    // Check cache file size before loading to prevent memory issues
+                    $cache_size = filesize($cache_file);
+                    if ($cache_size === false) {
+                        throw new Exception("Unable to get cache file size");
+                    }
+                    
+                    if ($cache_size > self::MAX_CACHE_SIZE) {
+                        self::logError(
+                            "Cache file too large ($cache_size bytes), regenerating"
+                        );
+                        @unlink($cache_file);
+                        // Fall back to normal processing
+                        return self::processNormalDictionary($f_name);
+                    }
+                    
+                    $cache_content = file_get_contents($cache_file);
+                    if ($cache_content === false) {
+                        throw new Exception("Unable to read cache file content");
+                    }
+                    
+                    $cache_data = json_decode($cache_content, true);
+                    
+                    // Verify cache data integrity
+                    if ($cache_data !== null &&
+                        isset($cache_data['original_freq']) &&
+                        isset($cache_data['total']) &&
+                        is_array($cache_data['original_freq']) &&
+                        is_numeric($cache_data['total'])) {
+                        self::$original_freq = $cache_data['original_freq'];
+                        self::$total = (float) $cache_data['total'];
+                        
+                        return self::$trie;
+                    }
+                } catch (JsonException $e) {
+                    // JSON decode/encode failures
+                    self::logError(
+                        "Cache file JSON parsing failed, falling back to normal processing: " . $e->getMessage()
+                    );
+                } catch (Exception $e) {
+                    // Other unexpected errors
+                    self::logError(
+                        "Cache file reading failed, falling back to normal processing: " . $e->getMessage()
+                    );
+                }
+            } else {
+                // Cache is outdated, remove it to force regeneration
+                @unlink($cache_file);
             }
-            self::$original_freq[$word] = $freq;
-            self::$total += $freq;
-            //$l = mb_strlen($word, 'UTF-8');
-            //$word_c = array();
-            //for ($i=0; $i<$l; $i++) {
-            //    $c = mb_substr($word, $i, 1, 'UTF-8');
-            //    array_push($word_c, $c);
-            //}
-            //$word_c_key = implode('.', $word_c);
-            //self::$trie->set($word_c_key, array("end"=>""));
         }
-        fclose($content);
 
-        return self::$trie;
+        // Process dictionary file normally if no cache or cache is invalid
+        return self::processNormalDictionary($f_name);
     }// end function genTrie
 
     /**
