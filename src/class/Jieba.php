@@ -119,6 +119,49 @@ class Jieba
     }// end function setLogging
 
     /**
+     * Static method validateCachePath - validate cache file path against directory traversal
+     *
+     * @param string $f_name     # dictionary file name
+     * @param string $cache_file # cache file path
+     *
+     * @return void
+     * @throws Exception if path is invalid
+     */
+    private static function validateCachePath($f_name, $cache_file)
+    {
+        // Get real paths to prevent directory traversal attacks
+        $dict_dir = dirname($f_name);
+        $cache_dir = dirname($cache_file);
+        
+        // Get real paths, handling non-existent directories
+        $real_dict_path = is_dir($dict_dir) ? realpath($dict_dir) : false;
+        $real_cache_path = is_dir($cache_dir) ? realpath($cache_dir) : false;
+        
+        // If directories don't exist, compare the normalized paths
+        if ($real_dict_path === false || $real_cache_path === false) {
+            $normalized_dict_path = rtrim(str_replace('\\', '/', $dict_dir), '/');
+            $normalized_cache_path = rtrim(str_replace('\\', '/', $cache_dir), '/');
+            
+            if ($normalized_dict_path !== $normalized_cache_path) {
+                throw new Exception("Invalid cache file path: directory mismatch");
+            }
+        } else {
+            // Compare real paths if directories exist
+            if ($real_dict_path !== $real_cache_path) {
+                throw new Exception("Invalid cache file path: directory traversal detected");
+            }
+        }
+        
+        // Additional check: ensure cache filename is just dictionary filename + .cache
+        $expected_cache_name = basename($f_name) . '.cache';
+        $actual_cache_name = basename($cache_file);
+        
+        if ($expected_cache_name !== $actual_cache_name) {
+            throw new Exception("Invalid cache file name");
+        }
+    }// end function validateCachePath
+
+    /**
      * Static method processNormalDictionary - extract normal dictionary processing
      *
      * @param string $f_name # dictionary file name
@@ -157,6 +200,10 @@ class Jieba
 
         // Create cache file to improve future loading performance
         $cache_file = $f_name . '.cache';
+        
+        // Validate cache file path against directory traversal attacks
+        self::validateCachePath($f_name, $cache_file);
+        
         try {
             // Validate cache directory permissions
             $cache_dir = dirname($cache_file);
@@ -263,6 +310,10 @@ class Jieba
 
         // Check if cache file exists and is valid for performance optimization
         $cache_file = $f_name . '.cache';
+        
+        // Validate cache file path against directory traversal attacks
+        self::validateCachePath($f_name, $cache_file);
+        
         if (file_exists($cache_file)) {
             // Check if cache is newer than dictionary file
             $dict_mtime = filemtime($f_name);
