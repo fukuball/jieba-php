@@ -1,6 +1,7 @@
 # [jieba-php](http://www.fukuball.com/jieba-php/)
 
 [![Made with Love](https://img.shields.io/badge/made%20with-%e2%9d%a4-ff69b4.svg)](http://www.fukuball.com)
+[![codecov](https://codecov.io/gh/fukuball/jieba-php/branch/master/graph/badge.svg)](https://codecov.io/gh/fukuball/jieba-php)
 
 "結巴"中文分詞：做最好的 PHP 中文分詞、中文斷詞組件，原始版本翻譯自[fxsjy/jieba](https://github.com/fxsjy/jieba)，目前已經為一個獨立分支，請有興趣的開發者一起加入開發！若想使用 Python 版本請前往 [fxsjy/jieba](https://github.com/fxsjy/jieba)
 
