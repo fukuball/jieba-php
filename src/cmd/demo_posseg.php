@@ -14,15 +14,17 @@
  */
 ini_set('memory_limit', '1024M');
 
-require_once dirname(dirname(__FILE__))."/vendor/multi-array/MultiArray.php";
-require_once dirname(dirname(__FILE__))."/vendor/multi-array/Factory/MultiArrayFactory.php";
-require_once dirname(dirname(__FILE__))."/class/Jieba.php";
-require_once dirname(dirname(__FILE__))."/class/Finalseg.php";
-require_once dirname(dirname(__FILE__))."/class/Posseg.php";
+require_once dirname(dirname(__FILE__)) . "/vendor/multi-array/MultiArray.php";
+require_once dirname(dirname(__FILE__)) . "/vendor/multi-array/Factory/MultiArrayFactory.php";
+require_once dirname(dirname(__FILE__)) . "/class/Jieba.php";
+require_once dirname(dirname(__FILE__)) . "/class/Finalseg.php";
+require_once dirname(dirname(__FILE__)) . "/class/Posseg.php";
+
 use Fukuball\Jieba\Jieba;
 use Fukuball\Jieba\Finalseg;
 use Fukuball\Jieba\Posseg;
-Jieba::init(array('mode'=>'test','dict'=>'big'));
+
+Jieba::init(array('mode' => 'test', 'dict' => 'big'));
 Finalseg::init();
 Posseg::init();
 
@@ -38,7 +40,7 @@ var_dump($seg_list);
 $seg_list = Posseg::posTagReadable($seg_list);
 var_dump($seg_list);
 
-$seg_list = Posseg::cut("林志傑來到了網易杭研大廈", ['HMM' => false]);
+$seg_list = Posseg::cut("林志傑來到了網易杭研大廈", ['HMM' => true]);
 var_dump($seg_list);
 
 $seg_list = Posseg::posTagReadable($seg_list);
