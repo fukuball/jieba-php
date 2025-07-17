@@ -306,7 +306,6 @@ class Jieba
         $options = array_merge($defaults, $options);
 
         self::$trie = new MultiArray(file_get_contents($f_name.'.json'));
-        //self::$trie->cache = new MultiArray(file_get_contents($f_name.'.cache.json'));
 
         // Check if cache file exists and is valid for performance optimization
         $cache_file = $f_name . '.cache';

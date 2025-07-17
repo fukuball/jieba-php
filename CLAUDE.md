@@ -32,7 +32,6 @@ This is a PHP port of the Python jieba Chinese text segmentation library. The co
 - **Finalseg**: HMM-based final segmentation for unknown words using Viterbi algorithm
 - **JiebaAnalyse**: TF-IDF keyword extraction functionality
 - **Posseg**: Part-of-speech tagging with HMM model
-- **JiebaCache**: Caching mechanism for performance optimization
 
 ### Dictionary System (src/dict/)
 - **dict.txt**: Default dictionary with word frequencies
