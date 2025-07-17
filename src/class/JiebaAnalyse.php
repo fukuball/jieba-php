@@ -89,16 +89,23 @@ class JiebaAnalyse
         } else {
             $f_name = "idf.txt";
         }
-        $content = fopen(dirname(dirname(__FILE__)) . "/dict/idf.txt", "r");
-
-        while (($line = fgets($content)) !== false) {
-            $explode_line = explode(" ", trim($line));
-            $word = $explode_line[0];
-            $freq = $explode_line[1];
-            $freq = (float) $freq;
-            self::$idf_freq[$word] = $freq;
+        $content = fopen(dirname(dirname(__FILE__)) . "/dict/" . $f_name, "r");
+        
+        if ($content === false) {
+            throw new \Exception("Failed to open IDF dictionary file: " . $f_name);
         }
-        fclose($content);
+
+        try {
+            while (($line = fgets($content)) !== false) {
+                $explode_line = explode(" ", trim($line));
+                $word = $explode_line[0];
+                $freq = $explode_line[1];
+                $freq = (float) $freq;
+                self::$idf_freq[$word] = $freq;
+            }
+        } finally {
+            fclose($content);
+        }
 
         asort(self::$idf_freq);
         $keys = array_keys(self::$idf_freq);
@@ -206,14 +213,21 @@ class JiebaAnalyse
     public static function setStopWords($stop_words_path, $options = array())
     {
         $content = fopen($stop_words_path, "r");
-
-        while (($line = fgets($content)) !== false) {
-            $stop_word = strtolower(trim($line));
-            if (! in_array($stop_word, self::$stop_words)) {
-                self::$stop_words[] = $stop_word;
-            }
+        
+        if ($content === false) {
+            throw new \Exception("Failed to open stop words file: " . $stop_words_path);
         }
-        fclose($content);
+
+        try {
+            while (($line = fgets($content)) !== false) {
+                $stop_word = strtolower(trim($line));
+                if (! in_array($stop_word, self::$stop_words)) {
+                    self::$stop_words[] = $stop_word;
+                }
+            }
+        } finally {
+            fclose($content);
+        }
     }
 
     /**

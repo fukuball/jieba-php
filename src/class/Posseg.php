@@ -57,20 +57,11 @@ class Posseg
 
         if (Jieba::$dictname != '') {
             $content = fopen(dirname(dirname(__FILE__)) . '/dict/' . Jieba::$dictname, 'r');
-            while (($line = fgets($content)) !== false) {
-                $explode_line = explode(' ', trim($line));
-                $word = $explode_line[0];
-                $freq = $explode_line[1];
-                $tag = $explode_line[2];
-                self::$word_tag[$word] = $tag;
+            if ($content === false) {
+                throw new \Exception("Failed to open dictionary file: " . Jieba::$dictname);
             }
-            fclose($content);
-        }
-
-
-        if (sizeof(Jieba::$user_dictname) != 0) {
-            for ($i = 0; $i < sizeof(Jieba::$user_dictname); $i++) {
-                $content = fopen(Jieba::$user_dictname[$i], 'r');
+            
+            try {
                 while (($line = fgets($content)) !== false) {
                     $explode_line = explode(' ', trim($line));
                     $word = $explode_line[0];
@@ -78,19 +69,48 @@ class Posseg
                     $tag = $explode_line[2];
                     self::$word_tag[$word] = $tag;
                 }
+            } finally {
                 fclose($content);
             }
         }
 
-        $content = fopen(dirname(dirname(__FILE__)) . '/dict/pos_tag_readable.txt', 'r');
 
-        while (($line = fgets($content)) !== false) {
-            $explode_line = explode(' ', trim($line));
-            $tag = $explode_line[0];
-            $meaning = $explode_line[1];
-            self::$pos_tag_readable[$tag] = $meaning;
+        if (sizeof(Jieba::$user_dictname) != 0) {
+            for ($i = 0; $i < sizeof(Jieba::$user_dictname); $i++) {
+                $content = fopen(Jieba::$user_dictname[$i], 'r');
+                if ($content === false) {
+                    throw new \Exception("Failed to open user dictionary file: " . Jieba::$user_dictname[$i]);
+                }
+                
+                try {
+                    while (($line = fgets($content)) !== false) {
+                        $explode_line = explode(' ', trim($line));
+                        $word = $explode_line[0];
+                        $freq = $explode_line[1];
+                        $tag = $explode_line[2];
+                        self::$word_tag[$word] = $tag;
+                    }
+                } finally {
+                    fclose($content);
+                }
+            }
         }
-        fclose($content);
+
+        $content = fopen(dirname(dirname(__FILE__)) . '/dict/pos_tag_readable.txt', 'r');
+        if ($content === false) {
+            throw new \Exception("Failed to open pos_tag_readable.txt file");
+        }
+
+        try {
+            while (($line = fgets($content)) !== false) {
+                $explode_line = explode(' ', trim($line));
+                $tag = $explode_line[0];
+                $meaning = $explode_line[1];
+                self::$pos_tag_readable[$tag] = $meaning;
+            }
+        } finally {
+            fclose($content);
+        }
 
         self::$is_initialized = true;
     } // end function init
@@ -162,7 +182,17 @@ class Posseg
 
         $options = array_merge($defaults, $options);
 
-        return json_decode(file_get_contents($f_name), true);
+        $content = file_get_contents($f_name);
+        if ($content === false) {
+            throw new \Exception("Failed to read model file: " . $f_name);
+        }
+        
+        $decoded = json_decode($content, true);
+        if ($decoded === null && json_last_error() !== JSON_ERROR_NONE) {
+            throw new \Exception("Failed to decode JSON from model file: " . $f_name . " - " . json_last_error_msg());
+        }
+        
+        return $decoded;
     } // end function loadModel
 
     /**

@@ -366,7 +366,11 @@ class Jieba
 
         $options = array_merge($defaults, $options);
 
-        self::$trie = new MultiArray(file_get_contents($f_name . '.json'));
+        $trie_content = file_get_contents($f_name . '.json');
+        if ($trie_content === false) {
+            throw new \Exception("Failed to read trie file: " . $f_name . '.json');
+        }
+        self::$trie = new MultiArray($trie_content);
 
         // Check if cache file exists and is valid for performance optimization
         $cache_file = $f_name . '.cache';
@@ -451,27 +455,34 @@ class Jieba
 
         self::$user_dictname[] = $f_name;
         $content = fopen($f_name, "r");
-        while (($line = fgets($content)) !== false) {
-            $explode_line = explode(" ", trim($line));
-            $word = $explode_line[0];
-            $freq = isset($explode_line[1]) ? $explode_line[1] : 1;
-            $tag = isset($explode_line[2]) ? $explode_line[2] : null;
-            $freq = (float) $freq;
-            if (isset(self::$original_freq[$word])) {
-                self::$total -= self::$original_freq[$word];
-            }
-            self::$original_freq[$word] = $freq;
-            self::$total += $freq;
-            $l = mb_strlen($word, 'UTF-8');
-            $word_c = array();
-            for ($i = 0; $i < $l; $i++) {
-                $c = mb_substr($word, $i, 1, 'UTF-8');
-                $word_c[] = $c;
-            }
-            $word_c_key = implode('.', $word_c);
-            self::$trie->set($word_c_key, array("end" => ""));
+        if ($content === false) {
+            throw new \Exception("Failed to open user dictionary file: " . $f_name);
         }
-        fclose($content);
+        
+        try {
+            while (($line = fgets($content)) !== false) {
+                $explode_line = explode(" ", trim($line));
+                $word = $explode_line[0];
+                $freq = isset($explode_line[1]) ? $explode_line[1] : 1;
+                $tag = isset($explode_line[2]) ? $explode_line[2] : null;
+                $freq = (float) $freq;
+                if (isset(self::$original_freq[$word])) {
+                    self::$total -= self::$original_freq[$word];
+                }
+                self::$original_freq[$word] = $freq;
+                self::$total += $freq;
+                $l = mb_strlen($word, 'UTF-8');
+                $word_c = array();
+                for ($i = 0; $i < $l; $i++) {
+                    $c = mb_substr($word, $i, 1, 'UTF-8');
+                    $word_c[] = $c;
+                }
+                $word_c_key = implode('.', $word_c);
+                self::$trie->set($word_c_key, array("end" => ""));
+            }
+        } finally {
+            fclose($content);
+        }
         self::__calcFreq();
         self::$dag_cache = array();
 

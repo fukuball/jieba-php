@@ -120,7 +120,17 @@ class Finalseg
 
         $options = array_merge($defaults, $options);
 
-        return json_decode(file_get_contents($f_name), true);
+        $content = file_get_contents($f_name);
+        if ($content === false) {
+            throw new \Exception("Failed to read model file: " . $f_name);
+        }
+        
+        $decoded = json_decode($content, true);
+        if ($decoded === null && json_last_error() !== JSON_ERROR_NONE) {
+            throw new \Exception("Failed to decode JSON from model file: " . $f_name . " - " . json_last_error_msg());
+        }
+        
+        return $decoded;
     } // end function loadModel
 
     /**
