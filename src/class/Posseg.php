@@ -165,6 +165,99 @@ class Posseg
             throw new \Exception("Posseg class not initialized. Please call Posseg::init() first.");
         }
     } // end function requireInitialization
+    
+    /**
+     * Static method addWordTag - Add custom word-tag mapping
+     *
+     * @param string $word The word to add POS tag for
+     * @param string $tag  The POS tag to associate with the word
+     *
+     * @return void
+     * @throws \InvalidArgumentException When tag validation fails
+     */
+    public static function addWordTag($word, $tag)
+    {
+        // Allow adding word tags even when not initialized to support Jieba::addWord()
+        // This is safe because we're just adding to the word_tag array
+        
+        // Validate and sanitize the tag input for security
+        $sanitizedTag = self::validateAndSanitizeTag($tag);
+        
+        self::$word_tag[$word] = $sanitizedTag;
+    } // end function addWordTag
+
+    /**
+     * Static method removeWordTag - Remove custom word-tag mapping
+     *
+     * @param string $word The word to remove POS tag for
+     *
+     * @return void
+     */
+    public static function removeWordTag($word)
+    {
+        if (isset(self::$word_tag[$word])) {
+            unset(self::$word_tag[$word]);
+        }
+    } // end function removeWordTag
+
+    /**
+     * Static method validateAndSanitizeTag - Validate and sanitize POS tag input
+     *
+     * @param string $tag The POS tag to validate and sanitize
+     *
+     * @return string The sanitized tag
+     * @throws \InvalidArgumentException When tag validation fails
+     */
+    private static function validateAndSanitizeTag($tag)
+    {
+        // Check if tag is a string
+        if (!is_string($tag)) {
+            throw new \InvalidArgumentException('POS tag must be a string');
+        }
+        
+        // Trim whitespace
+        $tag = trim($tag);
+        
+        // Check for empty tag after trimming
+        if (empty($tag)) {
+            throw new \InvalidArgumentException('POS tag cannot be empty');
+        }
+        
+        // Check tag length (reasonable limit for POS tags)
+        if (mb_strlen($tag, 'UTF-8') > 50) {
+            throw new \InvalidArgumentException('POS tag cannot exceed 50 characters');
+        }
+        
+        // Check for valid characters: allow alphanumeric, underscore, hyphen, and common Unicode characters
+        // This pattern allows standard POS tags like 'n', 'v', 'custom_tag', 'my-tag', etc.
+        if (!preg_match('/^[a-zA-Z0-9_\-\x{4e00}-\x{9fa5}]+$/u', $tag)) {
+            throw new \InvalidArgumentException(
+                'POS tag contains invalid characters. Only alphanumeric, underscore, hyphen, ' .
+                'and Chinese characters are allowed'
+            );
+        }
+        
+        // Additional security: prevent potentially dangerous patterns
+        $dangerousPatterns = [
+            '/[<>"\']/',           // HTML/XML characters
+            '/javascript:/i',      // JavaScript protocol
+            '/data:/i',            // Data protocol
+            '/vbscript:/i',        // VBScript protocol
+            '/onload/i',           // Event handlers
+            '/onerror/i',          // Event handlers
+            '/\$\{/',              // Template injection patterns
+            '/<%/',                // Server-side template patterns
+            '/%>/',                // Server-side template patterns
+        ];
+        
+        foreach ($dangerousPatterns as $pattern) {
+            if (preg_match($pattern, $tag)) {
+                throw new \InvalidArgumentException('POS tag contains potentially dangerous content');
+            }
+        }
+        
+        return $tag;
+    } // end function validateAndSanitizeTag
 
     /**
      * Static method loadModel
@@ -401,13 +494,22 @@ class Posseg
             if ($pos == 'B') {
                 $begin = $i;
             } elseif ($pos == 'E') {
+                $word = mb_substr($sentence, $begin, (($i + 1) - $begin), 'UTF-8');
+                // Check for custom word tag first
+                if (isset(self::$word_tag[$word])) {
+                    $tag = self::$word_tag[$word];
+                }
                 $this_word_pair = array(
-                    'word' => mb_substr($sentence, $begin, (($i + 1) - $begin), 'UTF-8'),
+                    'word' => $word,
                     'tag' => $tag
                 );
                 $words[] = $this_word_pair;
                 $next = $i + 1;
             } elseif ($pos == 'S') {
+                // Check for custom word tag first
+                if (isset(self::$word_tag[$char])) {
+                    $tag = self::$word_tag[$char];
+                }
                 $this_word_pair = array(
                     'word' => $char,
                     'tag' => $tag
@@ -426,8 +528,14 @@ class Posseg
                 $tag = 'x';
             }
 
+            $word = mb_substr($sentence, $next, null, 'UTF-8');
+            // Check for custom word tag first
+            if (isset(self::$word_tag[$word])) {
+                $tag = self::$word_tag[$word];
+            }
+
             $this_word_pair = array(
-                'word' => mb_substr($sentence, $next, null, 'UTF-8'),
+                'word' => $word,
                 'tag' => $tag
             );
             $words[] = $this_word_pair;
@@ -682,6 +790,11 @@ class Posseg
         @$options = array_merge($defaults, $options);
 
         $seg_list = array();
+
+        // Check if the entire sentence is a custom word first
+        if (isset(self::$word_tag[$sentence])) {
+            return array(array('word' => $sentence, 'tag' => self::$word_tag[$sentence]));
+        }
 
         $re_han_pattern = '([\x{4E00}-\x{9FA5}]+)';
         $re_skip_pattern = '([a-zA-Z0-9+#\r\n]+)';
