@@ -41,6 +41,7 @@ class Jieba
     public static $cjk_all = false;
     public static $dag_cache = array();
     public static $enable_logging = true;
+    public static $is_initialized = false;
     const MAX_CACHE_SIZE = 52428800; // 50MB in bytes
 
     /**
@@ -90,7 +91,66 @@ class Jieba
             echo "loading model cost ".(microtime(true) - $t1)." seconds.\n";
             echo "Trie has been built succesfully.\n";
         }
+        
+        self::$is_initialized = true;
     }// end function init
+
+    /**
+     * Static method destroy - Free all memory used by the class
+     * 
+     * This method clears all static variables that contain large data structures
+     * to free memory. After calling this method, init() must be called again
+     * before using any other methods.
+     *
+     * @return void
+     */
+    public static function destroy()
+    {
+        // Clear all large data structures
+        self::$trie = null;
+        self::$FREQ = array();
+        self::$original_freq = array();
+        self::$dag_cache = array();
+        self::$route = array();
+        self::$user_dictname = array();
+        
+        // Reset numeric values
+        self::$total = 0.0;
+        self::$min_freq = 0.0;
+        
+        // Reset flags
+        self::$dictname = null;
+        self::$cjk_all = false;
+        self::$is_initialized = false;
+        
+        // Force garbage collection
+        if (function_exists('gc_collect_cycles')) {
+            gc_collect_cycles();
+        }
+    }// end function destroy
+
+    /**
+     * Static method isInitialized - Check if the class has been initialized
+     *
+     * @return bool True if initialized, false otherwise
+     */
+    public static function isInitialized()
+    {
+        return self::$is_initialized;
+    }// end function isInitialized
+
+    /**
+     * Static method requireInitialization - Throws exception if not initialized
+     *
+     * @return void
+     * @throws Exception if not initialized
+     */
+    private static function requireInitialization()
+    {
+        if (!self::$is_initialized) {
+            throw new Exception("Jieba class not initialized. Please call Jieba::init() first.");
+        }
+    }// end function requireInitialization
 
     /**
      * Static method logError - configurable logging mechanism
@@ -385,6 +445,8 @@ class Jieba
      */
     public static function loadUserDict($f_name, $options = array())
     {
+        self::requireInitialization();
+        
         self::$user_dictname[] = $f_name;
         $content = fopen($f_name, "r");
         while (($line = fgets($content)) !== false) {
@@ -425,6 +487,8 @@ class Jieba
      */
     public static function addWord($word, $freq, $tag = '', $options = array())
     {
+        self::requireInitialization();
+        
         if (isset(self::$original_freq[$word])) {
             self::$total -= self::$original_freq[$word];
         }
@@ -452,6 +516,8 @@ class Jieba
      */
     public static function tokenize($sentence, $options = array("HMM" => true))
     {
+        self::requireInitialization();
+        
         $seg_list = self::cut($sentence, false, array("HMM" => $options["HMM"]));
         $tokenize_list = [];
         $start = 0;
@@ -743,6 +809,8 @@ class Jieba
      */
     public static function cut($sentence, $cut_all = false, $options = array("HMM" => true))
     {
+        self::requireInitialization();
+        
         $defaults = array(
             'mode'=>'default'
         );
@@ -848,6 +916,8 @@ class Jieba
      */
     public static function cutForSearch($sentence, $options = array("HMM" => true))
     {
+        self::requireInitialization();
+        
         $defaults = array(
             'mode'=>'default'
         );

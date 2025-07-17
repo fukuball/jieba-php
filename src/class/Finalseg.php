@@ -29,6 +29,7 @@ class Finalseg
     public static $prob_start = array();
     public static $prob_trans = array();
     public static $prob_emit = array();
+    public static $is_initialized = false;
 
     /**
      * Static method init
@@ -49,7 +50,57 @@ class Finalseg
         self::$prob_start = self::loadModel(dirname(dirname(__FILE__)).'/model/prob_start.json');
         self::$prob_trans = self::loadModel(dirname(dirname(__FILE__)).'/model/prob_trans.json');
         self::$prob_emit = self::loadModel(dirname(dirname(__FILE__)).'/model/prob_emit.json');
+        
+        self::$is_initialized = true;
     }// end function init
+
+    /**
+     * Static method destroy - Free all memory used by the class
+     *
+     * This method clears all static variables that contain HMM model data
+     * to free memory. After calling this method, init() must be called again
+     * before using any other methods.
+     *
+     * @return void
+     */
+    public static function destroy()
+    {
+        // Clear all HMM model data
+        self::$prob_start = array();
+        self::$prob_trans = array();
+        self::$prob_emit = array();
+        
+        // Reset initialization flag
+        self::$is_initialized = false;
+        
+        // Force garbage collection
+        if (function_exists('gc_collect_cycles')) {
+            gc_collect_cycles();
+        }
+    }// end function destroy
+
+    /**
+     * Static method isInitialized - Check if the class has been initialized
+     *
+     * @return bool True if initialized, false otherwise
+     */
+    public static function isInitialized()
+    {
+        return self::$is_initialized;
+    }// end function isInitialized
+
+    /**
+     * Static method requireInitialization - Throws exception if not initialized
+     *
+     * @return void
+     * @throws Exception if not initialized
+     */
+    private static function requireInitialization()
+    {
+        if (!self::$is_initialized) {
+            throw new Exception("Finalseg class not initialized. Please call Finalseg::init() first.");
+        }
+    }// end function requireInitialization
 
     /**
      * Static method loadModel
@@ -220,6 +271,7 @@ class Finalseg
      */
     public static function cut($sentence, $options = array())
     {
+        self::requireInitialization();
 
         $defaults = array(
             'mode'=>'default'

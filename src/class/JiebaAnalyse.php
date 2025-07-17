@@ -37,6 +37,7 @@ class JiebaAnalyse
         "then", "at", "have", "all", "not", "one", "has",
         "or", "that"
     ];
+    public static $is_initialized = false;
 
     /**
      * Static method init
@@ -76,7 +77,68 @@ class JiebaAnalyse
         $middle_key = $keys[count(self::$idf_freq)/2];
         self::$max_idf = max(self::$idf_freq);
         self::$median_idf = self::$idf_freq[$middle_key];
+        
+        self::$is_initialized = true;
     }// end function init
+
+    /**
+     * Static method destroy - Free all memory used by the class
+     *
+     * This method clears all static variables that contain IDF data
+     * to free memory. After calling this method, init() must be called again
+     * before using any other methods.
+     *
+     * @return void
+     */
+    public static function destroy()
+    {
+        // Clear all IDF data
+        self::$idf_freq = array();
+        
+        // Reset numeric values
+        self::$max_idf = 0;
+        self::$median_idf = 0;
+        
+        // Reset stop words to default
+        self::$stop_words = [
+            "the", "of", "is", "and", "to", "in", "that", "we",
+            "for", "an", "are", "by", "be", "as", "on", "with",
+            "can", "if", "from", "which", "you", "it", "this",
+            "then", "at", "have", "all", "not", "one", "has",
+            "or", "that"
+        ];
+        
+        // Reset initialization flag
+        self::$is_initialized = false;
+        
+        // Force garbage collection
+        if (function_exists('gc_collect_cycles')) {
+            gc_collect_cycles();
+        }
+    }// end function destroy
+
+    /**
+     * Static method isInitialized - Check if the class has been initialized
+     *
+     * @return bool True if initialized, false otherwise
+     */
+    public static function isInitialized()
+    {
+        return self::$is_initialized;
+    }// end function isInitialized
+
+    /**
+     * Static method requireInitialization - Throws exception if not initialized
+     *
+     * @return void
+     * @throws Exception if not initialized
+     */
+    private static function requireInitialization()
+    {
+        if (!self::$is_initialized) {
+            throw new Exception("JiebaAnalyse class not initialized. Please call JiebaAnalyse::init() first.");
+        }
+    }// end function requireInitialization
 
     /**
      * Static method setStopWords
@@ -110,6 +172,7 @@ class JiebaAnalyse
      */
     public static function extractTags($content, $top_k = 20, $options = array())
     {
+        self::requireInitialization();
 
         $defaults = array(
             'mode'=>'default'

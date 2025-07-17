@@ -33,6 +33,7 @@ class Posseg
     public static $char_state = array();
     public static $word_tag = array();
     public static $pos_tag_readable = array();
+    public static $is_initialized = false;
 
     /**
      * Static method init
@@ -90,7 +91,60 @@ class Posseg
             self::$pos_tag_readable[$tag] = $meaning;
         }
         fclose($content);
+        
+        self::$is_initialized = true;
     } // end function init
+
+    /**
+     * Static method destroy - Free all memory used by the class
+     *
+     * This method clears all static variables that contain POS tagging data
+     * to free memory. After calling this method, init() must be called again
+     * before using any other methods.
+     *
+     * @return void
+     */
+    public static function destroy()
+    {
+        // Clear all POS tagging data
+        self::$prob_start = array();
+        self::$prob_trans = array();
+        self::$prob_emit = array();
+        self::$char_state = array();
+        self::$word_tag = array();
+        self::$pos_tag_readable = array();
+        
+        // Reset initialization flag
+        self::$is_initialized = false;
+        
+        // Force garbage collection
+        if (function_exists('gc_collect_cycles')) {
+            gc_collect_cycles();
+        }
+    }// end function destroy
+
+    /**
+     * Static method isInitialized - Check if the class has been initialized
+     *
+     * @return bool True if initialized, false otherwise
+     */
+    public static function isInitialized()
+    {
+        return self::$is_initialized;
+    }// end function isInitialized
+
+    /**
+     * Static method requireInitialization - Throws exception if not initialized
+     *
+     * @return void
+     * @throws Exception if not initialized
+     */
+    private static function requireInitialization()
+    {
+        if (!self::$is_initialized) {
+            throw new Exception("Posseg class not initialized. Please call Posseg::init() first.");
+        }
+    }// end function requireInitialization
 
     /**
      * Static method loadModel
@@ -589,6 +643,8 @@ class Posseg
      */
     public static function cut($sentence, $options = array('HMM' => true))
     {
+        self::requireInitialization();
+        
         $defaults = array(
             'mode' => 'default'
         );
@@ -648,6 +704,8 @@ class Posseg
      */
     public static function posTagReadable($seg_list, $options = array())
     {
+        self::requireInitialization();
+        
         $defaults = array(
             'mode' => 'default'
         );
