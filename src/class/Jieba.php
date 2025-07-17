@@ -887,4 +887,72 @@ class Jieba
 
         return $seg_list;
     }// end function cutForSearch
+
+    /**
+     * Clear all caches to free memory
+     *
+     * This method clears both the DAG cache and the trie cache to free up memory.
+     * Useful when processing multiple large text files to prevent memory issues.
+     * Note: This will reset performance optimizations and may impact processing speed
+     * for subsequent operations until caches are rebuilt.
+     *
+     * @return void
+     */
+    public static function clearCache()
+    {
+        // Clear DAG cache
+        self::$dag_cache = array();
+        
+        // Clear trie cache if trie is initialized
+        if (self::$trie instanceof \Fukuball\Tebru\MultiArray) {
+            self::$trie->cache = array();
+        }
+    }// end function clearCache
+
+    /**
+     * Get cache statistics
+     *
+     * Returns information about current cache usage for monitoring purposes.
+     *
+     * @return array Array containing cache statistics
+     */
+    public static function getCacheStats()
+    {
+        $stats = array(
+            'dag_cache_size' => count(self::$dag_cache),
+            'trie_cache_size' => 0,
+            'total_memory_usage' => memory_get_usage(),
+            'peak_memory_usage' => memory_get_peak_usage()
+        );
+        
+        if (self::$trie instanceof \Fukuball\Tebru\MultiArray) {
+            $stats['trie_cache_size'] = count(self::$trie->cache);
+        }
+        
+        return $stats;
+    }// end function getCacheStats
+
+    /**
+     * Clear cache if it exceeds specified size limits
+     *
+     * This method provides automatic cache management by clearing caches
+     * when they exceed the specified size limits.
+     *
+     * @param int $dag_cache_limit Maximum number of entries in DAG cache (default: 50000)
+     * @param int $trie_cache_limit Maximum number of entries in trie cache (default: 50000)
+     *
+     * @return bool True if cache was cleared, false otherwise
+     */
+    public static function clearCacheIfNeeded($dag_cache_limit = 50000, $trie_cache_limit = 50000)
+    {
+        $dag_size = count(self::$dag_cache);
+        $trie_size = (self::$trie instanceof \Fukuball\Tebru\MultiArray) ? count(self::$trie->cache) : 0;
+        
+        if ($dag_size > $dag_cache_limit || $trie_size > $trie_cache_limit) {
+            self::clearCache();
+            return true;
+        }
+        
+        return false;
+    }// end function clearCacheIfNeeded
 }// end of class Jieba

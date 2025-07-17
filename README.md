@@ -1556,6 +1556,69 @@ z 状态词 (取汉字「状」的声母的前一个字母。)
   zg 状态词*
 ```
 
+# Cache Management
+
+When processing large amounts of text, jieba-php uses internal caches to improve performance. However, these caches can grow indefinitely and cause memory issues. The following functions are available to manage cache memory usage:
+
+## clearCache()
+
+Clears all internal caches to free memory. This is useful when processing multiple large text files.
+
+```php
+ini_set('memory_limit', '1024M');
+
+use Fukuball\Jieba\Jieba;
+use Fukuball\Jieba\Finalseg;
+
+Jieba::init();
+Finalseg::init();
+
+// Process first file
+$text1 = file_get_contents('large_file1.txt');
+$seg_list1 = Jieba::cut($text1);
+
+// Clear cache before processing next file
+Jieba::clearCache();
+
+// Process second file
+$text2 = file_get_contents('large_file2.txt');
+$seg_list2 = Jieba::cut($text2);
+```
+
+## getCacheStats()
+
+Returns information about current cache usage for monitoring purposes.
+
+```php
+$stats = Jieba::getCacheStats();
+echo "DAG Cache Size: " . $stats['dag_cache_size'] . "\n";
+echo "Trie Cache Size: " . $stats['trie_cache_size'] . "\n";
+echo "Memory Usage: " . round($stats['total_memory_usage'] / 1024 / 1024, 2) . "M\n";
+echo "Peak Memory: " . round($stats['peak_memory_usage'] / 1024 / 1024, 2) . "M\n";
+```
+
+## clearCacheIfNeeded()
+
+Automatically clears cache if it exceeds specified size limits.
+
+```php
+// Clear cache if DAG cache exceeds 50,000 entries or trie cache exceeds 50,000 entries
+$cleared = Jieba::clearCacheIfNeeded(50000, 50000);
+if ($cleared) {
+    echo "Cache was cleared due to size limits\n";
+}
+
+// Custom limits
+$cleared = Jieba::clearCacheIfNeeded(10000, 10000);
+```
+
+## Memory Usage Tips
+
+- For CLI applications processing multiple files, call `clearCache()` after each file
+- Use `getCacheStats()` to monitor memory usage
+- Consider using `clearCacheIfNeeded()` for automatic cache management
+- Note that clearing cache will reset performance optimizations until cache is rebuilt
+
 # Donate
 
 If you find fuku-ml useful, please consider a donation. Thank you!
