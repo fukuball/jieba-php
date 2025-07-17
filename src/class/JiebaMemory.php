@@ -77,6 +77,11 @@ class JiebaMemory
      * Returns detailed memory usage information including current usage,
      * peak usage, and cache statistics if available.
      *
+     * Note: Memory statistics may not immediately reflect memory freed by
+     * destroy() methods due to PHP's garbage collection behavior. The reported
+     * memory usage may remain high until PHP's garbage collector runs, even
+     * after calling destroyAll() or individual destroy() methods.
+     *
      * @return array Array containing memory usage statistics
      */
     public static function getMemoryStats()
@@ -89,10 +94,8 @@ class JiebaMemory
             'initialization_status' => self::getInitializationStatus()
         );
         
-        // Add Jieba cache stats if initialized
-        if (Jieba::isInitialized()) {
-            $stats['jieba_cache_stats'] = Jieba::getCacheStats();
-        }
+        // Add cache statistics for all classes
+        $stats['cache_stats'] = self::getAllCacheStats();
         
         return $stats;
     }// end function getMemoryStats
@@ -156,18 +159,111 @@ class JiebaMemory
      * initialized. Useful for reducing memory usage during long-running
      * processes without requiring re-initialization.
      *
+     * Note: Currently only Jieba class has dynamic caches that benefit from
+     * selective clearing. Other classes (Posseg, Finalseg, JiebaAnalyse) store
+     * static model data that doesn't change during runtime and should be cleared
+     * only via destroy() methods to avoid requiring re-initialization.
+     *
      * @return void
      */
     public static function clearAllCaches()
     {
         // Clear Jieba cache if initialized
+        // Note: Only Jieba has dynamic caches ($dag_cache, trie cache) that grow
+        // during usage and benefit from selective clearing
         if (Jieba::isInitialized()) {
             Jieba::clearCache();
         }
+        
+        // Other classes don't have dynamic caches to clear:
+        // - Posseg: stores static model data and word-tag mappings
+        // - Finalseg: stores static HMM model data
+        // - JiebaAnalyse: stores static IDF frequencies and stop words
         
         // Force garbage collection
         if (function_exists('gc_collect_cycles')) {
             gc_collect_cycles();
         }
     }// end function clearAllCaches
+
+    /**
+     * Get cache statistics from all classes
+     *
+     * Returns detailed cache statistics for all jieba-php classes,
+     * including dynamic caches and static data storage.
+     *
+     * @return array Array containing cache statistics for all classes
+     */
+    public static function getAllCacheStats()
+    {
+        $stats = array();
+        
+        // Jieba cache stats (dynamic caches)
+        if (Jieba::isInitialized()) {
+            $stats['jieba'] = Jieba::getCacheStats();
+        } else {
+            $stats['jieba'] = array(
+                'dag_cache_size' => 0,
+                'trie_cache_size' => 0,
+                'memory_usage' => 0
+            );
+        }
+        
+        // Posseg cache stats (static model data)
+        if (Posseg::isInitialized()) {
+            $stats['posseg'] = array(
+                'prob_start_size' => count(Posseg::$prob_start),
+                'prob_trans_size' => count(Posseg::$prob_trans),
+                'prob_emit_size' => count(Posseg::$prob_emit),
+                'char_state_size' => count(Posseg::$char_state),
+                'word_tag_size' => count(Posseg::$word_tag),
+                'pos_tag_readable_size' => count(Posseg::$pos_tag_readable),
+                'cache_type' => 'static_model_data'
+            );
+        } else {
+            $stats['posseg'] = array(
+                'prob_start_size' => 0,
+                'prob_trans_size' => 0,
+                'prob_emit_size' => 0,
+                'char_state_size' => 0,
+                'word_tag_size' => 0,
+                'pos_tag_readable_size' => 0,
+                'cache_type' => 'static_model_data'
+            );
+        }
+        
+        // Finalseg cache stats (static HMM model data)
+        if (Finalseg::isInitialized()) {
+            $stats['finalseg'] = array(
+                'prob_start_size' => count(Finalseg::$prob_start),
+                'prob_trans_size' => count(Finalseg::$prob_trans),
+                'prob_emit_size' => count(Finalseg::$prob_emit),
+                'cache_type' => 'static_hmm_model'
+            );
+        } else {
+            $stats['finalseg'] = array(
+                'prob_start_size' => 0,
+                'prob_trans_size' => 0,
+                'prob_emit_size' => 0,
+                'cache_type' => 'static_hmm_model'
+            );
+        }
+        
+        // JiebaAnalyse cache stats (static IDF data)
+        if (JiebaAnalyse::isInitialized()) {
+            $stats['jieba_analyse'] = array(
+                'idf_freq_size' => count(JiebaAnalyse::$idf_freq),
+                'stop_words_size' => count(JiebaAnalyse::$stop_words),
+                'cache_type' => 'static_idf_data'
+            );
+        } else {
+            $stats['jieba_analyse'] = array(
+                'idf_freq_size' => 0,
+                'stop_words_size' => 0,
+                'cache_type' => 'static_idf_data'
+            );
+        }
+        
+        return $stats;
+    }// end function getAllCacheStats
 }// end of class JiebaMemory
