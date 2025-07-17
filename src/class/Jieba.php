@@ -486,7 +486,9 @@ class Jieba
                         Posseg::addWordTag($word, $tag);
                     } catch (\InvalidArgumentException $e) {
                         // Log warning and skip this tag, but continue processing other words
-                        error_log("Warning: Invalid POS tag '$tag' for word '$word' in user dictionary: " . $e->getMessage());
+                        error_log(
+                            "Warning: Invalid POS tag '$tag' for word '$word' in user dictionary: " . $e->getMessage()
+                        );
                         continue;
                     }
                 }

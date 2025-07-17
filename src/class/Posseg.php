@@ -217,7 +217,10 @@ class Posseg
         // Check for valid characters: allow alphanumeric, underscore, hyphen, and common Unicode characters
         // This pattern allows standard POS tags like 'n', 'v', 'custom_tag', 'my-tag', etc.
         if (!preg_match('/^[a-zA-Z0-9_\-\x{4e00}-\x{9fa5}]+$/u', $tag)) {
-            throw new \InvalidArgumentException('POS tag contains invalid characters. Only alphanumeric, underscore, hyphen, and Chinese characters are allowed');
+            throw new \InvalidArgumentException(
+                'POS tag contains invalid characters. Only alphanumeric, underscore, hyphen, ' .
+                'and Chinese characters are allowed'
+            );
         }
         
         // Additional security: prevent potentially dangerous patterns
