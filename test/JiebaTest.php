@@ -276,4 +276,161 @@ class JiebaTest extends TestCase
 
         $this->assertEquals($case_array, $seg_list);
     }
+
+    public function testClearCache()
+    {
+        Jieba::init();
+        
+        // Process some text to populate cache
+        Jieba::cut("这是一个测试句子用来填充缓存");
+        Jieba::cut("另一个测试句子");
+        
+        // Verify cache has some entries
+        $stats_before = Jieba::getCacheStats();
+        $this->assertGreaterThan(0, $stats_before['dag_cache_size']);
+        
+        // Clear cache
+        Jieba::clearCache();
+        
+        // Verify cache is empty
+        $stats_after = Jieba::getCacheStats();
+        $this->assertEquals(0, $stats_after['dag_cache_size']);
+    }
+
+    public function testGetCacheStats()
+    {
+        Jieba::init();
+        
+        // Clear cache first
+        Jieba::clearCache();
+        
+        // Get initial stats
+        $stats = Jieba::getCacheStats();
+        
+        // Verify stats structure
+        $this->assertIsArray($stats);
+        $this->assertArrayHasKey('dag_cache_size', $stats);
+        $this->assertArrayHasKey('trie_cache_size', $stats);
+        $this->assertArrayHasKey('total_memory_usage', $stats);
+        $this->assertArrayHasKey('peak_memory_usage', $stats);
+        
+        // Initially should be empty
+        $this->assertEquals(0, $stats['dag_cache_size']);
+        $this->assertGreaterThan(0, $stats['total_memory_usage']);
+        $this->assertGreaterThan(0, $stats['peak_memory_usage']);
+        
+        // Process some text to populate cache
+        Jieba::cut("测试缓存统计功能");
+        
+        // Get stats after processing
+        $stats_after = Jieba::getCacheStats();
+        $this->assertGreaterThan(0, $stats_after['dag_cache_size']);
+    }
+
+    public function testClearCacheIfNeeded()
+    {
+        Jieba::init();
+        
+        // Clear cache first
+        Jieba::clearCache();
+        
+        // Test with very low limits to trigger cache clearing
+        $result = Jieba::clearCacheIfNeeded(0, 0);
+        $this->assertFalse($result); // Should not clear empty cache
+        
+        // Process some text to populate cache
+        Jieba::cut("测试条件缓存清理功能");
+        
+        // Test with very low limits to trigger cache clearing
+        $result = Jieba::clearCacheIfNeeded(0, 0);
+        $this->assertTrue($result); // Should clear non-empty cache
+        
+        // Verify cache is empty after clearing
+        $stats = Jieba::getCacheStats();
+        $this->assertEquals(0, $stats['dag_cache_size']);
+        
+        // Test with high limits (should not trigger clearing)
+        Jieba::cut("再次测试");
+        $result = Jieba::clearCacheIfNeeded(100000, 100000);
+        $this->assertFalse($result); // Should not clear
+    }
+
+    public function testCacheMemoryGrowth()
+    {
+        Jieba::init();
+        Jieba::clearCache();
+        
+        $initial_stats = Jieba::getCacheStats();
+        $initial_cache_size = $initial_stats['dag_cache_size'];
+        
+        // Process multiple different texts
+        $texts = [
+            "第一个测试文本用于缓存增长测试",
+            "第二个不同的测试文本",
+            "第三个完全不同的句子",
+            "第四个用于验证缓存增长的文本",
+            "第五个测试句子确保缓存持续增长"
+        ];
+        
+        foreach ($texts as $text) {
+            Jieba::cut($text);
+        }
+        
+        $final_stats = Jieba::getCacheStats();
+        $final_cache_size = $final_stats['dag_cache_size'];
+        
+        // Verify cache has grown
+        $this->assertGreaterThan($initial_cache_size, $final_cache_size);
+        $this->assertGreaterThan(0, $final_cache_size);
+    }
+
+    public function testCachePerformanceWithLargeText()
+    {
+        Jieba::init();
+        Jieba::clearCache();
+        
+        // Create a large text for testing
+        $large_text = str_repeat("这是一个用于测试大文本处理性能的句子。", 100);
+        
+        // First processing (cache miss)
+        $start_time = microtime(true);
+        Jieba::cut($large_text);
+        $first_processing_time = microtime(true) - $start_time;
+        
+        // Second processing (cache hit)
+        $start_time = microtime(true);
+        Jieba::cut($large_text);
+        $second_processing_time = microtime(true) - $start_time;
+        
+        // Verify cache provides performance benefit
+        // Second processing should be faster due to cache hits
+        $this->assertLessThan($first_processing_time, $second_processing_time);
+        
+        // Verify cache has entries
+        $stats = Jieba::getCacheStats();
+        $this->assertGreaterThan(0, $stats['dag_cache_size']);
+    }
+
+    public function testAutomaticCacheManagement()
+    {
+        Jieba::init();
+        Jieba::clearCache();
+        
+        // Process multiple texts to populate cache
+        for ($i = 0; $i < 10; $i++) {
+            Jieba::cut("自动缓存管理测试句子编号" . $i);
+        }
+        
+        // Get current cache size
+        $stats = Jieba::getCacheStats();
+        $cache_size = $stats['dag_cache_size'];
+        
+        // Test automatic cache management with very low limit
+        $cleared = Jieba::clearCacheIfNeeded(1, 1);
+        $this->assertTrue($cleared);
+        
+        // Verify cache was cleared
+        $stats_after = Jieba::getCacheStats();
+        $this->assertEquals(0, $stats_after['dag_cache_size']);
+    }
 }
