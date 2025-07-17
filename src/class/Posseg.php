@@ -173,13 +173,74 @@ class Posseg
      * @param string $tag  The POS tag to associate with the word
      *
      * @return void
+     * @throws \InvalidArgumentException When tag validation fails
      */
     public static function addWordTag($word, $tag)
     {
         // Allow adding word tags even when not initialized to support Jieba::addWord()
         // This is safe because we're just adding to the word_tag array
-        self::$word_tag[$word] = $tag;
+        
+        // Validate and sanitize the tag input for security
+        $sanitizedTag = self::validateAndSanitizeTag($tag);
+        
+        self::$word_tag[$word] = $sanitizedTag;
     } // end function addWordTag
+
+    /**
+     * Static method validateAndSanitizeTag - Validate and sanitize POS tag input
+     *
+     * @param string $tag The POS tag to validate and sanitize
+     *
+     * @return string The sanitized tag
+     * @throws \InvalidArgumentException When tag validation fails
+     */
+    private static function validateAndSanitizeTag($tag)
+    {
+        // Check if tag is a string
+        if (!is_string($tag)) {
+            throw new \InvalidArgumentException('POS tag must be a string');
+        }
+        
+        // Trim whitespace
+        $tag = trim($tag);
+        
+        // Check for empty tag after trimming
+        if (empty($tag)) {
+            throw new \InvalidArgumentException('POS tag cannot be empty');
+        }
+        
+        // Check tag length (reasonable limit for POS tags)
+        if (mb_strlen($tag, 'UTF-8') > 50) {
+            throw new \InvalidArgumentException('POS tag cannot exceed 50 characters');
+        }
+        
+        // Check for valid characters: allow alphanumeric, underscore, hyphen, and common Unicode characters
+        // This pattern allows standard POS tags like 'n', 'v', 'custom_tag', 'my-tag', etc.
+        if (!preg_match('/^[a-zA-Z0-9_\-\x{4e00}-\x{9fa5}]+$/u', $tag)) {
+            throw new \InvalidArgumentException('POS tag contains invalid characters. Only alphanumeric, underscore, hyphen, and Chinese characters are allowed');
+        }
+        
+        // Additional security: prevent potentially dangerous patterns
+        $dangerousPatterns = [
+            '/[<>"\']/',           // HTML/XML characters
+            '/javascript:/i',      // JavaScript protocol
+            '/data:/i',            // Data protocol
+            '/vbscript:/i',        // VBScript protocol
+            '/onload/i',           // Event handlers
+            '/onerror/i',          // Event handlers
+            '/\$\{/',              // Template injection patterns
+            '/<%/',                // Server-side template patterns
+            '/%>/',                // Server-side template patterns
+        ];
+        
+        foreach ($dangerousPatterns as $pattern) {
+            if (preg_match($pattern, $tag)) {
+                throw new \InvalidArgumentException('POS tag contains potentially dangerous content');
+            }
+        }
+        
+        return $tag;
+    } // end function validateAndSanitizeTag
 
     /**
      * Static method loadModel

@@ -482,7 +482,13 @@ class Jieba
                 
                 // Add POS tag if provided and Posseg class is available
                 if (!empty($tag) && class_exists('Fukuball\Jieba\Posseg')) {
-                    Posseg::addWordTag($word, $tag);
+                    try {
+                        Posseg::addWordTag($word, $tag);
+                    } catch (\InvalidArgumentException $e) {
+                        // Log warning and skip this tag, but continue processing other words
+                        error_log("Warning: Invalid POS tag '$tag' for word '$word' in user dictionary: " . $e->getMessage());
+                        continue;
+                    }
                 }
             }
         } finally {
@@ -503,6 +509,7 @@ class Jieba
      * @param array  $options
      *
      * @return array self::$trie
+     * @throws \InvalidArgumentException When tag validation fails
      */
     public static function addWord($word, $freq, $tag = '', $options = array())
     {
@@ -524,7 +531,13 @@ class Jieba
         
         // Add POS tag if provided and Posseg class is available
         if (!empty($tag) && class_exists('Fukuball\Jieba\Posseg')) {
-            Posseg::addWordTag($word, $tag);
+            try {
+                Posseg::addWordTag($word, $tag);
+            } catch (\InvalidArgumentException $e) {
+                // Log the error or handle it as needed
+                // For now, we'll throw it up to let the caller handle it
+                throw $e;
+            }
         }
         
         self::__calcFreq();
