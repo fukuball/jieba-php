@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Jieba.php
  *
@@ -54,29 +55,29 @@ class Jieba
     public static function init($options = array())
     {
         $defaults = array(
-            'mode'=>'default',
-            'dict'=>'normal',
-            'cjk'=>'chinese'
+            'mode' => 'default',
+            'dict' => 'normal',
+            'cjk' => 'chinese'
         );
 
         $options = array_merge($defaults, $options);
 
-        if ($options['mode']=='test') {
+        if ($options['mode'] == 'test') {
             echo "Building Trie...\n";
         }
 
-        if ($options['dict']=='small') {
+        if ($options['dict'] == 'small') {
             $f_name = "dict.small.txt";
-            self::$dictname="dict.small.txt";
-        } elseif ($options['dict']=='big') {
+            self::$dictname = "dict.small.txt";
+        } elseif ($options['dict'] == 'big') {
             $f_name = "dict.big.txt";
-            self::$dictname="dict.big.txt";
+            self::$dictname = "dict.big.txt";
         } else {
             $f_name = "dict.txt";
-            self::$dictname="dict.txt";
+            self::$dictname = "dict.txt";
         }
 
-        if ($options['cjk']=='all') {
+        if ($options['cjk'] == 'all') {
             self::$cjk_all = true;
         } else {
             self::$cjk_all = false;
@@ -84,20 +85,20 @@ class Jieba
 
         $t1 = microtime(true);
         self::$dag_cache = array();
-        self::$trie = Jieba::genTrie(dirname(dirname(__FILE__))."/dict/".$f_name);
+        self::$trie = Jieba::genTrie(dirname(dirname(__FILE__)) . "/dict/" . $f_name);
         self::__calcFreq();
 
-        if ($options['mode']=='test') {
-            echo "loading model cost ".(microtime(true) - $t1)." seconds.\n";
+        if ($options['mode'] == 'test') {
+            echo "loading model cost " . (microtime(true) - $t1) . " seconds.\n";
             echo "Trie has been built succesfully.\n";
         }
-        
+
         self::$is_initialized = true;
-    }// end function init
+    } // end function init
 
     /**
      * Static method destroy - Free all memory used by the class
-     * 
+     *
      * This method clears all static variables that contain large data structures
      * to free memory. After calling this method, init() must be called again
      * before using any other methods.
@@ -113,21 +114,21 @@ class Jieba
         self::$dag_cache = array();
         self::$route = array();
         self::$user_dictname = array();
-        
+
         // Reset numeric values
         self::$total = 0.0;
         self::$min_freq = 0.0;
-        
+
         // Reset flags
         self::$dictname = null;
         self::$cjk_all = false;
         self::$is_initialized = false;
-        
+
         // Force garbage collection
         if (function_exists('gc_collect_cycles')) {
             gc_collect_cycles();
         }
-    }// end function destroy
+    } // end function destroy
 
     /**
      * Static method isInitialized - Check if the class has been initialized
@@ -137,20 +138,20 @@ class Jieba
     public static function isInitialized()
     {
         return self::$is_initialized;
-    }// end function isInitialized
+    } // end function isInitialized
 
     /**
      * Static method requireInitialization - Throws exception if not initialized
      *
      * @return void
-     * @throws Exception if not initialized
+     * @throws \Exception if not initialized
      */
     private static function requireInitialization()
     {
         if (!self::$is_initialized) {
-            throw new Exception("Jieba class not initialized. Please call Jieba::init() first.");
+            throw new \Exception("Jieba class not initialized. Please call Jieba::init() first.");
         }
-    }// end function requireInitialization
+    } // end function requireInitialization
 
     /**
      * Static method logError - configurable logging mechanism
@@ -164,7 +165,7 @@ class Jieba
         if (self::$enable_logging) {
             error_log($message);
         }
-    }// end function logError
+    } // end function logError
 
     /**
      * Static method setLogging - enable or disable logging
@@ -176,7 +177,7 @@ class Jieba
     public static function setLogging($enabled)
     {
         self::$enable_logging = (bool) $enabled;
-    }// end function setLogging
+    } // end function setLogging
 
     /**
      * Static method validateCachePath - validate cache file path against directory traversal
@@ -185,41 +186,41 @@ class Jieba
      * @param string $cache_file # cache file path
      *
      * @return void
-     * @throws Exception if path is invalid
+     * @throws \Exception if path is invalid
      */
     private static function validateCachePath($f_name, $cache_file)
     {
         // Get real paths to prevent directory traversal attacks
         $dict_dir = dirname($f_name);
         $cache_dir = dirname($cache_file);
-        
+
         // Get real paths, handling non-existent directories
         $real_dict_path = is_dir($dict_dir) ? realpath($dict_dir) : false;
         $real_cache_path = is_dir($cache_dir) ? realpath($cache_dir) : false;
-        
+
         // If directories don't exist, compare the normalized paths
         if ($real_dict_path === false || $real_cache_path === false) {
             $normalized_dict_path = rtrim(str_replace('\\', '/', $dict_dir), '/');
             $normalized_cache_path = rtrim(str_replace('\\', '/', $cache_dir), '/');
-            
+
             if ($normalized_dict_path !== $normalized_cache_path) {
-                throw new Exception("Invalid cache file path: directory mismatch");
+                throw new \Exception("Invalid cache file path: directory mismatch");
             }
         } else {
             // Compare real paths if directories exist
             if ($real_dict_path !== $real_cache_path) {
-                throw new Exception("Invalid cache file path: directory traversal detected");
+                throw new \Exception("Invalid cache file path: directory traversal detected");
             }
         }
-        
+
         // Additional check: ensure cache filename is just dictionary filename + .cache
         $expected_cache_name = basename($f_name) . '.cache';
         $actual_cache_name = basename($cache_file);
-        
+
         if ($expected_cache_name !== $actual_cache_name) {
-            throw new Exception("Invalid cache file name");
+            throw new \Exception("Invalid cache file name");
         }
-    }// end function validateCachePath
+    } // end function validateCachePath
 
     /**
      * Static method processNormalDictionary - extract normal dictionary processing
@@ -233,22 +234,22 @@ class Jieba
         // Process dictionary file normally if no cache or cache is invalid
         $content = fopen($f_name, "r");
         if ($content === false) {
-            throw new Exception("Unable to open dictionary file: " . $f_name);
+            throw new \Exception("Unable to open dictionary file: " . $f_name);
         }
 
         while (($line = fgets($content)) !== false) {
             $explode_line = explode(" ", trim($line));
-            
+
             // Skip malformed lines
             if (count($explode_line) < 2) {
                 continue;
             }
-            
+
             $word = $explode_line[0];
             $freq = $explode_line[1];
             $tag = isset($explode_line[2]) ? $explode_line[2] : '';
             $freq = (float) $freq;
-            
+
             // Update frequency data
             if (isset(self::$original_freq[$word])) {
                 self::$total -= self::$original_freq[$word];
@@ -260,44 +261,44 @@ class Jieba
 
         // Create cache file to improve future loading performance
         $cache_file = $f_name . '.cache';
-        
+
         // Validate cache file path against directory traversal attacks
         self::validateCachePath($f_name, $cache_file);
-        
+
         try {
             // Validate cache directory permissions
             $cache_dir = dirname($cache_file);
             if (!is_dir($cache_dir) || !is_writable($cache_dir)) {
-                throw new Exception("Cache directory not writable: " . $cache_dir);
+                throw new \Exception("Cache directory not writable: " . $cache_dir);
             }
-            
+
             $cache_data = array(
                 'original_freq' => self::$original_freq,
                 'total' => self::$total
             );
-            
+
             $json_data = json_encode($cache_data);
             if ($json_data === false) {
-                throw new JsonException("Failed to encode cache data to JSON");
+                throw new \JsonException("Failed to encode cache data to JSON");
             }
-            
+
             // Write with explicit permissions and file locking
             if (file_put_contents($cache_file, $json_data, LOCK_EX) === false) {
-                throw new Exception("Failed to write cache file");
+                throw new \Exception("Failed to write cache file");
             }
-            
+
             // Set explicit file permissions (readable by owner and group)
             chmod($cache_file, 0644);
-        } catch (JsonException $e) {
+        } catch (\JsonException $e) {
             // JSON encode failures
             self::logError("Cache file JSON encoding failed: " . $e->getMessage());
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Other cache creation failures should not stop normal operation
             self::logError("Cache file creation failed: " . $e->getMessage());
         }
 
         return self::$trie;
-    }// end function processNormalDictionary
+    } // end function processNormalDictionary
 
     /**
      * Static method __calcFreq
@@ -312,7 +313,7 @@ class Jieba
             self::$FREQ[$key] = log($value / self::$total);
         }
         self::$min_freq = min(self::$FREQ);
-    }// end function __calcFreq
+    } // end function __calcFreq
 
     /**
      * Static method calc
@@ -328,11 +329,11 @@ class Jieba
         $N = mb_strlen($sentence, 'UTF-8');
         self::$route = array();
         self::$route[$N] = array($N => 0.0);
-        for ($i=($N-1); $i>=0; $i--) {
+        for ($i = ($N - 1); $i >= 0; $i--) {
             $candidates = array();
             foreach ($DAG[$i] as $x) {
-                $w_c = mb_substr($sentence, $i, (($x+1)-$i), 'UTF-8');
-                $previous_freq = current(self::$route[$x+1]);
+                $w_c = mb_substr($sentence, $i, (($x + 1) - $i), 'UTF-8');
+                $previous_freq = current(self::$route[$x + 1]);
                 if (isset(self::$FREQ[$w_c])) {
                     $current_freq = (float) $previous_freq + self::$FREQ[$w_c];
                 } else {
@@ -347,7 +348,7 @@ class Jieba
         }
 
         return self::$route;
-    }// end function calc
+    } // end function calc
 
     /**
      * Static method genTrie
@@ -360,33 +361,33 @@ class Jieba
     public static function genTrie($f_name, $options = array())
     {
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
 
-        self::$trie = new MultiArray(file_get_contents($f_name.'.json'));
+        self::$trie = new MultiArray(file_get_contents($f_name . '.json'));
 
         // Check if cache file exists and is valid for performance optimization
         $cache_file = $f_name . '.cache';
-        
+
         // Validate cache file path against directory traversal attacks
         self::validateCachePath($f_name, $cache_file);
-        
+
         if (file_exists($cache_file)) {
             // Check if cache is newer than dictionary file
             $dict_mtime = filemtime($f_name);
             $cache_mtime = filemtime($cache_file);
-            
+
             if ($cache_mtime >= $dict_mtime) {
                 // Load cached frequency data to avoid re-processing dictionary
                 try {
                     // Check cache file size before loading to prevent memory issues
                     $cache_size = filesize($cache_file);
                     if ($cache_size === false) {
-                        throw new Exception("Unable to get cache file size");
+                        throw new \Exception("Unable to get cache file size");
                     }
-                    
+
                     if ($cache_size > self::MAX_CACHE_SIZE) {
                         self::logError(
                             "Cache file too large ($cache_size bytes), regenerating"
@@ -395,31 +396,32 @@ class Jieba
                         // Fall back to normal processing
                         return self::processNormalDictionary($f_name);
                     }
-                    
+
                     $cache_content = file_get_contents($cache_file);
                     if ($cache_content === false) {
-                        throw new Exception("Unable to read cache file content");
+                        throw new \Exception("Unable to read cache file content");
                     }
-                    
+
                     $cache_data = json_decode($cache_content, true);
-                    
+
                     // Verify cache data integrity
                     if ($cache_data !== null &&
                         isset($cache_data['original_freq']) &&
                         isset($cache_data['total']) &&
                         is_array($cache_data['original_freq']) &&
-                        is_numeric($cache_data['total'])) {
+                        is_numeric($cache_data['total'])
+                    ) {
                         self::$original_freq = $cache_data['original_freq'];
                         self::$total = (float) $cache_data['total'];
-                        
+
                         return self::$trie;
                     }
-                } catch (JsonException $e) {
+                } catch (\JsonException $e) {
                     // JSON decode/encode failures
                     self::logError(
                         "Cache file JSON parsing failed, falling back to normal processing: " . $e->getMessage()
                     );
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     // Other unexpected errors
                     self::logError(
                         "Cache file reading failed, falling back to normal processing: " . $e->getMessage()
@@ -433,7 +435,7 @@ class Jieba
 
         // Process dictionary file normally if no cache or cache is invalid
         return self::processNormalDictionary($f_name);
-    }// end function genTrie
+    } // end function genTrie
 
     /**
      * Static method loadUserDict
@@ -446,7 +448,7 @@ class Jieba
     public static function loadUserDict($f_name, $options = array())
     {
         self::requireInitialization();
-        
+
         self::$user_dictname[] = $f_name;
         $content = fopen($f_name, "r");
         while (($line = fgets($content)) !== false) {
@@ -462,19 +464,19 @@ class Jieba
             self::$total += $freq;
             $l = mb_strlen($word, 'UTF-8');
             $word_c = array();
-            for ($i=0; $i<$l; $i++) {
+            for ($i = 0; $i < $l; $i++) {
                 $c = mb_substr($word, $i, 1, 'UTF-8');
                 $word_c[] = $c;
             }
             $word_c_key = implode('.', $word_c);
-            self::$trie->set($word_c_key, array("end"=>""));
+            self::$trie->set($word_c_key, array("end" => ""));
         }
         fclose($content);
         self::__calcFreq();
         self::$dag_cache = array();
 
         return self::$trie;
-    }// end function loadUserDict
+    } // end function loadUserDict
 
     /**
      * Static method addWord
@@ -488,7 +490,7 @@ class Jieba
     public static function addWord($word, $freq, $tag = '', $options = array())
     {
         self::requireInitialization();
-        
+
         if (isset(self::$original_freq[$word])) {
             self::$total -= self::$original_freq[$word];
         }
@@ -496,12 +498,12 @@ class Jieba
         self::$total += $freq;
         $l = mb_strlen($word, 'UTF-8');
         $word_c = array();
-        for ($i=0; $i<$l; $i++) {
+        for ($i = 0; $i < $l; $i++) {
             $c = mb_substr($word, $i, 1, 'UTF-8');
             $word_c[] = $c;
         }
         $word_c_key = implode('.', $word_c);
-        self::$trie->set($word_c_key, array("end"=>""));
+        self::$trie->set($word_c_key, array("end" => ""));
         self::__calcFreq();
         self::$dag_cache = array();
         return self::$trie;
@@ -517,13 +519,13 @@ class Jieba
     public static function tokenize($sentence, $options = array("HMM" => true))
     {
         self::requireInitialization();
-        
+
         $seg_list = self::cut($sentence, false, array("HMM" => $options["HMM"]));
         $tokenize_list = [];
         $start = 0;
         $end = 0;
         foreach ($seg_list as $seg) {
-            $end = $start+mb_strlen($seg, 'UTF-8');
+            $end = $start + mb_strlen($seg, 'UTF-8');
             $tokenize = [
                 'word' => $seg,
                 'start' => $start,
@@ -546,7 +548,7 @@ class Jieba
     public static function __cutAll($sentence, $options = array())
     {
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
@@ -558,13 +560,13 @@ class Jieba
 
         foreach ($DAG as $k => $L) {
             if (count($L) == 1 && $k > $old_j) {
-                $word = mb_substr($sentence, $k, (($L[0]-$k)+1), 'UTF-8');
+                $word = mb_substr($sentence, $k, (($L[0] - $k) + 1), 'UTF-8');
                 $words[] = $word;
                 $old_j = $L[0];
             } else {
                 foreach ($L as $j) {
                     if ($j > $k) {
-                        $word = mb_substr($sentence, $k, ($j-$k)+1, 'UTF-8');
+                        $word = mb_substr($sentence, $k, ($j - $k) + 1, 'UTF-8');
                         $words[] = $word;
                         $old_j = $j;
                     }
@@ -573,7 +575,7 @@ class Jieba
         }
 
         return $words;
-    }// end function __cutAll
+    } // end function __cutAll
 
     /**
      * Static method getDAG
@@ -586,7 +588,7 @@ class Jieba
     public static function getDAG($sentence, $options = array())
     {
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
@@ -599,10 +601,10 @@ class Jieba
 
         while ($i < $N) {
             $c = mb_substr($sentence, $j, 1, 'UTF-8');
-            if (count($word_c)==0) {
+            if (count($word_c) == 0) {
                 $next_word_key = $c;
             } else {
-                $next_word_key = implode('.', $word_c).'.'.$c;
+                $next_word_key = implode('.', $word_c) . '.' . $c;
             }
 
             if (isset(self::$dag_cache[$next_word_key])) {
@@ -632,9 +634,9 @@ class Jieba
                 self::$dag_cache[$next_word_key] = array('exist' => true, 'end' => false);
                 $word_c[] = $c;
                 $next_word_key_value = self::$trie->get($next_word_key);
-                if ($next_word_key_value == array("end"=>"")
-                 || isset($next_word_key_value["end"])
-                 || isset($next_word_key_value[0]["end"])
+                if ($next_word_key_value == array("end" => "")
+                    || isset($next_word_key_value["end"])
+                    || isset($next_word_key_value[0]["end"])
                 ) {
                     self::$dag_cache[$next_word_key]['end'] = true;
                     if (!isset($DAG[$i])) {
@@ -656,14 +658,14 @@ class Jieba
             }
         }
 
-        for ($i=0; $i<$N; $i++) {
+        for ($i = 0; $i < $N; $i++) {
             if (!isset($DAG[$i])) {
                 $DAG[$i] = array($i);
             }
         }
 
         return $DAG;
-    }// end function getDAG
+    } // end function getDAG
 
     /**
      * Static method __cutDAG
@@ -676,7 +678,7 @@ class Jieba
     public static function __cutDAG($sentence, $options = array())
     {
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
@@ -693,14 +695,14 @@ class Jieba
 
         while ($x < $N) {
             $current_route_keys = array_keys(self::$route[$x]);
-            $y = $current_route_keys[0]+1;
-            $l_word = mb_substr($sentence, $x, ($y-$x), 'UTF-8');
+            $y = $current_route_keys[0] + 1;
+            $l_word = mb_substr($sentence, $x, ($y - $x), 'UTF-8');
 
-            if (($y-$x)==1) {
-                $buf = $buf.$l_word;
+            if (($y - $x) == 1) {
+                $buf = $buf . $l_word;
             } else {
-                if (mb_strlen($buf, 'UTF-8')>0) {
-                    if (mb_strlen($buf, 'UTF-8')==1) {
+                if (mb_strlen($buf, 'UTF-8') > 0) {
+                    if (mb_strlen($buf, 'UTF-8') == 1) {
                         $words[] = $buf;
                         $buf = '';
                     } else {
@@ -723,8 +725,8 @@ class Jieba
             $x = $y;
         }
 
-        if (mb_strlen($buf, 'UTF-8')>0) {
-            if (mb_strlen($buf, 'UTF-8')==1) {
+        if (mb_strlen($buf, 'UTF-8') > 0) {
+            if (mb_strlen($buf, 'UTF-8') == 1) {
                 $words[] = $buf;
             } else {
                 if (! isset(self::$FREQ[$buf])) {
@@ -742,7 +744,7 @@ class Jieba
         }
 
         return $words;
-    }// end function __cutDAG
+    } // end function __cutDAG
 
     /**
      * Static method __cutDAGNoHMM
@@ -755,7 +757,7 @@ class Jieba
     public static function __cutDAGNoHMM($sentence, $options = array())
     {
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
@@ -774,14 +776,14 @@ class Jieba
 
         while ($x < $N) {
             $current_route_keys = array_keys(self::$route[$x]);
-            $y = $current_route_keys[0]+1;
-            $l_word = mb_substr($sentence, $x, ($y-$x), 'UTF-8');
+            $y = $current_route_keys[0] + 1;
+            $l_word = mb_substr($sentence, $x, ($y - $x), 'UTF-8');
 
-            if (preg_match('/'.$re_eng_pattern.'/u', $l_word)) {
-                $buf = $buf.$l_word;
+            if (preg_match('/' . $re_eng_pattern . '/u', $l_word)) {
+                $buf = $buf . $l_word;
                 $x = $y;
             } else {
-                if (mb_strlen($buf, 'UTF-8')>0) {
+                if (mb_strlen($buf, 'UTF-8') > 0) {
                     $words[] = $buf;
                     $buf = '';
                 }
@@ -790,13 +792,13 @@ class Jieba
             }
         }
 
-        if (mb_strlen($buf, 'UTF-8')>0) {
+        if (mb_strlen($buf, 'UTF-8') > 0) {
             $words[] = $buf;
             $buf = '';
         }
 
         return $words;
-    }// end function __cutDAGNoHMM
+    } // end function __cutDAGNoHMM
 
     /**
      * Static method cut
@@ -810,9 +812,9 @@ class Jieba
     public static function cut($sentence, $cut_all = false, $options = array("HMM" => true))
     {
         self::requireInitialization();
-        
+
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
@@ -829,20 +831,20 @@ class Jieba
         if ($cut_all) {
             $re_skip_pattern = '([a-zA-Z0-9+#&=\._\r\n]+)';
         }
-        $re_punctuation_pattern = '([\x{ff5e}\x{ff01}\x{ff08}\x{ff09}\x{300e}'.
-                                    '\x{300c}\x{300d}\x{300f}\x{3001}\x{ff1a}\x{ff1b}'.
-                                    '\x{ff0c}\x{ff1f}\x{3002}]+)';
+        $re_punctuation_pattern = '([\x{ff5e}\x{ff01}\x{ff08}\x{ff09}\x{300e}' .
+            '\x{300c}\x{300d}\x{300f}\x{3001}\x{ff1a}\x{ff1b}' .
+            '\x{ff0c}\x{ff1f}\x{3002}]+)';
 
         if (self::$cjk_all) {
-            $filter_pattern = $re_kanjikana_pattern.
-                            '|'.$re_katakana_pattern.
-                            '|'.$re_hangul_pattern;
+            $filter_pattern = $re_kanjikana_pattern .
+                '|' . $re_katakana_pattern .
+                '|' . $re_hangul_pattern;
         } else {
             $filter_pattern = $re_han_with_ascii_pattern;
         }
 
         preg_match_all(
-            '/('.$filter_pattern.'|'.$re_ascii_pattern.'|'.$re_punctuation_pattern.')/u',
+            '/(' . $filter_pattern . '|' . $re_ascii_pattern . '|' . $re_punctuation_pattern . ')/u',
             $sentence,
             $matches,
             PREG_PATTERN_ORDER
@@ -850,17 +852,17 @@ class Jieba
         $blocks = $matches[0];
 
         foreach ($blocks as $blk) {
-            if (mb_strlen($blk, 'UTF-8')==0) {
+            if (mb_strlen($blk, 'UTF-8') == 0) {
                 continue;
             }
             if (self::$cjk_all) {
                 // skip korean
-                $filter_pattern = $re_kanjikana_pattern.'|'.$re_katakana_pattern;
+                $filter_pattern = $re_kanjikana_pattern . '|' . $re_katakana_pattern;
             } else {
                 $filter_pattern = $re_han_with_ascii_pattern;
             }
 
-            if (preg_match('/'.$filter_pattern.'/u', $blk)) {
+            if (preg_match('/' . $filter_pattern . '/u', $blk)) {
                 if ($cut_all) {
                     $words = Jieba::__cutAll($blk);
                 } else {
@@ -874,16 +876,16 @@ class Jieba
                 foreach ($words as $word) {
                     $seg_list[] = $word;
                 }
-            } elseif (preg_match('/'.$re_skip_pattern.'/u', $blk)) {
+            } elseif (preg_match('/' . $re_skip_pattern . '/u', $blk)) {
                 preg_match_all(
-                    '/('.$re_skip_pattern.')/u',
+                    '/(' . $re_skip_pattern . ')/u',
                     $blk,
                     $tmp,
                     PREG_PATTERN_ORDER
                 );
                 $tmp = $tmp[0];
                 foreach ($tmp as $x) {
-                    if (preg_match('/'.$re_skip_pattern.'/u', $x)) {
+                    if (preg_match('/' . $re_skip_pattern . '/u', $x)) {
                         if (str_replace(' ', '', $x) != '') {
                             $seg_list[] = $x;
                         }
@@ -898,13 +900,13 @@ class Jieba
                         }
                     }
                 }
-            } elseif (preg_match('/'.$re_punctuation_pattern.'/u', $blk)) {
+            } elseif (preg_match('/' . $re_punctuation_pattern . '/u', $blk)) {
                 $seg_list[] = $blk;
-            }// end else (preg_match('/'.$re_han_pattern.'/u', $blk))
-        }// end foreach ($blocks as $blk)
+            } // end else (preg_match('/'.$re_han_pattern.'/u', $blk))
+        } // end foreach ($blocks as $blk)
 
         return $seg_list;
-    }// end function cut
+    } // end function cut
 
     /**
      * Static method cutForSearch
@@ -917,9 +919,9 @@ class Jieba
     public static function cutForSearch($sentence, $options = array("HMM" => true))
     {
         self::requireInitialization();
-        
+
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
@@ -931,8 +933,8 @@ class Jieba
         foreach ($cut_seg_list as $w) {
             $len = mb_strlen($w, 'UTF-8');
 
-            if ($len>2) {
-                for ($i=0; $i<($len-1); $i++) {
+            if ($len > 2) {
+                for ($i = 0; $i < ($len - 1); $i++) {
                     $gram2 = mb_substr($w, $i, 2, 'UTF-8');
 
                     if (isset(self::$FREQ[$gram2])) {
@@ -941,8 +943,8 @@ class Jieba
                 }
             }
 
-            if (mb_strlen($w, 'UTF-8')>3) {
-                for ($i=0; $i<($len-2); $i++) {
+            if (mb_strlen($w, 'UTF-8') > 3) {
+                for ($i = 0; $i < ($len - 2); $i++) {
                     $gram3 = mb_substr($w, $i, 3, 'UTF-8');
 
                     if (isset(self::$FREQ[$gram3])) {
@@ -955,7 +957,7 @@ class Jieba
         }
 
         return $seg_list;
-    }// end function cutForSearch
+    } // end function cutForSearch
 
     /**
      * Clear all caches to free memory
@@ -971,12 +973,12 @@ class Jieba
     {
         // Clear DAG cache
         self::$dag_cache = array();
-        
+
         // Clear trie cache if trie is initialized
         if (self::$trie instanceof \Fukuball\Tebru\MultiArray) {
             self::$trie->cache = array();
         }
-    }// end function clearCache
+    } // end function clearCache
 
     /**
      * Get cache statistics
@@ -993,13 +995,13 @@ class Jieba
             'total_memory_usage' => memory_get_usage(),
             'peak_memory_usage' => memory_get_peak_usage()
         );
-        
+
         if (self::$trie instanceof \Fukuball\Tebru\MultiArray) {
             $stats['trie_cache_size'] = count(self::$trie->cache);
         }
-        
+
         return $stats;
-    }// end function getCacheStats
+    } // end function getCacheStats
 
     /**
      * Clear cache if it exceeds specified size limits
@@ -1016,12 +1018,12 @@ class Jieba
     {
         $dag_size = count(self::$dag_cache);
         $trie_size = (self::$trie instanceof \Fukuball\Tebru\MultiArray) ? count(self::$trie->cache) : 0;
-        
+
         if ($dag_size > $dag_cache_limit || $trie_size > $trie_cache_limit) {
             self::clearCache();
             return true;
         }
-        
+
         return false;
-    }// end function clearCacheIfNeeded
+    } // end function clearCacheIfNeeded
 }// end of class Jieba

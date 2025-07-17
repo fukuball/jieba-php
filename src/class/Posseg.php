@@ -91,7 +91,7 @@ class Posseg
             self::$pos_tag_readable[$tag] = $meaning;
         }
         fclose($content);
-        
+
         self::$is_initialized = true;
     } // end function init
 
@@ -113,15 +113,15 @@ class Posseg
         self::$char_state = array();
         self::$word_tag = array();
         self::$pos_tag_readable = array();
-        
+
         // Reset initialization flag
         self::$is_initialized = false;
-        
+
         // Force garbage collection
         if (function_exists('gc_collect_cycles')) {
             gc_collect_cycles();
         }
-    }// end function destroy
+    } // end function destroy
 
     /**
      * Static method isInitialized - Check if the class has been initialized
@@ -131,20 +131,20 @@ class Posseg
     public static function isInitialized()
     {
         return self::$is_initialized;
-    }// end function isInitialized
+    } // end function isInitialized
 
     /**
      * Static method requireInitialization - Throws exception if not initialized
      *
      * @return void
-     * @throws Exception if not initialized
+     * @throws \Exception if not initialized
      */
     private static function requireInitialization()
     {
         if (!self::$is_initialized) {
-            throw new Exception("Posseg class not initialized. Please call Posseg::init() first.");
+            throw new \Exception("Posseg class not initialized. Please call Posseg::init() first.");
         }
-    }// end function requireInitialization
+    } // end function requireInitialization
 
     /**
      * Static method loadModel
@@ -644,7 +644,7 @@ class Posseg
     public static function cut($sentence, $options = array('HMM' => true))
     {
         self::requireInitialization();
-        
+
         $defaults = array(
             'mode' => 'default'
         );
@@ -705,7 +705,7 @@ class Posseg
     public static function posTagReadable($seg_list, $options = array())
     {
         self::requireInitialization();
-        
+
         $defaults = array(
             'mode' => 'default'
         );

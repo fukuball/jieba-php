@@ -2,13 +2,13 @@
 ini_set('memory_limit', '1024M');
 
 // Include the necessary files
-require_once dirname(__FILE__)."/src/vendor/multi-array/MultiArray.php";
-require_once dirname(__FILE__)."/src/vendor/multi-array/Factory/MultiArrayFactory.php";
-require_once dirname(__FILE__)."/src/class/Jieba.php";
-require_once dirname(__FILE__)."/src/class/Finalseg.php";
-require_once dirname(__FILE__)."/src/class/JiebaAnalyse.php";
-require_once dirname(__FILE__)."/src/class/Posseg.php";
-require_once dirname(__FILE__)."/src/class/JiebaMemory.php";
+require_once dirname(dirname(__FILE__)) . "/src/vendor/multi-array/MultiArray.php";
+require_once dirname(dirname(__FILE__)) . "/src/vendor/multi-array/Factory/MultiArrayFactory.php";
+require_once dirname(dirname(__FILE__)) . "/src/class/Jieba.php";
+require_once dirname(dirname(__FILE__)) . "/src/class/Finalseg.php";
+require_once dirname(dirname(__FILE__)) . "/src/class/JiebaAnalyse.php";
+require_once dirname(dirname(__FILE__)) . "/src/class/Posseg.php";
+require_once dirname(dirname(__FILE__)) . "/src/class/JiebaMemory.php";
 
 use Fukuball\Jieba\Jieba;
 use Fukuball\Jieba\Finalseg;
@@ -47,16 +47,16 @@ echo "Test 3: Test functionality\n";
 try {
     $result = Jieba::cut("这是一个测试");
     echo "Jieba::cut works: " . (is_array($result) && count($result) > 0 ? "true" : "false") . "\n";
-    
+
     $result = Finalseg::cut("测试");
     echo "Finalseg::cut works: " . (is_array($result) && count($result) > 0 ? "true" : "false") . "\n";
-    
+
     $result = JiebaAnalyse::extractTags("这是一个测试文本");
     echo "JiebaAnalyse::extractTags works: " . (is_array($result) ? "true" : "false") . "\n";
-    
+
     $result = Posseg::cut("测试");
     echo "Posseg::cut works: " . (is_array($result) && count($result) > 0 ? "true" : "false") . "\n";
-    
+
     echo "Result: PASS\n\n";
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";

@@ -143,9 +143,9 @@ class JiebaMemory
      */
     public static function isAllInitialized()
     {
-        return Jieba::isInitialized() && 
-               Finalseg::isInitialized() && 
-               JiebaAnalyse::isInitialized() && 
+        return Jieba::isInitialized() &&
+               Finalseg::isInitialized() &&
+               JiebaAnalyse::isInitialized() &&
                Posseg::isInitialized();
     }// end function isAllInitialized
 
