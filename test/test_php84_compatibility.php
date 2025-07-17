@@ -9,12 +9,12 @@
 ini_set('memory_limit', '1024M');
 
 // Test basic requires
-require_once dirname(__FILE__) . "/src/vendor/multi-array/MultiArray.php";
-require_once dirname(__FILE__) . "/src/vendor/multi-array/Factory/MultiArrayFactory.php";
-require_once dirname(__FILE__) . "/src/class/Jieba.php";
-require_once dirname(__FILE__) . "/src/class/Finalseg.php";
-require_once dirname(__FILE__) . "/src/class/JiebaAnalyse.php";
-require_once dirname(__FILE__) . "/src/class/Posseg.php";
+require_once dirname(dirname(__FILE__)) . "/src/vendor/multi-array/MultiArray.php";
+require_once dirname(dirname(__FILE__)) . "/src/vendor/multi-array/Factory/MultiArrayFactory.php";
+require_once dirname(dirname(__FILE__)) . "/src/class/Jieba.php";
+require_once dirname(dirname(__FILE__)) . "/src/class/Finalseg.php";
+require_once dirname(dirname(__FILE__)) . "/src/class/JiebaAnalyse.php";
+require_once dirname(dirname(__FILE__)) . "/src/class/Posseg.php";
 
 use Fukuball\Jieba\Jieba;
 use Fukuball\Jieba\Finalseg;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Finalseg.php
  *
@@ -29,6 +30,7 @@ class Finalseg
     public static $prob_start = array();
     public static $prob_trans = array();
     public static $prob_emit = array();
+    public static $is_initialized = false;
 
     /**
      * Static method init
@@ -41,15 +43,65 @@ class Finalseg
     {
 
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
 
-        self::$prob_start = self::loadModel(dirname(dirname(__FILE__)).'/model/prob_start.json');
-        self::$prob_trans = self::loadModel(dirname(dirname(__FILE__)).'/model/prob_trans.json');
-        self::$prob_emit = self::loadModel(dirname(dirname(__FILE__)).'/model/prob_emit.json');
-    }// end function init
+        self::$prob_start = self::loadModel(dirname(dirname(__FILE__)) . '/model/prob_start.json');
+        self::$prob_trans = self::loadModel(dirname(dirname(__FILE__)) . '/model/prob_trans.json');
+        self::$prob_emit = self::loadModel(dirname(dirname(__FILE__)) . '/model/prob_emit.json');
+
+        self::$is_initialized = true;
+    } // end function init
+
+    /**
+     * Static method destroy - Free all memory used by the class
+     *
+     * This method clears all static variables that contain HMM model data
+     * to free memory. After calling this method, init() must be called again
+     * before using any other methods.
+     *
+     * @return void
+     */
+    public static function destroy()
+    {
+        // Clear all HMM model data
+        self::$prob_start = array();
+        self::$prob_trans = array();
+        self::$prob_emit = array();
+
+        // Reset initialization flag
+        self::$is_initialized = false;
+
+        // Force garbage collection
+        if (function_exists('gc_collect_cycles')) {
+            gc_collect_cycles();
+        }
+    } // end function destroy
+
+    /**
+     * Static method isInitialized - Check if the class has been initialized
+     *
+     * @return bool True if initialized, false otherwise
+     */
+    public static function isInitialized()
+    {
+        return self::$is_initialized;
+    } // end function isInitialized
+
+    /**
+     * Static method requireInitialization - Throws exception if not initialized
+     *
+     * @return void
+     * @throws \Exception if not initialized
+     */
+    private static function requireInitialization()
+    {
+        if (!self::$is_initialized) {
+            throw new \Exception("Finalseg class not initialized. Please call Finalseg::init() first.");
+        }
+    } // end function requireInitialization
 
     /**
      * Static method loadModel
@@ -63,13 +115,23 @@ class Finalseg
     {
 
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
 
-        return json_decode(file_get_contents($f_name), true);
-    }// end function loadModel
+        $content = file_get_contents($f_name);
+        if ($content === false) {
+            throw new \Exception("Failed to read model file: " . $f_name);
+        }
+        
+        $decoded = json_decode($content, true);
+        if ($decoded === null && json_last_error() !== JSON_ERROR_NONE) {
+            throw new \Exception("Failed to decode JSON from model file: " . $f_name . " - " . json_last_error_msg());
+        }
+        
+        return $decoded;
+    } // end function loadModel
 
     /**
      * Static method viterbi
@@ -83,7 +145,7 @@ class Finalseg
     {
 
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
@@ -107,7 +169,7 @@ class Finalseg
             $path[$y] = $y;
         }
 
-        for ($t=1; $t<mb_strlen($obs, 'UTF-8'); $t++) {
+        for ($t = 1; $t < mb_strlen($obs, 'UTF-8'); $t++) {
             $c = mb_substr($obs, $t, 1, 'UTF-8');
             $V[$t] = array();
             $newpath = array();
@@ -128,7 +190,7 @@ class Finalseg
                     } else {
                         $prob_emit = MIN_FLOAT;
                     }
-                    $temp_prob_array[$y0] = $V[$t-1][$y0] + $prob_trans + $prob_emit;
+                    $temp_prob_array[$y0] = $V[$t - 1][$y0] + $prob_trans + $prob_emit;
                 }
                 arsort($temp_prob_array);
                 $max_prob = reset($temp_prob_array);
@@ -147,19 +209,19 @@ class Finalseg
             $path = $newpath;
         }
 
-        $es_states = array('E','S');
+        $es_states = array('E', 'S');
         $temp_prob_array = array();
         $len = mb_strlen($obs, 'UTF-8');
         foreach ($es_states as $key => $state) {
             $y = $state;
-            $temp_prob_array[$y] = $V[$len-1][$y];
+            $temp_prob_array[$y] = $V[$len - 1][$y];
         }
         arsort($temp_prob_array);
         $prob = reset($temp_prob_array);
         $state = key($temp_prob_array);
 
-        return array("prob"=>$prob, "pos_list"=>$path[$state]);
-    }// end function viterbi
+        return array("prob" => $prob, "pos_list" => $path[$state]);
+    } // end function viterbi
 
     /**
      * Static method __cut
@@ -173,7 +235,7 @@ class Finalseg
     {
 
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
@@ -188,26 +250,26 @@ class Finalseg
         $next = 0;
         $len = mb_strlen($sentence, 'UTF-8');
 
-        for ($i=0; $i<$len; $i++) {
+        for ($i = 0; $i < $len; $i++) {
             $char = mb_substr($sentence, $i, 1, 'UTF-8');
             $pos = $pos_list[$i];
-            if ($pos=='B') {
+            if ($pos == 'B') {
                 $begin = $i;
-            } elseif ($pos=='E') {
-                $words[] = mb_substr($sentence, $begin, (($i+1)-$begin), 'UTF-8');
-                $next = $i+1;
-            } elseif ($pos=='S') {
+            } elseif ($pos == 'E') {
+                $words[] = mb_substr($sentence, $begin, (($i + 1) - $begin), 'UTF-8');
+                $next = $i + 1;
+            } elseif ($pos == 'S') {
                 $words[] = $char;
-                $next = $i+1;
+                $next = $i + 1;
             }
         }
 
-        if ($next<$len) {
+        if ($next < $len) {
             $words[] = mb_substr($sentence, $next, null, 'UTF-8');
         }
 
         return $words;
-    }// end function __cut
+    } // end function __cut
 
 
     /**
@@ -220,9 +282,10 @@ class Finalseg
      */
     public static function cut($sentence, $options = array())
     {
+        self::requireInitialization();
 
         $defaults = array(
-            'mode'=>'default'
+            'mode' => 'default'
         );
 
         $options = array_merge($defaults, $options);
@@ -232,7 +295,7 @@ class Finalseg
         $re_cjk_pattern = '([\x{3040}-\x{309F}]+)|([\x{30A0}-\x{30FF}]+)|([\x{4E00}-\x{9FA5}]+)|([\x{AC00}-\x{D7AF}]+)';
         $re_skip_pattern = '([a-zA-Z0-9+#&=\._\r\n]+)';
         preg_match_all(
-            '/('.$re_cjk_pattern.'|'.$re_skip_pattern.')/u',
+            '/(' . $re_cjk_pattern . '|' . $re_skip_pattern . ')/u',
             $sentence,
             $matches,
             PREG_PATTERN_ORDER
@@ -240,7 +303,7 @@ class Finalseg
         $blocks = $matches[0];
 
         foreach ($blocks as $blk) {
-            if (preg_match('/'.$re_cjk_pattern.'/u', $blk)) {
+            if (preg_match('/' . $re_cjk_pattern . '/u', $blk)) {
                 $words = self::__cut($blk);
 
                 foreach ($words as $word) {
@@ -248,9 +311,9 @@ class Finalseg
                 }
             } else {
                 $seg_list[] = $blk;
-            }// end else (preg_match('/'.$re_han_pattern.'/u', $blk))
-        }// end foreach ($blocks as $blk)
+            } // end else (preg_match('/'.$re_han_pattern.'/u', $blk))
+        } // end foreach ($blocks as $blk)
 
         return $seg_list;
-    }// end function cut
+    } // end function cut
 }

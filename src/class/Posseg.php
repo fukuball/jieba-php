@@ -33,6 +33,7 @@ class Posseg
     public static $char_state = array();
     public static $word_tag = array();
     public static $pos_tag_readable = array();
+    public static $is_initialized = false;
 
     /**
      * Static method init
@@ -56,20 +57,11 @@ class Posseg
 
         if (Jieba::$dictname != '') {
             $content = fopen(dirname(dirname(__FILE__)) . '/dict/' . Jieba::$dictname, 'r');
-            while (($line = fgets($content)) !== false) {
-                $explode_line = explode(' ', trim($line));
-                $word = $explode_line[0];
-                $freq = $explode_line[1];
-                $tag = $explode_line[2];
-                self::$word_tag[$word] = $tag;
+            if ($content === false) {
+                throw new \Exception("Failed to open dictionary file: " . Jieba::$dictname);
             }
-            fclose($content);
-        }
-
-
-        if (sizeof(Jieba::$user_dictname) != 0) {
-            for ($i = 0; $i < sizeof(Jieba::$user_dictname); $i++) {
-                $content = fopen(Jieba::$user_dictname[$i], 'r');
+            
+            try {
                 while (($line = fgets($content)) !== false) {
                     $explode_line = explode(' ', trim($line));
                     $word = $explode_line[0];
@@ -77,20 +69,102 @@ class Posseg
                     $tag = $explode_line[2];
                     self::$word_tag[$word] = $tag;
                 }
+            } finally {
                 fclose($content);
             }
         }
 
-        $content = fopen(dirname(dirname(__FILE__)) . '/dict/pos_tag_readable.txt', 'r');
 
-        while (($line = fgets($content)) !== false) {
-            $explode_line = explode(' ', trim($line));
-            $tag = $explode_line[0];
-            $meaning = $explode_line[1];
-            self::$pos_tag_readable[$tag] = $meaning;
+        if (sizeof(Jieba::$user_dictname) != 0) {
+            for ($i = 0; $i < sizeof(Jieba::$user_dictname); $i++) {
+                $content = fopen(Jieba::$user_dictname[$i], 'r');
+                if ($content === false) {
+                    throw new \Exception("Failed to open user dictionary file: " . Jieba::$user_dictname[$i]);
+                }
+                
+                try {
+                    while (($line = fgets($content)) !== false) {
+                        $explode_line = explode(' ', trim($line));
+                        $word = $explode_line[0];
+                        $freq = $explode_line[1];
+                        $tag = $explode_line[2];
+                        self::$word_tag[$word] = $tag;
+                    }
+                } finally {
+                    fclose($content);
+                }
+            }
         }
-        fclose($content);
+
+        $content = fopen(dirname(dirname(__FILE__)) . '/dict/pos_tag_readable.txt', 'r');
+        if ($content === false) {
+            throw new \Exception("Failed to open pos_tag_readable.txt file");
+        }
+
+        try {
+            while (($line = fgets($content)) !== false) {
+                $explode_line = explode(' ', trim($line));
+                $tag = $explode_line[0];
+                $meaning = $explode_line[1];
+                self::$pos_tag_readable[$tag] = $meaning;
+            }
+        } finally {
+            fclose($content);
+        }
+
+        self::$is_initialized = true;
     } // end function init
+
+    /**
+     * Static method destroy - Free all memory used by the class
+     *
+     * This method clears all static variables that contain POS tagging data
+     * to free memory. After calling this method, init() must be called again
+     * before using any other methods.
+     *
+     * @return void
+     */
+    public static function destroy()
+    {
+        // Clear all POS tagging data
+        self::$prob_start = array();
+        self::$prob_trans = array();
+        self::$prob_emit = array();
+        self::$char_state = array();
+        self::$word_tag = array();
+        self::$pos_tag_readable = array();
+
+        // Reset initialization flag
+        self::$is_initialized = false;
+
+        // Force garbage collection
+        if (function_exists('gc_collect_cycles')) {
+            gc_collect_cycles();
+        }
+    } // end function destroy
+
+    /**
+     * Static method isInitialized - Check if the class has been initialized
+     *
+     * @return bool True if initialized, false otherwise
+     */
+    public static function isInitialized()
+    {
+        return self::$is_initialized;
+    } // end function isInitialized
+
+    /**
+     * Static method requireInitialization - Throws exception if not initialized
+     *
+     * @return void
+     * @throws \Exception if not initialized
+     */
+    private static function requireInitialization()
+    {
+        if (!self::$is_initialized) {
+            throw new \Exception("Posseg class not initialized. Please call Posseg::init() first.");
+        }
+    } // end function requireInitialization
 
     /**
      * Static method loadModel
@@ -108,7 +182,17 @@ class Posseg
 
         $options = array_merge($defaults, $options);
 
-        return json_decode(file_get_contents($f_name), true);
+        $content = file_get_contents($f_name);
+        if ($content === false) {
+            throw new \Exception("Failed to read model file: " . $f_name);
+        }
+        
+        $decoded = json_decode($content, true);
+        if ($decoded === null && json_last_error() !== JSON_ERROR_NONE) {
+            throw new \Exception("Failed to decode JSON from model file: " . $f_name . " - " . json_last_error_msg());
+        }
+        
+        return $decoded;
     } // end function loadModel
 
     /**
@@ -589,6 +673,8 @@ class Posseg
      */
     public static function cut($sentence, $options = array('HMM' => true))
     {
+        self::requireInitialization();
+
         $defaults = array(
             'mode' => 'default'
         );
@@ -648,6 +734,8 @@ class Posseg
      */
     public static function posTagReadable($seg_list, $options = array())
     {
+        self::requireInitialization();
+
         $defaults = array(
             'mode' => 'default'
         );
