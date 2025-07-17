@@ -40,5 +40,4 @@ while (($line = fgets($content)) !== false) {
 }
 
 file_put_contents(dirname(dirname(__FILE__))."/dict/dict.big.txt.json", json_encode($trie->storage));
-file_put_contents(dirname(dirname(__FILE__))."/dict/dict.big.txt.cache.json", json_encode($trie->cache));
 ?>
