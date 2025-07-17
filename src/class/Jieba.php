@@ -26,7 +26,6 @@ define("MIN_FLOAT", -3.14e+100);
  * @package  /src/class/
  * @author   Fukuball Lin <fukuball@gmail.com>
  * @license  MIT Licence
- * @version  Release: <0.16>
  * @link     https://github.com/fukuball/jieba-php
  */
 class Jieba
@@ -409,7 +408,8 @@ class Jieba
                     $cache_data = json_decode($cache_content, true);
 
                     // Verify cache data integrity
-                    if ($cache_data !== null &&
+                    if (
+                        $cache_data !== null &&
                         isset($cache_data['original_freq']) &&
                         isset($cache_data['total']) &&
                         is_array($cache_data['original_freq']) &&
@@ -458,7 +458,7 @@ class Jieba
         if ($content === false) {
             throw new \Exception("Failed to open user dictionary file: " . $f_name);
         }
-        
+
         try {
             while (($line = fgets($content)) !== false) {
                 $explode_line = explode(" ", trim($line));
@@ -677,7 +677,8 @@ class Jieba
                 self::$dag_cache[$next_word_key] = array('exist' => true, 'end' => false);
                 $word_c[] = $c;
                 $next_word_key_value = self::$trie->get($next_word_key);
-                if ($next_word_key_value == array("end" => "")
+                if (
+                    $next_word_key_value == array("end" => "")
                     || isset($next_word_key_value["end"])
                     || isset($next_word_key_value[0]["end"])
                 ) {

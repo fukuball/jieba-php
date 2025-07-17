@@ -1,4 +1,5 @@
 <?php
+
 /**
  * JiebaMemory.php
  *
@@ -25,7 +26,6 @@ namespace Fukuball\Jieba;
  * @package  /src/class/
  * @author   Fukuball Lin <fukuball@gmail.com>
  * @license  MIT Licence
- * @version  Release: <0.16>
  * @link     https://github.com/fukuball/jieba-php
  */
 class JiebaMemory
@@ -46,12 +46,12 @@ class JiebaMemory
         Finalseg::destroy();
         JiebaAnalyse::destroy();
         Posseg::destroy();
-        
+
         // Force garbage collection
         if (function_exists('gc_collect_cycles')) {
             gc_collect_cycles();
         }
-    }// end function destroyAll
+    } // end function destroyAll
 
     /**
      * Check which classes are initialized
@@ -69,7 +69,7 @@ class JiebaMemory
             'JiebaAnalyse' => JiebaAnalyse::isInitialized(),
             'Posseg' => Posseg::isInitialized()
         );
-    }// end function getInitializationStatus
+    } // end function getInitializationStatus
 
     /**
      * Get memory usage statistics
@@ -93,12 +93,12 @@ class JiebaMemory
             'peak_memory_usage_formatted' => self::formatBytes(memory_get_peak_usage(true)),
             'initialization_status' => self::getInitializationStatus()
         );
-        
+
         // Add cache statistics for all classes
         $stats['cache_stats'] = self::getAllCacheStats();
-        
+
         return $stats;
-    }// end function getMemoryStats
+    } // end function getMemoryStats
 
     /**
      * Format bytes into human readable format
@@ -111,13 +111,13 @@ class JiebaMemory
     private static function formatBytes($bytes, $precision = 2)
     {
         $units = array('B', 'KB', 'MB', 'GB', 'TB');
-        
+
         for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
             $bytes /= 1024;
         }
-        
+
         return round($bytes, $precision) . ' ' . $units[$i];
-    }// end function formatBytes
+    } // end function formatBytes
 
     /**
      * Initialize all jieba-php classes with default settings
@@ -135,7 +135,7 @@ class JiebaMemory
         Finalseg::init($options);
         JiebaAnalyse::init($options);
         Posseg::init($options);
-    }// end function initAll
+    } // end function initAll
 
     /**
      * Check if all classes are initialized
@@ -147,10 +147,10 @@ class JiebaMemory
     public static function isAllInitialized()
     {
         return Jieba::isInitialized() &&
-               Finalseg::isInitialized() &&
-               JiebaAnalyse::isInitialized() &&
-               Posseg::isInitialized();
-    }// end function isAllInitialized
+            Finalseg::isInitialized() &&
+            JiebaAnalyse::isInitialized() &&
+            Posseg::isInitialized();
+    } // end function isAllInitialized
 
     /**
      * Clear all caches without destroying classes
@@ -174,17 +174,17 @@ class JiebaMemory
         if (Jieba::isInitialized()) {
             Jieba::clearCache();
         }
-        
+
         // Other classes don't have dynamic caches to clear:
         // - Posseg: stores static model data and word-tag mappings
         // - Finalseg: stores static HMM model data
         // - JiebaAnalyse: stores static IDF frequencies and stop words
-        
+
         // Force garbage collection
         if (function_exists('gc_collect_cycles')) {
             gc_collect_cycles();
         }
-    }// end function clearAllCaches
+    } // end function clearAllCaches
 
     /**
      * Get cache statistics from all classes
@@ -197,7 +197,7 @@ class JiebaMemory
     public static function getAllCacheStats()
     {
         $stats = array();
-        
+
         // Jieba cache stats (dynamic caches)
         if (Jieba::isInitialized()) {
             $stats['jieba'] = Jieba::getCacheStats();
@@ -208,7 +208,7 @@ class JiebaMemory
                 'memory_usage' => 0
             );
         }
-        
+
         // Posseg cache stats (static model data)
         if (Posseg::isInitialized()) {
             $stats['posseg'] = array(
@@ -231,7 +231,7 @@ class JiebaMemory
                 'cache_type' => 'static_model_data'
             );
         }
-        
+
         // Finalseg cache stats (static HMM model data)
         if (Finalseg::isInitialized()) {
             $stats['finalseg'] = array(
@@ -248,7 +248,7 @@ class JiebaMemory
                 'cache_type' => 'static_hmm_model'
             );
         }
-        
+
         // JiebaAnalyse cache stats (static IDF data)
         if (JiebaAnalyse::isInitialized()) {
             $stats['jieba_analyse'] = array(
@@ -263,7 +263,7 @@ class JiebaMemory
                 'cache_type' => 'static_idf_data'
             );
         }
-        
+
         return $stats;
-    }// end function getAllCacheStats
+    } // end function getAllCacheStats
 }// end of class JiebaMemory

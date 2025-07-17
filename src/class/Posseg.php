@@ -22,7 +22,6 @@ namespace Fukuball\Jieba;
  * @package  /src/class/
  * @author   Fukuball Lin <fukuball@gmail.com>
  * @license  MIT Licence
- * @version  Release: <0.16>
  * @link     https://github.com/fukuball/jieba-php
  */
 class Posseg
@@ -60,7 +59,7 @@ class Posseg
             if ($content === false) {
                 throw new \Exception("Failed to open dictionary file: " . Jieba::$dictname);
             }
-            
+
             try {
                 while (($line = fgets($content)) !== false) {
                     $explode_line = explode(' ', trim($line));
@@ -81,7 +80,7 @@ class Posseg
                 if ($content === false) {
                     throw new \Exception("Failed to open user dictionary file: " . Jieba::$user_dictname[$i]);
                 }
-                
+
                 try {
                     while (($line = fgets($content)) !== false) {
                         $explode_line = explode(' ', trim($line));
@@ -279,12 +278,12 @@ class Posseg
         if ($content === false) {
             throw new \Exception("Failed to read model file: " . $f_name);
         }
-        
+
         $decoded = json_decode($content, true);
         if ($decoded === null && json_last_error() !== JSON_ERROR_NONE) {
             throw new \Exception("Failed to decode JSON from model file: " . $f_name . " - " . json_last_error_msg());
         }
-        
+
         return $decoded;
     } // end function loadModel
 

@@ -22,7 +22,6 @@ namespace Fukuball\Jieba;
  * @package  /src/class/
  * @author   Fukuball Lin <fukuball@gmail.com>
  * @license  MIT Licence
- * @version  Release: <0.16>
  * @link     https://github.com/fukuball/jieba-php
  */
 class JiebaAnalyse
@@ -90,7 +89,7 @@ class JiebaAnalyse
             $f_name = "idf.txt";
         }
         $content = fopen(dirname(dirname(__FILE__)) . "/dict/" . $f_name, "r");
-        
+
         if ($content === false) {
             throw new \Exception("Failed to open IDF dictionary file: " . $f_name);
         }
@@ -213,7 +212,7 @@ class JiebaAnalyse
     public static function setStopWords($stop_words_path, $options = array())
     {
         $content = fopen($stop_words_path, "r");
-        
+
         if ($content === false) {
             throw new \Exception("Failed to open stop words file: " . $stop_words_path);
         }
