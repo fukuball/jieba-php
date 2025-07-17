@@ -416,13 +416,22 @@ class Posseg
             if ($pos == 'B') {
                 $begin = $i;
             } elseif ($pos == 'E') {
+                $word = mb_substr($sentence, $begin, (($i + 1) - $begin), 'UTF-8');
+                // Check for custom word tag first
+                if (isset(self::$word_tag[$word])) {
+                    $tag = self::$word_tag[$word];
+                }
                 $this_word_pair = array(
-                    'word' => mb_substr($sentence, $begin, (($i + 1) - $begin), 'UTF-8'),
+                    'word' => $word,
                     'tag' => $tag
                 );
                 $words[] = $this_word_pair;
                 $next = $i + 1;
             } elseif ($pos == 'S') {
+                // Check for custom word tag first
+                if (isset(self::$word_tag[$char])) {
+                    $tag = self::$word_tag[$char];
+                }
                 $this_word_pair = array(
                     'word' => $char,
                     'tag' => $tag
@@ -441,8 +450,14 @@ class Posseg
                 $tag = 'x';
             }
 
+            $word = mb_substr($sentence, $next, null, 'UTF-8');
+            // Check for custom word tag first
+            if (isset(self::$word_tag[$word])) {
+                $tag = self::$word_tag[$word];
+            }
+
             $this_word_pair = array(
-                'word' => mb_substr($sentence, $next, null, 'UTF-8'),
+                'word' => $word,
                 'tag' => $tag
             );
             $words[] = $this_word_pair;
@@ -697,6 +712,11 @@ class Posseg
         @$options = array_merge($defaults, $options);
 
         $seg_list = array();
+
+        // Check if the entire sentence is a custom word first
+        if (isset(self::$word_tag[$sentence])) {
+            return array(array('word' => $sentence, 'tag' => self::$word_tag[$sentence]));
+        }
 
         $re_han_pattern = '([\x{4E00}-\x{9FA5}]+)';
         $re_skip_pattern = '([a-zA-Z0-9+#\r\n]+)';

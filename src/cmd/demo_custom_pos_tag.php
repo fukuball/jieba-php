@@ -85,23 +85,23 @@ echo "\n";
 
 // 5. 測試覆蓋現有詞性標記
 echo "5. 測試覆蓋現有詞性標記:\n";
-$original_seg = Posseg::cut('北京');
+$original_seg = Posseg::cut('台北');
 echo "   原始標記: ";
 foreach ($original_seg as $word_info) {
-    if ($word_info['word'] === '北京') {
+    if ($word_info['word'] === '台北') {
         echo $word_info['word'] . " / " . $word_info['tag'] . "\n";
         break;
     }
 }
 
 // 覆蓋標記
-Jieba::addWord('北京', 1000, 'custom_place');
-echo "   覆蓋為: 北京 -> custom_place\n";
+Jieba::addWord('台北', 1000, 'custom_place');
+echo "   覆蓋為: 台北 -> custom_place\n";
 
-$new_seg = Posseg::cut('北京');
+$new_seg = Posseg::cut('台北');
 echo "   新標記: ";
 foreach ($new_seg as $word_info) {
-    if ($word_info['word'] === '北京') {
+    if ($word_info['word'] === '台北') {
         echo $word_info['word'] . " / \033[31m" . $word_info['tag'] . "\033[0m\n"; // 紅色顯示覆蓋的標記
         break;
     }
@@ -110,7 +110,7 @@ echo "\n";
 
 // 6. 測試複雜句子
 echo "6. 測試複雜句子:\n";
-$complex_sentence = "福球林在北京開發了一個很棒的程式庫直接測試";
+$complex_sentence = "福球林在台北開發了一個很棒的程式庫直接測試";
 echo "   句子: " . $complex_sentence . "\n";
 echo "   分詞結果:\n";
 
