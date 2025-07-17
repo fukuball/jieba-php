@@ -187,6 +187,20 @@ class Posseg
     } // end function addWordTag
 
     /**
+     * Static method removeWordTag - Remove custom word-tag mapping
+     *
+     * @param string $word The word to remove POS tag for
+     *
+     * @return void
+     */
+    public static function removeWordTag($word)
+    {
+        if (isset(self::$word_tag[$word])) {
+            unset(self::$word_tag[$word]);
+        }
+    } // end function removeWordTag
+
+    /**
      * Static method validateAndSanitizeTag - Validate and sanitize POS tag input
      *
      * @param string $tag The POS tag to validate and sanitize

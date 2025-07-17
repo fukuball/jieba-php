@@ -485,11 +485,11 @@ class Jieba
                     try {
                         Posseg::addWordTag($word, $tag);
                     } catch (\InvalidArgumentException $e) {
-                        // Log warning and skip this tag, but continue processing other words
+                        // Log warning and skip this tag, but continue processing the word
                         error_log(
                             "Warning: Invalid POS tag '$tag' for word '$word' in user dictionary: " . $e->getMessage()
                         );
-                        continue;
+                        // Don't use continue here - let the word be processed even if tag is invalid
                     }
                 }
             }
@@ -531,14 +531,19 @@ class Jieba
         $word_c_key = implode('.', $word_c);
         self::$trie->set($word_c_key, array("end" => ""));
         
-        // Add POS tag if provided and Posseg class is available
-        if (!empty($tag) && class_exists('Fukuball\Jieba\Posseg')) {
-            try {
-                Posseg::addWordTag($word, $tag);
-            } catch (\InvalidArgumentException $e) {
-                // Log the error or handle it as needed
-                // For now, we'll throw it up to let the caller handle it
-                throw $e;
+        // Handle POS tag if Posseg class is available
+        if (class_exists('Fukuball\Jieba\Posseg')) {
+            if (!empty($tag)) {
+                try {
+                    Posseg::addWordTag($word, $tag);
+                } catch (\InvalidArgumentException $e) {
+                    // Log the error or handle it as needed
+                    // For now, we'll throw it up to let the caller handle it
+                    throw $e;
+                }
+            } else {
+                // If no tag provided, remove any existing tag to prevent memory leaks
+                Posseg::removeWordTag($word);
             }
         }
         

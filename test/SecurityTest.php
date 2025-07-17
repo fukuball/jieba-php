@@ -186,4 +186,39 @@ class SecurityTest extends TestCase
             }
         }
     }
+
+    /**
+     * Test removeWordTag functionality
+     */
+    public function testRemoveWordTag()
+    {
+        // Add a word tag
+        Posseg::addWordTag('測試詞', 'test_tag');
+        $this->assertTrue(isset(Posseg::$word_tag['測試詞']));
+        $this->assertEquals('test_tag', Posseg::$word_tag['測試詞']);
+
+        // Remove the tag
+        Posseg::removeWordTag('測試詞');
+        $this->assertFalse(isset(Posseg::$word_tag['測試詞']));
+
+        // Test removing non-existent tag (should not error)
+        Posseg::removeWordTag('不存在的詞');
+        $this->assertFalse(isset(Posseg::$word_tag['不存在的詞']));
+    }
+
+    /**
+     * Test that addWord without tag removes existing tags
+     */
+    public function testAddWordWithoutTagRemovesExistingTag()
+    {
+        // Add word with tag
+        Jieba::addWord('測試清理', 100, 'test_tag');
+        $this->assertTrue(isset(Posseg::$word_tag['測試清理']));
+        $this->assertEquals('test_tag', Posseg::$word_tag['測試清理']);
+
+        // Add same word without tag - should remove the tag
+        Jieba::addWord('測試清理', 150);
+        $this->assertFalse(isset(Posseg::$word_tag['測試清理']));
+        $this->assertEquals(150, Jieba::$original_freq['測試清理']);
+    }
 }
