@@ -433,4 +433,49 @@ class JiebaTest extends TestCase
         $stats_after = Jieba::getCacheStats();
         $this->assertEquals(0, $stats_after['dag_cache_size']);
     }
+
+    public function testAddWordWithPosTag()
+    {
+        Jieba::init();
+        Posseg::init();
+        
+        // Test adding a word with POS tag
+        Jieba::addWord('測試詞', 100, 'test_tag');
+        
+        // Verify the word was added to frequency dictionary
+        $this->assertTrue(isset(Jieba::$original_freq['測試詞']));
+        $this->assertEquals(100, Jieba::$original_freq['測試詞']);
+        
+        // Verify the POS tag was added to Posseg
+        $this->assertTrue(isset(Posseg::$word_tag['測試詞']));
+        $this->assertEquals('test_tag', Posseg::$word_tag['測試詞']);
+    }
+
+    public function testAddWordWithoutPosTag()
+    {
+        Jieba::init();
+        Posseg::init();
+        
+        // Test adding a word without POS tag
+        Jieba::addWord('無標籤詞', 100);
+        
+        // Verify the word was added to frequency dictionary
+        $this->assertTrue(isset(Jieba::$original_freq['無標籤詞']));
+        $this->assertEquals(100, Jieba::$original_freq['無標籤詞']);
+        
+        // Verify no POS tag was added
+        $this->assertFalse(isset(Posseg::$word_tag['無標籤詞']));
+    }
+
+    public function testAddWordTagDirectly()
+    {
+        Posseg::init();
+        
+        // Test adding word tag directly
+        Posseg::addWordTag('直接測試', 'direct_tag');
+        
+        // Verify it was added
+        $this->assertTrue(isset(Posseg::$word_tag['直接測試']));
+        $this->assertEquals('direct_tag', Posseg::$word_tag['直接測試']);
+    }
 }

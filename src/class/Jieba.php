@@ -479,6 +479,11 @@ class Jieba
                 }
                 $word_c_key = implode('.', $word_c);
                 self::$trie->set($word_c_key, array("end" => ""));
+                
+                // Add POS tag if provided and Posseg class is available
+                if (!empty($tag) && class_exists('Fukuball\Jieba\Posseg')) {
+                    Posseg::addWordTag($word, $tag);
+                }
             }
         } finally {
             fclose($content);
@@ -495,6 +500,7 @@ class Jieba
      * @param string $word
      * @param float  $freq
      * @param string $tag
+     * @param array  $options
      *
      * @return array self::$trie
      */
@@ -515,6 +521,12 @@ class Jieba
         }
         $word_c_key = implode('.', $word_c);
         self::$trie->set($word_c_key, array("end" => ""));
+        
+        // Add POS tag if provided and Posseg class is available
+        if (!empty($tag) && class_exists('Fukuball\Jieba\Posseg')) {
+            Posseg::addWordTag($word, $tag);
+        }
+        
         self::__calcFreq();
         self::$dag_cache = array();
         return self::$trie;

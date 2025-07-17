@@ -165,6 +165,21 @@ class Posseg
             throw new \Exception("Posseg class not initialized. Please call Posseg::init() first.");
         }
     } // end function requireInitialization
+    
+    /**
+     * Static method addWordTag - Add custom word-tag mapping
+     *
+     * @param string $word The word to add POS tag for
+     * @param string $tag  The POS tag to associate with the word
+     *
+     * @return void
+     */
+    public static function addWordTag($word, $tag)
+    {
+        // Allow adding word tags even when not initialized to support Jieba::addWord()
+        // This is safe because we're just adding to the word_tag array
+        self::$word_tag[$word] = $tag;
+    } // end function addWordTag
 
     /**
      * Static method loadModel
