@@ -408,8 +408,7 @@ class Jieba
                     $cache_data = json_decode($cache_content, true);
 
                     // Verify cache data integrity
-                    if (
-                        $cache_data !== null &&
+                    if ($cache_data !== null &&
                         isset($cache_data['original_freq']) &&
                         isset($cache_data['total']) &&
                         is_array($cache_data['original_freq']) &&
@@ -677,8 +676,7 @@ class Jieba
                 self::$dag_cache[$next_word_key] = array('exist' => true, 'end' => false);
                 $word_c[] = $c;
                 $next_word_key_value = self::$trie->get($next_word_key);
-                if (
-                    $next_word_key_value == array("end" => "")
+                if ($next_word_key_value == array("end" => "")
                     || isset($next_word_key_value["end"])
                     || isset($next_word_key_value[0]["end"])
                 ) {
