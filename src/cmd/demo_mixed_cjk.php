@@ -68,7 +68,7 @@ echo "Full Mode: ";
 var_dump(Jieba::cut($chinese_text, true));
 echo "\n";
 
-// Japanese text  
+// Japanese text
 $japanese_text = "私は東京大学で日本語を勉強しています";
 echo "Japanese Text: " . $japanese_text . "\n";
 echo "Default Mode: ";
@@ -96,17 +96,17 @@ var_dump(Jieba::cut($complex_mixed, true));
 echo "\n";
 
 // Memory usage
-function memory_usage() {
+function memory_usage()
+{
     $mem_usage = memory_get_usage(true);
     if ($mem_usage < 1024) {
         $mem_usage .= ' bytes';
     } elseif ($mem_usage < 1048576) {
-        $mem_usage = round($mem_usage/1024,2) . ' kilobytes';
+        $mem_usage = round($mem_usage/1024, 2) . ' kilobytes';
     } else {
-        $mem_usage = round($mem_usage/1048576,2) . ' megabytes';
+        $mem_usage = round($mem_usage/1048576, 2) . ' megabytes';
     }
     return $mem_usage;
 }
 
 echo "Memory Usage: " . memory_usage() . "\n";
-?>
