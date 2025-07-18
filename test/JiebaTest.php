@@ -478,4 +478,68 @@ class JiebaTest extends TestCase
         $this->assertTrue(isset(Posseg::$word_tag['直接測試']));
         $this->assertEquals('direct_tag', Posseg::$word_tag['直接測試']);
     }
+
+    public function testPreservePunctuationOption()
+    {
+        Jieba::init();
+        
+        // Test sentence with punctuation
+        $sentence = "这是一个测试！有标点符号，对吧？";
+        
+        // Test with preserve_punctuation = true (default behavior)
+        $result_with_punct = Jieba::cut($sentence, false, array("preserve_punctuation" => true));
+        $this->assertContains("！", $result_with_punct);
+        $this->assertContains("，", $result_with_punct);
+        $this->assertContains("？", $result_with_punct);
+        
+        // Test with preserve_punctuation = false
+        $result_without_punct = Jieba::cut($sentence, false, array("preserve_punctuation" => false));
+        $this->assertNotContains("！", $result_without_punct);
+        $this->assertNotContains("，", $result_without_punct);
+        $this->assertNotContains("？", $result_without_punct);
+        
+        // Test default behavior (should preserve punctuation)
+        $result_default = Jieba::cut($sentence);
+        $this->assertContains("！", $result_default);
+        $this->assertContains("，", $result_default);
+        $this->assertContains("？", $result_default);
+    }
+
+    public function testPreservePunctuationInCutForSearch()
+    {
+        Jieba::init();
+        
+        // Test sentence with punctuation
+        $sentence = "小明硕士毕业于中国科学院计算所，后在日本京都大学深造。";
+        
+        // Test with preserve_punctuation = true
+        $result_with_punct = Jieba::cutForSearch($sentence, array("preserve_punctuation" => true));
+        $this->assertContains("，", $result_with_punct);
+        $this->assertContains("。", $result_with_punct);
+        
+        // Test with preserve_punctuation = false
+        $result_without_punct = Jieba::cutForSearch($sentence, array("preserve_punctuation" => false));
+        $this->assertNotContains("，", $result_without_punct);
+        $this->assertNotContains("。", $result_without_punct);
+    }
+
+    public function testPreservePunctuationInTokenize()
+    {
+        Jieba::init();
+        
+        // Test sentence with punctuation
+        $sentence = "测试！标点符号。";
+        
+        // Test with preserve_punctuation = true
+        $result_with_punct = Jieba::tokenize($sentence, array("preserve_punctuation" => true));
+        $words_with_punct = array_column($result_with_punct, 'word');
+        $this->assertContains("！", $words_with_punct);
+        $this->assertContains("。", $words_with_punct);
+        
+        // Test with preserve_punctuation = false
+        $result_without_punct = Jieba::tokenize($sentence, array("preserve_punctuation" => false));
+        $words_without_punct = array_column($result_without_punct, 'word');
+        $this->assertNotContains("！", $words_without_punct);
+        $this->assertNotContains("。", $words_without_punct);
+    }
 }
