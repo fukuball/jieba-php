@@ -563,12 +563,16 @@ class Jieba
         self::requireInitialization();
 
         $defaults = array(
-            'preserve_punctuation' => true
+            'preserve_punctuation' => true,
+            'HMM' => true
         );
 
         $options = array_merge($defaults, $options);
 
-        $seg_list = self::cut($sentence, false, array("HMM" => $options["HMM"], "preserve_punctuation" => $options["preserve_punctuation"]));
+        $seg_list = self::cut($sentence, false, array(
+            "HMM" => $options["HMM"],
+            "preserve_punctuation" => $options["preserve_punctuation"]
+        ));
         $tokenize_list = [];
         $start = 0;
         $end = 0;
@@ -863,7 +867,8 @@ class Jieba
 
         $defaults = array(
             'mode' => 'default',
-            'preserve_punctuation' => true
+            'preserve_punctuation' => true,
+            'HMM' => true
         );
 
         $options = array_merge($defaults, $options);
@@ -967,14 +972,18 @@ class Jieba
 
         $defaults = array(
             'mode' => 'default',
-            'preserve_punctuation' => true
+            'preserve_punctuation' => true,
+            'HMM' => true
         );
 
         $options = array_merge($defaults, $options);
 
         $seg_list = array();
 
-        $cut_seg_list = Jieba::cut($sentence, false, array("HMM" => $options["HMM"], "preserve_punctuation" => $options["preserve_punctuation"]));
+        $cut_seg_list = Jieba::cut($sentence, false, array(
+            "HMM" => $options["HMM"],
+            "preserve_punctuation" => $options["preserve_punctuation"]
+        ));
 
         foreach ($cut_seg_list as $w) {
             $len = mb_strlen($w, 'UTF-8');
