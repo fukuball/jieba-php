@@ -788,7 +788,7 @@ class Posseg
             'with_scores' => false
         );
 
-        @$options = array_merge($defaults, $options);
+        $options = array_merge($defaults, is_array($options) ? $options : array());
 
         $seg_list = array();
 
