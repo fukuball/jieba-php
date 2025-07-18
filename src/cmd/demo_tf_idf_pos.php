@@ -15,13 +15,15 @@
  * @link     https://github.com/fukuball/jieba-php
  */
 
+require_once dirname(dirname(__FILE__)) . '/vendor/multi-array/MultiArray.php';
+require_once dirname(dirname(__FILE__)) . '/vendor/multi-array/Factory/MultiArrayFactory.php';
 require_once dirname(dirname(__FILE__)) . '/class/Jieba.php';
 require_once dirname(dirname(__FILE__)) . '/class/Finalseg.php';
 require_once dirname(dirname(__FILE__)) . '/class/JiebaAnalyse.php';
 require_once dirname(dirname(__FILE__)) . '/class/Posseg.php';
-require_once dirname(dirname(__FILE__)) . '/../vendor/multi-array/MultiArray.php';
 
 use Fukuball\Jieba\Jieba;
+use Fukuball\Jieba\Finalseg;
 use Fukuball\Jieba\JiebaAnalyse;
 use Fukuball\Jieba\Posseg;
 
@@ -31,7 +33,9 @@ ini_set('memory_limit', '1024M');
 // 初始化系統
 echo "正在初始化 jieba-php...\n";
 Jieba::init();
+Finalseg::init();
 Posseg::init();
+JiebaAnalyse::init();
 
 echo "===== jieba-php TF-IDF 和詞性標註功能示範 =====\n\n";
 
@@ -44,7 +48,7 @@ $test_sentences = array(
 );
 
 foreach ($test_sentences as $index => $sentence) {
-    echo "【範例 " . ($index + 1) . "】文本：「$sentence」\n";
+    echo "【範例 " . ($index + 1) . "】文本：「" . $sentence . "」\n";
     echo str_repeat("=", 60) . "\n";
 
     // 1. 基本 Jieba 分詞 (向後相容)

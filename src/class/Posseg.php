@@ -858,6 +858,10 @@ class Posseg
                 if (isset($tfidf_values[$word])) {
                     $seg_list[$i]['tf'] = $tfidf_values[$word]['tf'];
                     $seg_list[$i]['tfidf'] = $tfidf_values[$word]['tfidf'];
+                } else {
+                    // For words filtered out (stop words, short words), set scores to 0
+                    $seg_list[$i]['tf'] = 0.0;
+                    $seg_list[$i]['tfidf'] = 0.0;
                 }
             }
         }

@@ -994,9 +994,15 @@ class Jieba
                 }
 
                 // Add TF-IDF scores if requested
-                if ($options['with_scores'] && isset($tfidf_values[$word])) {
-                    $result['tf'] = $tfidf_values[$word]['tf'];
-                    $result['tfidf'] = $tfidf_values[$word]['tfidf'];
+                if ($options['with_scores']) {
+                    if (isset($tfidf_values[$word])) {
+                        $result['tf'] = $tfidf_values[$word]['tf'];
+                        $result['tfidf'] = $tfidf_values[$word]['tfidf'];
+                    } else {
+                        // For words filtered out (stop words, short words), set scores to 0
+                        $result['tf'] = 0.0;
+                        $result['tfidf'] = 0.0;
+                    }
                 }
 
                 $enhanced_results[] = $result;
