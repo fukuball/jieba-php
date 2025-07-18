@@ -897,12 +897,6 @@ class Jieba
             if (mb_strlen($blk, 'UTF-8') == 0) {
                 continue;
             }
-            if (self::$cjk_all) {
-                // skip korean
-                $filter_pattern = $re_kanjikana_pattern . '|' . $re_katakana_pattern;
-            } else {
-                $filter_pattern = $re_han_with_ascii_pattern;
-            }
 
             if (preg_match('/' . $filter_pattern . '/u', $blk)) {
                 if ($cut_all) {
