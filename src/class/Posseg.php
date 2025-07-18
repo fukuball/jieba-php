@@ -783,10 +783,12 @@ class Posseg
         self::requireInitialization();
 
         $defaults = array(
-            'mode' => 'default'
+            'mode' => 'default',
+            'HMM' => true,
+            'with_scores' => false
         );
 
-        @$options = array_merge($defaults, $options);
+        $options = array_merge($defaults, is_array($options) ? $options : array());
 
         $seg_list = array();
 
@@ -830,6 +832,37 @@ class Posseg
                 }
             } elseif (preg_match('/' . $re_punctuation_pattern . '/u', $blk)) {
                 $seg_list[] = array('word' => $blk, 'tag' => 'w');
+            }
+        }
+
+        // Add TF-IDF scores if requested
+        if ($options['with_scores']) {
+            // Ensure JiebaAnalyse is initialized
+            if (!JiebaAnalyse::isInitialized()) {
+                JiebaAnalyse::init();
+            }
+
+            // Extract words for TF-IDF calculation
+            $words = array();
+            foreach ($seg_list as $item) {
+                $words[] = $item['word'];
+            }
+
+            // Calculate TF-IDF scores
+            $tf_values = JiebaAnalyse::calculateTF($words);
+            $tfidf_values = JiebaAnalyse::calculateTFIDF($tf_values, true);
+
+            // Add scores to results
+            for ($i = 0; $i < count($seg_list); $i++) {
+                $word = $seg_list[$i]['word'];
+                if (isset($tfidf_values[$word])) {
+                    $seg_list[$i]['tf'] = $tfidf_values[$word]['tf'];
+                    $seg_list[$i]['tfidf'] = $tfidf_values[$word]['tfidf'];
+                } else {
+                    // For words filtered out (stop words, short words), set scores to 0
+                    $seg_list[$i]['tf'] = 0.0;
+                    $seg_list[$i]['tfidf'] = 0.0;
+                }
             }
         }
 

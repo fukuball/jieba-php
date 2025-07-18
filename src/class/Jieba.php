@@ -42,6 +42,7 @@ class Jieba
     public static $dag_cache = array();
     public static $enable_logging = true;
     public static $is_initialized = false;
+    public static $word_pos = array();
     const MAX_CACHE_SIZE = 52428800; // 50MB in bytes
 
     /**
@@ -113,6 +114,7 @@ class Jieba
         self::$dag_cache = array();
         self::$route = array();
         self::$user_dictname = array();
+        self::$word_pos = array();
 
         // Reset numeric values
         self::$total = 0.0;
@@ -255,6 +257,11 @@ class Jieba
             }
             self::$original_freq[$word] = $freq;
             self::$total += $freq;
+
+            // Store POS tag information if available
+            if (!empty($tag)) {
+                self::$word_pos[$word] = $tag;
+            }
         }
         fclose($content);
 
@@ -273,7 +280,8 @@ class Jieba
 
             $cache_data = array(
                 'original_freq' => self::$original_freq,
-                'total' => self::$total
+                'total' => self::$total,
+                'word_pos' => self::$word_pos
             );
 
             $json_data = json_encode($cache_data);
@@ -416,6 +424,11 @@ class Jieba
                     ) {
                         self::$original_freq = $cache_data['original_freq'];
                         self::$total = (float) $cache_data['total'];
+
+                        // Load word_pos data if available (for backward compatibility with old cache files)
+                        if (isset($cache_data['word_pos']) && is_array($cache_data['word_pos'])) {
+                            self::$word_pos = $cache_data['word_pos'];
+                        }
 
                         return self::$trie;
                     }
@@ -868,7 +881,9 @@ class Jieba
         $defaults = array(
             'mode' => 'default',
             'preserve_punctuation' => true,
-            'HMM' => true
+            'HMM' => true,
+            'with_pos' => false,
+            'with_scores' => false
         );
 
         $options = array_merge($defaults, $options);
@@ -954,6 +969,47 @@ class Jieba
                 }
             } // end else (preg_match('/'.$re_han_pattern.'/u', $blk))
         } // end foreach ($blocks as $blk)
+
+        // Enhanced return format with POS tags and/or scores if requested
+        if ($options['with_pos'] || $options['with_scores']) {
+            $enhanced_results = array();
+
+            // Initialize JiebaAnalyse if scores are needed
+            if ($options['with_scores']) {
+                if (!JiebaAnalyse::isInitialized()) {
+                    JiebaAnalyse::init();
+                }
+
+                // Calculate TF-IDF scores
+                $tf_values = JiebaAnalyse::calculateTF($seg_list);
+                $tfidf_values = JiebaAnalyse::calculateTFIDF($tf_values, true);
+            }
+
+            foreach ($seg_list as $word) {
+                $result = array('word' => $word);
+
+                // Add POS tag if requested
+                if ($options['with_pos']) {
+                    $result['tag'] = isset(self::$word_pos[$word]) ? self::$word_pos[$word] : 'x';
+                }
+
+                // Add TF-IDF scores if requested
+                if ($options['with_scores']) {
+                    if (isset($tfidf_values[$word])) {
+                        $result['tf'] = $tfidf_values[$word]['tf'];
+                        $result['tfidf'] = $tfidf_values[$word]['tfidf'];
+                    } else {
+                        // For words filtered out (stop words, short words), set scores to 0
+                        $result['tf'] = 0.0;
+                        $result['tfidf'] = 0.0;
+                    }
+                }
+
+                $enhanced_results[] = $result;
+            }
+
+            return $enhanced_results;
+        }
 
         return $seg_list;
     } // end function cut

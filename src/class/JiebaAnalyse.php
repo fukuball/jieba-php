@@ -230,6 +230,78 @@ class JiebaAnalyse
     }
 
     /**
+     * Static method calculateTF - Calculate Term Frequency
+     *
+     * @param array $words # array of words
+     *
+     * @return array $tf_values # array of word => tf_value
+     */
+    public static function calculateTF($words)
+    {
+        $freq = array();
+        $total = 0.0;
+
+        foreach ($words as $w) {
+            $w = trim($w);
+            if (mb_strlen($w, 'UTF-8') < 2) {
+                continue;
+            }
+
+            if (in_array(strtolower($w), self::$stop_words)) {
+                continue;
+            }
+            if (isset($freq[$w])) {
+                $freq[$w] = $freq[$w] + 1.0;
+            } else {
+                $freq[$w] = 0.0 + 1.0;
+            }
+            $total = $total + 1.0;
+        }
+
+        foreach ($freq as $k => $v) {
+            $freq[$k] = $v / $total;
+        }
+
+        return $freq;
+    } // end function calculateTF
+
+    /**
+     * Static method calculateTFIDF - Calculate TF-IDF values with detailed info
+     *
+     * @param array $tf_values # TF values array
+     * @param bool  $detailed  # return detailed info including tf, idf, tfidf
+     *
+     * @return array $tfidf_values
+     */
+    public static function calculateTFIDF($tf_values, $detailed = false)
+    {
+        self::requireInitialization();
+
+        $result = array();
+
+        foreach ($tf_values as $word => $tf) {
+            if (isset(self::$idf_freq[$word])) {
+                $idf = self::$idf_freq[$word];
+            } else {
+                $idf = self::$median_idf;
+            }
+            $tfidf = $tf * $idf;
+
+            if ($detailed) {
+                $result[$word] = array(
+                    'tf' => $tf,
+                    'idf' => $idf,
+                    'tfidf' => $tfidf
+                );
+            } else {
+                $result[$word] = $tfidf;
+            }
+        }
+
+        return $result;
+    } // end function calculateTFIDF
+
+    /**
      * Static method extractTags
      *
      * @param string  $content  # input content
@@ -268,40 +340,9 @@ class JiebaAnalyse
             $words = Jieba::cut($content);
         }
 
-        $freq = array();
-        $total = 0.0;
-
-        foreach ($words as $w) {
-            $w = trim($w);
-            if (mb_strlen($w, 'UTF-8') < 2) {
-                continue;
-            }
-
-            if (in_array(strtolower($w), self::$stop_words)) {
-                continue;
-            }
-            if (isset($freq[$w])) {
-                $freq[$w] = $freq[$w] + 1.0;
-            } else {
-                $freq[$w] = 0.0 + 1.0;
-            }
-            $total = $total + 1.0;
-        }
-
-        foreach ($freq as $k => $v) {
-            $freq[$k] = $v / $total;
-        }
-
-        $tf_idf_list = array();
-
-        foreach ($freq as $k => $v) {
-            if (isset(self::$idf_freq[$k])) {
-                $idf_freq = self::$idf_freq[$k];
-            } else {
-                $idf_freq = self::$median_idf;
-            }
-            $tf_idf_list[$k] = $v * $idf_freq;
-        }
+        // Use modularized TF-IDF calculation
+        $tf_values = self::calculateTF($words);
+        $tf_idf_list = self::calculateTFIDF($tf_values);
 
         arsort($tf_idf_list);
 
