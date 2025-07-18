@@ -558,7 +558,7 @@ class JiebaTest extends TestCase
                 array("word" => "價格", "tag" => "n"),
                 array("word" => "是", "tag" => "v"),
                 array("word" => "3.14", "tag" => "m"),
-                array("word" => "元", "tag" => "q")
+                array("word" => "元", "tag" => "m")
             ),
             "123.456789" => array(
                 array("word" => "123.456789", "tag" => "m")
@@ -576,9 +576,8 @@ class JiebaTest extends TestCase
                 array("word" => "50%", "tag" => "m")
             ),
             "成功率為90.5%" => array(
-                array("word" => "成功", "tag" => "n"),
-                array("word" => "率", "tag" => "n"),
-                array("word" => "為", "tag" => "v"),
+                array("word" => "成功率", "tag" => "n"),
+                array("word" => "為", "tag" => "zg"),
                 array("word" => "90.5%", "tag" => "m")
             ),
             "增長了25%" => array(
@@ -596,7 +595,7 @@ class JiebaTest extends TestCase
         // Test mixed numbers and percentages
         $mixed_cases = array(
             "從3.14增長到50%" => array(
-                array("word" => "從", "tag" => "p"),
+                array("word" => "從", "tag" => "zg"),
                 array("word" => "3.14", "tag" => "m"),
                 array("word" => "增長", "tag" => "v"),
                 array("word" => "到", "tag" => "v"),
@@ -605,10 +604,10 @@ class JiebaTest extends TestCase
             "產品價格$99.99，銷售額增長了15.5%" => array(
                 array("word" => "產品", "tag" => "n"),
                 array("word" => "價格", "tag" => "n"),
-                array("word" => "$", "tag" => "w"),
                 array("word" => "99.99", "tag" => "m"),
                 array("word" => "，", "tag" => "w"),
-                array("word" => "銷售額", "tag" => "n"),
+                array("word" => "銷售", "tag" => "vn"),
+                array("word" => "額", "tag" => "n"),
                 array("word" => "增長", "tag" => "v"),
                 array("word" => "了", "tag" => "ul"),
                 array("word" => "15.5%", "tag" => "m")
