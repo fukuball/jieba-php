@@ -26,6 +26,10 @@ _Scroll down for English documentation._
 
 - 支持繁體斷詞
 - 支持自定義詞典
+- 支持多語言 CJK 文本處理（中文、日文、韓文）
+- 支持 TF-IDF 分詞整合和詞性標註
+- 支持記憶體管理和快取優化
+- 支持自定義詞性標籤
 
 # Usage
 
@@ -357,6 +361,33 @@ $seg_list = Posseg::cut("这是一个伸手不见五指的黑夜。我叫孙悟�
 var_dump($seg_list);
 ```
 
+## 新功能：支持 TF-IDF 分數的詞性分詞
+
+```php
+// 使用 Posseg::cut() 含 TF-IDF 分數
+$scored_result = Posseg::cut("我愛吃蘋果", array('with_scores' => true));
+foreach ($scored_result as $item) {
+    echo sprintf("%-10s [%s] TF: %.4f, TF-IDF: %.4f\n", 
+        $item['word'], $item['tag'], $item['tf'], $item['tfidf']);
+}
+
+// 使用 Jieba::cut() 含詞性標註
+$pos_result = Jieba::cut("我愛吃蘋果", false, array('with_pos' => true));
+foreach ($pos_result as $item) {
+    echo sprintf("%-10s [%s]\n", $item['word'], $item['tag']);
+}
+
+// 使用 Jieba::cut() 含詞性標註和 TF-IDF 分數
+$full_result = Jieba::cut("我愛吃蘋果", false, array(
+    'with_pos' => true,
+    'with_scores' => true
+));
+foreach ($full_result as $item) {
+    echo sprintf("%-10s [%s] TF: %.4f, TF-IDF: %.4f\n", 
+        $item['word'], $item['tag'], $item['tf'], $item['tfidf']);
+}
+```
+
 Output:
 
 ```php
@@ -631,7 +662,9 @@ array(7) {
 }
 ```
 
-# 功能 6)：保留日语或者朝鲜语原文不进行过滤
+# 功能 6)：多語言 CJK 文本處理
+
+jieba-php 現在支援更好的多語言 CJK（中文、日文、韓文）文本處理，包括混合語言文本的處理。
 
 代碼示例 (Tutorial)
 
@@ -644,20 +677,39 @@ require_once dirname(dirname(__FILE__))."/class/Jieba.php";
 require_once dirname(dirname(__FILE__))."/class/Finalseg.php";
 use Fukuball\Jieba\Jieba;
 use Fukuball\Jieba\Finalseg;
+
+// 初始化支援所有 CJK 語言
 Jieba::init(array('cjk'=>'all'));
 Finalseg::init();
 
+// 韓語文本處理
 $seg_list = Jieba::cut("한국어 또는 조선말은 제주특별자치도를 제외한 한반도 및 그 부속 도서와 한민족 거주 지역에서 쓰이는 언어로");
 var_dump($seg_list);
 
+// 日語文本處理
 $seg_list = Jieba::cut("日本語は、主に日本国内や日本人同士の間で使われている言語である。");
 var_dump($seg_list);
 
-// 加载日语词库可以对日语进行简单的分词
+// 混合語言文本處理
+$mixed_text = "我喜欢这个世界。私は日本に住んでいます。안녕하세요 세계입니다.";
+$seg_list = Jieba::cut($mixed_text);
+var_dump($seg_list);
+
+// 複雜混合文本處理
+$complex_mixed = "今天weather很好，私たちは공원에 갔습니다。";
+$seg_list = Jieba::cut($complex_mixed);
+var_dump($seg_list);
+
+// 加載日語詞庫可以對日語進行簡單的分詞
 Jieba::loadUserDict("/path/to/your/japanese/dict.txt");
 $seg_list = Jieba::cut("日本語は、主に日本国内や日本人同士の間で使われている言語である。");
 var_dump($seg_list);
 ```
+
+## 示範腳本
+
+- 基本多語言處理：`php src/cmd/demo_mixed_cjk.php`
+- TF-IDF 和詞性標註整合：`php src/cmd/demo_tf_idf_pos.php`
 
 Output:
 
@@ -864,6 +916,13 @@ array(4) {
 - 1. Accurate Mode, attempt to cut the sentence into the most accurate segmentation, which is suitable for text analysis;
 - 2. Full Mode, break the words of the sentence into words scanned
 - 3. Search Engine Mode, based on the Accurate Mode, with an attempt to cut the long words into several short words, which can enhance the recall rate
+
+- Support Traditional Chinese word segmentation
+- Support custom dictionaries
+- Support multi-language CJK text processing (Chinese, Japanese, Korean)
+- Support TF-IDF integration and POS tagging
+- Support memory management and cache optimization
+- Support custom POS tags
 
 # Usage
 
@@ -1556,13 +1615,53 @@ z 状态词 (取汉字「状」的声母的前一个字母。)
   zg 状态词*
 ```
 
-# Cache Management
+# 功能 8)：記憶體管理
 
-When processing large amounts of text, jieba-php uses internal caches to improve performance. However, these caches can grow indefinitely and cause memory issues. The following functions are available to manage cache memory usage:
+為了處理大量文本時的記憶體使用問題，jieba-php 提供了新的 JiebaMemory 類別來統一管理所有類別的記憶體使用。
 
-## clearCache()
+## JiebaMemory - 統一記憶體管理
 
-Clears all internal caches to free memory. This is useful when processing multiple large text files.
+```php
+ini_set('memory_limit', '1024M');
+
+use Fukuball\Jieba\JiebaMemory;
+
+// 初始化所有類別
+JiebaMemory::initAll();
+
+// 檢查初始化狀態
+$status = JiebaMemory::getInitializationStatus();
+var_dump($status);
+
+// 獲取記憶體使用統計
+$stats = JiebaMemory::getMemoryStats();
+echo "當前記憶體使用：" . $stats['current_memory_usage_formatted'] . "\n";
+echo "峰值記憶體使用：" . $stats['peak_memory_usage_formatted'] . "\n";
+
+// 清除所有快取但保持類別初始化
+JiebaMemory::clearAllCaches();
+
+// 銷毀所有類別釋放記憶體
+JiebaMemory::destroyAll();
+```
+
+## 詳細快取統計
+
+```php
+// 獲取所有類別的快取統計
+$cacheStats = JiebaMemory::getAllCacheStats();
+echo "Jieba DAG 快取大小：" . $cacheStats['jieba']['dag_cache_size'] . "\n";
+echo "Posseg 詞性標籤數量：" . $cacheStats['posseg']['word_tag_size'] . "\n";
+echo "JiebaAnalyse IDF 頻率數量：" . $cacheStats['jieba_analyse']['idf_freq_size'] . "\n";
+```
+
+## Cache Management (原有功能)
+
+當處理大量文本時，jieba-php 使用內部快取來提高性能。以下功能可用於管理快取記憶體使用：
+
+### clearCache()
+
+清除所有內部快取以釋放記憶體。處理多個大型文本文件時很有用。
 
 ```php
 ini_set('memory_limit', '1024M');
@@ -1573,51 +1672,52 @@ use Fukuball\Jieba\Finalseg;
 Jieba::init();
 Finalseg::init();
 
-// Process first file
+// 處理第一個文件
 $text1 = file_get_contents('large_file1.txt');
 $seg_list1 = Jieba::cut($text1);
 
-// Clear cache before processing next file
+// 處理下一個文件前清除快取
 Jieba::clearCache();
 
-// Process second file
+// 處理第二個文件
 $text2 = file_get_contents('large_file2.txt');
 $seg_list2 = Jieba::cut($text2);
 ```
 
-## getCacheStats()
+### getCacheStats()
 
-Returns information about current cache usage for monitoring purposes.
+返回當前快取使用情況以供監控。
 
 ```php
 $stats = Jieba::getCacheStats();
-echo "DAG Cache Size: " . $stats['dag_cache_size'] . "\n";
-echo "Trie Cache Size: " . $stats['trie_cache_size'] . "\n";
-echo "Memory Usage: " . round($stats['total_memory_usage'] / 1024 / 1024, 2) . "M\n";
-echo "Peak Memory: " . round($stats['peak_memory_usage'] / 1024 / 1024, 2) . "M\n";
+echo "DAG 快取大小：" . $stats['dag_cache_size'] . "\n";
+echo "Trie 快取大小：" . $stats['trie_cache_size'] . "\n";
+echo "記憶體使用：" . round($stats['total_memory_usage'] / 1024 / 1024, 2) . "M\n";
+echo "峰值記憶體：" . round($stats['peak_memory_usage'] / 1024 / 1024, 2) . "M\n";
 ```
 
-## clearCacheIfNeeded()
+### clearCacheIfNeeded()
 
-Automatically clears cache if it exceeds specified size limits.
+如果快取超過指定大小限制則自動清除。
 
 ```php
-// Clear cache if DAG cache exceeds 50,000 entries or trie cache exceeds 50,000 entries
+// 如果 DAG 快取超過 50,000 條目或 trie 快取超過 50,000 條目則清除快取
 $cleared = Jieba::clearCacheIfNeeded(50000, 50000);
 if ($cleared) {
-    echo "Cache was cleared due to size limits\n";
+    echo "由於大小限制，快取已被清除\n";
 }
 
-// Custom limits
+// 自定義限制
 $cleared = Jieba::clearCacheIfNeeded(10000, 10000);
 ```
 
-## Memory Usage Tips
+## 記憶體使用提示
 
-- For CLI applications processing multiple files, call `clearCache()` after each file
-- Use `getCacheStats()` to monitor memory usage
-- Consider using `clearCacheIfNeeded()` for automatic cache management
-- Note that clearing cache will reset performance optimizations until cache is rebuilt
+- 對於處理多個文件的 CLI 應用程序，在每個文件後調用 `clearCache()` 或使用 `JiebaMemory::clearAllCaches()`
+- 使用 `getCacheStats()` 或 `JiebaMemory::getMemoryStats()` 監控記憶體使用情況
+- 考慮使用 `clearCacheIfNeeded()` 進行自動快取管理
+- 注意清除快取會重置性能優化，直到重新建立快取
+- 使用 `JiebaMemory::destroyAll()` 完全釋放記憶體，但需要重新初始化才能再次使用
 
 # Donate
 
