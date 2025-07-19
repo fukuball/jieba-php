@@ -3,7 +3,7 @@
 [![Made with Love](https://img.shields.io/badge/made%20with-%e2%9d%a4-ff69b4.svg)](http://www.fukuball.com)
 [![codecov](https://codecov.io/gh/fukuball/jieba-php/branch/master/graph/badge.svg)](https://codecov.io/gh/fukuball/jieba-php)
 
-"結巴"中文分詞：做最好的 PHP 中文分詞、中文斷詞組件，原始版本翻譯自[fxsjy/jieba](https://github.com/fxsjy/jieba)，目前已經為一個獨立分支，請有興趣的開發者一起加入開發！若想使用 Python 版本請前往 [fxsjy/jieba](https://github.com/fxsjy/jieba)
+"結巴"中文分詞：做最好的 PHP 中文分詞、中文斷詞組件，原始版本翻譯自 [fxsjy/jieba](https://github.com/fxsjy/jieba)，目前已經為一個獨立分支，請有興趣的開發者一起加入開發！若想使用 Python 版本請前往 [fxsjy/jieba](https://github.com/fxsjy/jieba)
 
 現在已經可以支援繁體中文！只要將字典切換為 big 模式即可！
 
@@ -367,7 +367,7 @@ var_dump($seg_list);
 // 使用 Posseg::cut() 含 TF-IDF 分數
 $scored_result = Posseg::cut("我愛吃蘋果", array('with_scores' => true));
 foreach ($scored_result as $item) {
-    echo sprintf("%-10s [%s] TF: %.4f, TF-IDF: %.4f\n", 
+    echo sprintf("%-10s [%s] TF: %.4f, TF-IDF: %.4f\n",
         $item['word'], $item['tag'], $item['tf'], $item['tfidf']);
 }
 
@@ -383,7 +383,7 @@ $full_result = Jieba::cut("我愛吃蘋果", false, array(
     'with_scores' => true
 ));
 foreach ($full_result as $item) {
-    echo sprintf("%-10s [%s] TF: %.4f, TF-IDF: %.4f\n", 
+    echo sprintf("%-10s [%s] TF: %.4f, TF-IDF: %.4f\n",
         $item['word'], $item['tag'], $item['tf'], $item['tfidf']);
 }
 ```
