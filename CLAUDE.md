@@ -40,17 +40,17 @@ This is a PHP port of the Python jieba Chinese text segmentation library. The co
   - Supports custom word addition with `addWord($word, $freq, $tag)`
   - Enhanced input validation and security measures
   - Memory management improvements
-  - **NEW**: Support for `with_pos` and `with_scores` options in `cut()` method
+  - Support for `with_pos` and `with_scores` options in `cut()` method
 - **Finalseg**: HMM-based final segmentation for unknown words using Viterbi algorithm
 - **JiebaAnalyse**: TF-IDF keyword extraction functionality
-  - **NEW**: Modular TF calculation with `calculateTF($words)`
-  - **NEW**: Flexible TF-IDF calculation with `calculateTFIDF($tf_values, $detailed)`
+  - Modular TF calculation with `calculateTF($words)`
+  - Flexible TF-IDF calculation with `calculateTFIDF($tf_values, $detailed)`
 - **Posseg**: Part-of-speech tagging with HMM model
   - **Custom POS tag support**: Add custom tags with `addWordTag($word, $tag)`
   - **Input validation**: Secure tag validation with length limits and character restrictions
   - **Memory cleanup**: `removeWordTag($word)` for tag cleanup
-  - **NEW**: Support for `with_scores` option in `cut()` method
-- **JiebaMemory**: NEW unified memory management utility
+  - Support for `with_scores` option in `cut()` method
+- **JiebaMemory**: Unified memory management utility
   - **Memory management**: `destroyAll()`, `initAll()`, `clearAllCaches()`
   - **Statistics**: `getMemoryStats()`, `getAllCacheStats()`, `getInitializationStatus()`
   - **Convenience**: `isAllInitialized()` for checking all classes
@@ -84,7 +84,7 @@ Finalseg::init();           // Load HMM models
 JiebaAnalyse::init();       // Load IDF data
 Posseg::init();             // Load POS models
 
-// NEW: Convenient initialization of all classes
+// Convenient initialization of all classes
 JiebaMemory::initAll($options);  // Initialize all classes at once
 ```
 
@@ -102,14 +102,14 @@ JiebaMemory::initAll($options);  // Initialize all classes at once
 ### Multi-language Support
 - Primary: Simplified/Traditional Chinese
 - Secondary: Japanese, Korean (with `'cjk'=>'all'`)
-- **ENHANCED**: Improved mixed-language text processing
-- **NEW**: Better handling of complex mixed CJK scenarios
+- Enhanced: Improved mixed-language text processing
+- Better handling of complex mixed CJK scenarios
 - Custom dictionaries can extend language support
-- **NEW Demo**: `demo_mixed_cjk.php` for testing multi-language capabilities
+- Demo: `demo_mixed_cjk.php` for testing multi-language capabilities
 
 ## Enhanced TF-IDF and POS Integration Features
 
-### NEW: Integrated TF-IDF Scoring
+### Integrated TF-IDF Scoring
 ```php
 // Jieba::cut() with POS tags
 $pos_result = Jieba::cut($text, false, array('with_pos' => true));
@@ -127,7 +127,7 @@ $full_result = Jieba::cut($text, false, array(
 $posseg_scored = Posseg::cut($text, array('with_scores' => true));
 ```
 
-### NEW: Modular TF-IDF Calculation
+### Modular TF-IDF Calculation
 ```php
 // Calculate Term Frequency
 $words = array('測試', '中文', '分詞', '測試');
@@ -193,21 +193,21 @@ Posseg::removeWordTag('詞彙');
 - **Security**: Input validation and injection prevention tests
 - **User Dictionaries**: Dictionary loading and processing tests
 - **Memory Management**: Memory cleanup and leak prevention tests
-- **NEW: TF-IDF Integration**: Enhanced TF-IDF and POS tagging features (`TfIdfPosTest.php`)
-- **NEW: Mixed CJK Support**: Multi-language text processing tests (`MixedCJKTest.php`)
+- TF-IDF Integration: Enhanced TF-IDF and POS tagging features (`TfIdfPosTest.php`)
+- Mixed CJK Support: Multi-language text processing tests (`MixedCJKTest.php`)
 
 ### Test Coverage
 - 70+ tests with 300+ assertions
 - PSR2 coding standard compliance
 - Edge case coverage for mixed character types
 - Security vulnerability testing
-- **NEW**: Comprehensive TF-IDF integration testing
-- **NEW**: Multi-language CJK text processing validation
-- **NEW**: Backward compatibility verification
+- Comprehensive TF-IDF integration testing
+- Multi-language CJK text processing validation
+- Backward compatibility verification
 
 ## Memory Management with JiebaMemory
 
-### NEW: Unified Memory Management
+### Unified Memory Management
 ```php
 use Fukuball\Jieba\JiebaMemory;
 
@@ -232,7 +232,7 @@ JiebaMemory::clearAllCaches();
 JiebaMemory::destroyAll();
 ```
 
-### NEW: Cache Statistics Monitoring
+### Cache Statistics Monitoring
 ```php
 // Get detailed cache statistics for all classes
 $cacheStats = JiebaMemory::getAllCacheStats();
@@ -262,7 +262,7 @@ try {
 }
 ```
 
-### NEW: Enhanced Feature Usage
+### Enhanced Feature Usage
 ```php
 // Use integrated TF-IDF and POS features
 $result = Jieba::cut($text, false, array(
@@ -288,8 +288,8 @@ $tfidf_scores = JiebaAnalyse::calculateTFIDF($tf_values, true);
 - Load user dictionaries during initialization, not runtime
 - Use appropriate dictionary modes ('small' for memory-constrained environments)
 - Clear unused tags with `removeWordTag()` to prevent memory leaks
-- **NEW**: Use `JiebaMemory::clearAllCaches()` for comprehensive cache management
-- **NEW**: Monitor memory with `JiebaMemory::getMemoryStats()` and `getAllCacheStats()`
+- Use `JiebaMemory::clearAllCaches()` for comprehensive cache management
+- Monitor memory with `JiebaMemory::getMemoryStats()` and `getAllCacheStats()`
 - Cache initialization results when possible
 
 ### Error Handling Patterns
