@@ -584,7 +584,10 @@ class Posseg
                     $words[] = $blk_word;
                 }
             } elseif (preg_match('/' . $re_skip_pattern . '/u', $blk)) {
-                if (preg_match('/' . $re_num_pattern . '/u', $blk)) {
+                // Check for custom word tag first
+                if (isset(self::$word_tag[$blk])) {
+                    $words[] = array('word' => $blk, 'tag' => self::$word_tag[$blk]);
+                } elseif (preg_match('/' . $re_num_pattern . '/u', $blk)) {
                     $words[] = array('word' => $blk, 'tag' => 'm');
                 } elseif (preg_match('/' . $re_eng_pattern . '/u', $blk)) {
                     $words[] = array('word' => $blk, 'tag' => 'eng');
@@ -825,7 +828,10 @@ class Posseg
                     $seg_list[] = $word;
                 }
             } elseif (preg_match('/' . $re_skip_pattern . '/u', $blk)) {
-                if (preg_match('/' . $re_num_pattern . '/u', $blk)) {
+                // Check for custom word tag first
+                if (isset(self::$word_tag[$blk])) {
+                    $seg_list[] = array('word' => $blk, 'tag' => self::$word_tag[$blk]);
+                } elseif (preg_match('/' . $re_num_pattern . '/u', $blk)) {
                     $seg_list[] = array('word' => $blk, 'tag' => 'm');
                 } elseif (preg_match('/' . $re_eng_pattern . '/u', $blk)) {
                     $seg_list[] = array('word' => $blk, 'tag' => 'eng');
