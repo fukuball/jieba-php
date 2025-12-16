@@ -264,7 +264,7 @@ class JiebaTest extends TestCase
             ),
             array(
                 "word" => "C++",
-                "tag" => "eng"
+                "tag" => "nz"
             ),
             array(
                 "word" => "。",
