@@ -119,6 +119,10 @@ class HyphenWordsTest extends TestCase
 
         // Test with different frequency values
         foreach ([100, 1000, 10000, 100000] as $freq) {
+            // Clean up before reinitializing
+            Jieba::destroy();
+            Finalseg::destroy();
+
             // Reinitialize to clear previous additions
             Jieba::init();
             Finalseg::init();

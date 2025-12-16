@@ -369,7 +369,7 @@ class CustomPosTagTest extends TestCase
         }
 
         // At least some English text should be tagged as 'eng'
-        $this->assertTrue($found_eng || true, 'English pattern should match in __cutDetail');
+        $this->assertTrue($found_eng, 'English pattern should match in __cutDetail');
     }
 
     /**
@@ -393,6 +393,6 @@ class CustomPosTagTest extends TestCase
         }
 
         // At least some numeric text should be tagged as 'm'
-        $this->assertTrue($found_num || true, 'Numeric pattern should match in __cutDetail');
+        $this->assertTrue($found_num, 'Numeric pattern should match in __cutDetail');
     }
 }
