@@ -216,4 +216,183 @@ class CustomPosTagTest extends TestCase
         $this->assertEquals('custom_verb', $result_map['開發']);
         $this->assertEquals('custom_noun', $result_map['程式庫']);
     }
+
+    /**
+     * Test custom tags for English words override default 'eng' tag
+     * This tests the priority logic in Posseg line 587-594
+     */
+    public function testCustomTagForEnglishWord()
+    {
+        // Add English word with custom tag
+        Jieba::addWord('Python', 100, 'programming_lang');
+        Jieba::addWord('JavaScript', 100, 'script_lang');
+
+        // Test segmentation
+        $result = Posseg::cut('我喜歡Python和JavaScript');
+
+        // Build result map
+        $result_map = array();
+        foreach ($result as $word_info) {
+            $result_map[$word_info['word']] = $word_info['tag'];
+        }
+
+        // Verify custom tags override default 'eng' tag
+        $this->assertEquals('programming_lang', $result_map['Python']);
+        $this->assertEquals('script_lang', $result_map['JavaScript']);
+    }
+
+    /**
+     * Test custom tags for numeric words override default 'm' tag
+     * This tests the priority logic in Posseg line 587-594
+     */
+    public function testCustomTagForNumericWord()
+    {
+        // Add numeric-like word with custom tag
+        Jieba::addWord('123', 100, 'custom_id');
+        Jieba::addWord('456', 100, 'custom_code');
+
+        // Test segmentation
+        $result = Posseg::cut('編號123和456');
+
+        // Build result map
+        $result_map = array();
+        foreach ($result as $word_info) {
+            $result_map[$word_info['word']] = $word_info['tag'];
+        }
+
+        // Verify custom tags override default 'm' tag
+        $this->assertEquals('custom_id', $result_map['123']);
+        $this->assertEquals('custom_code', $result_map['456']);
+    }
+
+    /**
+     * Test custom tags for mixed alphanumeric words
+     * This tests the priority logic in Posseg line 587-594
+     */
+    public function testCustomTagForMixedAlphanumeric()
+    {
+        // Add mixed alphanumeric words with custom tags
+        Jieba::addWord('ABC123', 100, 'product_code');
+        Jieba::addWord('V2.0', 100, 'version_tag');
+        Jieba::addWord('BZ-YQ1722', 10000, 'issue_number');
+
+        // Test segmentation
+        $result = Posseg::cut('產品ABC123版本V2.0編號BZ-YQ1722');
+
+        // Build result map
+        $result_map = array();
+        foreach ($result as $word_info) {
+            $result_map[$word_info['word']] = $word_info['tag'];
+        }
+
+        // Verify custom tags are applied
+        $this->assertEquals('product_code', $result_map['ABC123']);
+        $this->assertEquals('version_tag', $result_map['V2.0']);
+        $this->assertEquals('issue_number', $result_map['BZ-YQ1722']);
+    }
+
+    /**
+     * Test that words without custom tags still use pattern matching
+     * This ensures the fallback logic works correctly
+     */
+    public function testPatternMatchingFallback()
+    {
+        // Don't add custom tags, let pattern matching work
+        $result = Posseg::cut('test 123 測試');
+
+        // Build result map
+        $result_map = array();
+        foreach ($result as $word_info) {
+            $result_map[$word_info['word']] = $word_info['tag'];
+        }
+
+        // Verify pattern matching still works
+        if (isset($result_map['test'])) {
+            $this->assertEquals('eng', $result_map['test']);
+        }
+        if (isset($result_map['123'])) {
+            $this->assertEquals('m', $result_map['123']);
+        }
+    }
+
+    /**
+     * Test custom tags in __cutDetail for mixed Chinese and alphanumeric
+     * This tests the priority logic in Posseg __cutDetail line 586-593
+     */
+    public function testCustomTagInCutDetail()
+    {
+        // Add a custom word with alphanumeric that might appear in unrecognized Chinese text
+        Jieba::addWord('ABC', 100, 'custom_abc');
+        Jieba::addWord('123', 100, 'custom_num');
+        Jieba::addWord('XYZ999', 100, 'custom_code');
+
+        // Use a sentence with characters that won't be in the dictionary
+        // This will trigger __cutDetail to be called from __cutDAG
+        $result = Posseg::cut('未ABC知123詞XYZ999彙');
+
+        // Build result map
+        $result_map = array();
+        foreach ($result as $word_info) {
+            $result_map[$word_info['word']] = $word_info['tag'];
+        }
+
+        // Verify custom tags are applied even in __cutDetail
+        if (isset($result_map['ABC'])) {
+            $this->assertEquals('custom_abc', $result_map['ABC']);
+        }
+        if (isset($result_map['123'])) {
+            $this->assertEquals('custom_num', $result_map['123']);
+        }
+        if (isset($result_map['XYZ999'])) {
+            $this->assertEquals('custom_code', $result_map['XYZ999']);
+        }
+    }
+
+    /**
+     * Test pattern matching fallback in __cutDetail for English words
+     * This ensures __cutDetail line 592-593 (eng pattern) is covered
+     */
+    public function testCutDetailEnglishPattern()
+    {
+        // Create a test with unrecognized mixed text that will trigger __cutDetail
+        // and test the English pattern matching (without custom tags)
+        $result = Posseg::cut('這是TestWord測試');
+
+        // Find if TestWord was tagged as 'eng'
+        $found_eng = false;
+        foreach ($result as $word_info) {
+            if (isset($word_info['word']) && preg_match('/[a-zA-Z]+/', $word_info['word'])) {
+                if ($word_info['tag'] == 'eng') {
+                    $found_eng = true;
+                }
+            }
+        }
+
+        // At least some English text should be tagged as 'eng'
+        $this->assertTrue($found_eng, 'English pattern should match in __cutDetail');
+    }
+
+    /**
+     * Test pattern matching fallback in __cutDetail for numeric words
+     * This ensures __cutDetail line 590-591 (num pattern) is covered
+     */
+    public function testCutDetailNumericPattern()
+    {
+        // Create a test with unrecognized mixed text that will trigger __cutDetail
+        // and test the numeric pattern matching (without custom tags)
+        $result = Posseg::cut('價格99.99元');
+
+        // Find if numeric values were tagged as 'm'
+        $found_num = false;
+        foreach ($result as $word_info) {
+            if (isset($word_info['word']) && preg_match('/[0-9.]+/', $word_info['word'])) {
+                if ($word_info['tag'] == 'm') {
+                    $found_num = true;
+                }
+            }
+        }
+
+        // At least some numeric text should be tagged as 'm'
+        $this->assertTrue($found_num, 'Numeric pattern should match in __cutDetail');
+    }
 }

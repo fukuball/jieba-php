@@ -562,7 +562,7 @@ class Posseg
         $words = array();
 
         $re_han_pattern = '([\x{4E00}-\x{9FA5}]+)';
-        $re_skip_pattern = '([a-zA-Z0-9+#%&=\._\r\n]+)';
+        $re_skip_pattern = '([a-zA-Z0-9+#%&=\._\-\r\n]+)';
         $re_punctuation_pattern = '([\x{ff5e}\x{ff01}\x{ff08}\x{ff09}\x{300e}' .
             '\x{300c}\x{300d}\x{300f}\x{3001}\x{ff1a}\x{ff1b}' .
             '\x{ff0c}\x{ff1f}\x{3002}]+)';
@@ -584,7 +584,10 @@ class Posseg
                     $words[] = $blk_word;
                 }
             } elseif (preg_match('/' . $re_skip_pattern . '/u', $blk)) {
-                if (preg_match('/' . $re_num_pattern . '/u', $blk)) {
+                // Check for custom word tag first
+                if (isset(self::$word_tag[$blk])) {
+                    $words[] = array('word' => $blk, 'tag' => self::$word_tag[$blk]);
+                } elseif (preg_match('/' . $re_num_pattern . '/u', $blk)) {
                     $words[] = array('word' => $blk, 'tag' => 'm');
                 } elseif (preg_match('/' . $re_eng_pattern . '/u', $blk)) {
                     $words[] = array('word' => $blk, 'tag' => 'eng');
@@ -798,7 +801,7 @@ class Posseg
         }
 
         $re_han_pattern = '([\x{4E00}-\x{9FA5}]+)';
-        $re_skip_pattern = '([a-zA-Z0-9+#%\._\r\n]+)';
+        $re_skip_pattern = '([a-zA-Z0-9+#%&=\._\-\r\n]+)';
         $re_punctuation_pattern = '([\x{ff5e}\x{ff01}\x{ff08}\x{ff09}\x{300e}' .
             '\x{300c}\x{300d}\x{300f}\x{3001}\x{ff1a}\x{ff1b}' .
             '\x{ff0c}\x{ff1f}\x{3002}]+)';
@@ -825,7 +828,10 @@ class Posseg
                     $seg_list[] = $word;
                 }
             } elseif (preg_match('/' . $re_skip_pattern . '/u', $blk)) {
-                if (preg_match('/' . $re_num_pattern . '/u', $blk)) {
+                // Check for custom word tag first
+                if (isset(self::$word_tag[$blk])) {
+                    $seg_list[] = array('word' => $blk, 'tag' => self::$word_tag[$blk]);
+                } elseif (preg_match('/' . $re_num_pattern . '/u', $blk)) {
                     $seg_list[] = array('word' => $blk, 'tag' => 'm');
                 } elseif (preg_match('/' . $re_eng_pattern . '/u', $blk)) {
                     $seg_list[] = array('word' => $blk, 'tag' => 'eng');
