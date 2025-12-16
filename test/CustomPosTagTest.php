@@ -216,4 +216,102 @@ class CustomPosTagTest extends TestCase
         $this->assertEquals('custom_verb', $result_map['開發']);
         $this->assertEquals('custom_noun', $result_map['程式庫']);
     }
+
+    /**
+     * Test custom tags for English words override default 'eng' tag
+     * This tests the priority logic in Posseg line 587-594
+     */
+    public function testCustomTagForEnglishWord()
+    {
+        // Add English word with custom tag
+        Jieba::addWord('Python', 100, 'programming_lang');
+        Jieba::addWord('JavaScript', 100, 'script_lang');
+
+        // Test segmentation
+        $result = Posseg::cut('我喜歡Python和JavaScript');
+
+        // Build result map
+        $result_map = array();
+        foreach ($result as $word_info) {
+            $result_map[$word_info['word']] = $word_info['tag'];
+        }
+
+        // Verify custom tags override default 'eng' tag
+        $this->assertEquals('programming_lang', $result_map['Python']);
+        $this->assertEquals('script_lang', $result_map['JavaScript']);
+    }
+
+    /**
+     * Test custom tags for numeric words override default 'm' tag
+     * This tests the priority logic in Posseg line 587-594
+     */
+    public function testCustomTagForNumericWord()
+    {
+        // Add numeric-like word with custom tag
+        Jieba::addWord('123', 100, 'custom_id');
+        Jieba::addWord('456', 100, 'custom_code');
+
+        // Test segmentation
+        $result = Posseg::cut('編號123和456');
+
+        // Build result map
+        $result_map = array();
+        foreach ($result as $word_info) {
+            $result_map[$word_info['word']] = $word_info['tag'];
+        }
+
+        // Verify custom tags override default 'm' tag
+        $this->assertEquals('custom_id', $result_map['123']);
+        $this->assertEquals('custom_code', $result_map['456']);
+    }
+
+    /**
+     * Test custom tags for mixed alphanumeric words
+     * This tests the priority logic in Posseg line 587-594
+     */
+    public function testCustomTagForMixedAlphanumeric()
+    {
+        // Add mixed alphanumeric words with custom tags
+        Jieba::addWord('ABC123', 100, 'product_code');
+        Jieba::addWord('V2.0', 100, 'version_tag');
+        Jieba::addWord('BZ-YQ1722', 10000, 'issue_number');
+
+        // Test segmentation
+        $result = Posseg::cut('產品ABC123版本V2.0編號BZ-YQ1722');
+
+        // Build result map
+        $result_map = array();
+        foreach ($result as $word_info) {
+            $result_map[$word_info['word']] = $word_info['tag'];
+        }
+
+        // Verify custom tags are applied
+        $this->assertEquals('product_code', $result_map['ABC123']);
+        $this->assertEquals('version_tag', $result_map['V2.0']);
+        $this->assertEquals('issue_number', $result_map['BZ-YQ1722']);
+    }
+
+    /**
+     * Test that words without custom tags still use pattern matching
+     * This ensures the fallback logic works correctly
+     */
+    public function testPatternMatchingFallback()
+    {
+        // Don't add custom tags, let pattern matching work
+        $result = Posseg::cut('test 123 測試');
+
+        // Build result map
+        $result_map = array();
+        foreach ($result as $word_info) {
+            $result_map[$word_info['word']] = $word_info['tag'];
+        }
+
+        // Verify pattern matching still works
+        if (isset($result_map['test'])) {
+            $this->assertEquals('eng', $result_map['test']);
+        }
+        if (isset($result_map['123'])) {
+            $this->assertEquals('m', $result_map['123']);
+        }
+    }
 }
